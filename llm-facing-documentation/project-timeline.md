@@ -18,6 +18,74 @@
 
 ## Timeline Entries
 
+### Session: 2025-12-12 (Evening) - Tier 1 Documentation Token Budget Optimization
+
+**Completed**:
+- Created `meta-maintenance/writing-guide.md` (~2,324 tokens)
+  - Extracted detailed examples from documentation-standards.md
+  - Complete formatting patterns with good/bad examples
+  - Research foundation (OpenAI, Anthropic, arXiv paper - all 26 principles)
+  - Copy-paste ready templates (metadata blocks, docstrings, procedures)
+  
+- Created `meta-maintenance/data-sources.md` (~690 tokens)
+  - External research links with annotations
+  - Wikipedia/MediaWiki technical resources
+  - Discovery dates and application notes
+  
+- Compressed `documentation-standards.md` (20k+ → ~960 tokens)
+  - Reduced to core 10 Golden Rules + quick-reference tables
+  - Added bootstrap instructions for new LLM sessions
+  - All detailed content moved to writing-guide.md with pointers
+  
+- Compressed `project-management-practices.md` (8-10k → ~960 tokens)
+  - Tier system quick reference table
+  - "How to start new session" bootstrap instructions
+  - "Creating new directory" copy-paste template
+  - Removed redundant content (implementation.md covers architecture)
+
+**Decisions Made**:
+- **Token Budget Strategy**: Aggressive compression with just-in-time loading
+  - Rationale: Tier 1 should be <12k tokens total; was ~30k (2.5x over budget)
+  - Achieved: ~2,370 tokens (80% savings, 5x under budget)
+  
+- **Restructure Approach**: Extract to Tier 2, not delete
+  - Rationale: Preserve granular content for when creating new documentation
+  - Pattern: Brief + pointer in Tier 1 → Details in Tier 2
+  
+- **Bootstrap Path**: Explicit navigation instructions in Tier 1
+  - Rationale: Blank-slate LLM must be able to navigate from cold start
+  - Implementation: Step-by-step "Starting a New Session" section
+
+**Discoveries**:
+- **Recursive Realization**: Documentation system's own docs violated its principles
+  - Original Tier 1 docs written before architecture finalized
+  - System needed to "self-heal" by applying its own rules to itself
+  
+- **Just-In-Time Loading Pattern**: Tier 2 details loaded only when needed
+  - Don't load writing-guide.md every session
+  - Load it only when creating new documentation
+  - Matches human behavior: Check style guide when writing, not when reading
+
+**Validation**:
+- Tier 1 token count: 2,370 / 12,000 budget ✓
+- Bootstrap path tested mentally: Clear Tier 1 → Tier 2 navigation
+- Cross-references validated (documentation-standards.md ↔ writing-guide.md)
+- Self-referential integrity maintained (system documents itself correctly)
+
+**Architecture Impact**:
+- Tier 1 now truly universal: Core rules + templates only
+- Tier 2 now contains granular implementation: Detailed examples + research
+- System achieves stated goal: "Just enough context to bootstrap"
+
+**Git Commit**: `2811316` - "Optimize Tier 1 documentation token budget"
+
+**Next Steps**:
+- Test bootstrap path with actual new session (verify Tier 1 sufficient)
+- Begin Wikipedia extraction implementation with new documentation patterns
+- Consider: Are theory documents in theories-proofs-conjectures/ also Tier 1? (May need review)
+
+---
+
 ### Session: 2025-12-12 - Project Initialization & Documentation Framework
 
 **Completed**:
@@ -93,6 +161,9 @@ This was the foundational session establishing project infrastructure and docume
 ---
 
 ## Changelog
+
+### 2025-12-12 (Second Update)
+- Added evening session entry: Tier 1 documentation token budget optimization
 
 ### 2025-12-12
 - Created project timeline document
