@@ -3,7 +3,7 @@
 **Document Type**: Crystallized Specification  
 **Target Audience**: LLMs + Developers  
 **Purpose**: Define the complete architecture of the documentation system  
-**Last Updated**: 2025-12-12  
+**Last Updated**: 2025-12-15  
 **Dependencies**: [documentation-standards.md](../llm-facing-documentation/llm-project-management-instructions/documentation-standards.md), [project-management-practices.md](../llm-facing-documentation/llm-project-management-instructions/project-management-practices.md)  
 **Status**: Stable
 
@@ -115,6 +115,59 @@ Commit: abc123f
 - Self-organizing: Docs live with code
 - Scales infinitely: No bottleneck
 - Never stale: No central index to maintain
+
+### Per-Directory INDEX Files
+
+Every documentation directory includes `INDEX.md` (minimal manifest):
+
+**Purpose**: Quick overview of directory contents without loading all files
+
+**Format**: 
+```markdown
+| File | Purpose | Tokens |
+|------|---------|--------|
+| [file.md](file.md) | Brief description | ~5k |
+```
+
+**Constraints**:
+- Target: 200-300 tokens per INDEX.md
+- Include only active files (exclude deprecated/)
+- Update when files added/removed/significantly changed
+- No prose, just table + brief usage notes
+
+**Example**: `theories-proofs-conjectures/INDEX.md` lists all active theory documents with token estimates
+
+---
+
+## Document Deprecation Policy
+
+**When documents evolve**, don't delete - deprecate:
+
+**Theory/Research Documents**: Create `deprecated/` subdirectory
+- Move superseded versions to `deprecated/`
+- Exclude from INDEX.md (explicit "not listed")
+- Preserve for historical reference
+- Example: `theories-proofs-conjectures/deprecated/inference-summary.md`
+
+**Code/Project Documentation**: Use git history
+- No deprecated/ subdirectories needed
+- Reference git commit history for evolution
+- Use git log/blame for historical context
+
+**Decision Tree**:
+- Is it a theory that evolved? → `deprecated/` subdirectory
+- Is it project documentation? → Git history only
+- Is it a temporary working file? → Delete (not documentation)
+
+**6-Step Deprecation Procedure**:
+1. Create `<directory>/deprecated/` if needed
+2. Move old file to deprecated/
+3. Remove from INDEX.md (or add "Deprecated" section)
+4. Update new file metadata with "Supersedes" note
+5. Update dependencies that reference old file
+6. Commit with deprecation message
+
+See [project-management-practices.md](../llm-facing-documentation/llm-project-management-instructions/project-management-practices.md) for complete deprecation procedures.
 
 ---
 
@@ -231,18 +284,24 @@ User says "wrap up":
 
 ```
 llm-facing-documentation/
+├── README.md                          [Bootstrap instructions for new sessions]
+├── end-of-session-protocol.md         [Systematic session closing procedure]
 ├── llm-project-management-instructions/
+│   ├── INDEX.md                       [Directory manifest]
 │   ├── documentation-standards.md     [How to write docs]
 │   └── project-management-practices.md [How to maintain project]
 ├── project-timeline.md                [Changelog-style index]
-└── theories-proofs-conjectures/       [Foundational theory papers]
+└── theories-proofs-conjectures/       [Tier 2: Load when needed]
+    ├── INDEX.md                       [Theory document manifest]
+    └── [theory papers]                [~10-20k tokens each]
 ```
 
 **Constraints**:
-- Must stay under ~12k tokens total
+- Bootstrap load: ~8-10k tokens (README + timeline + meta-docs)
+- Theory documents classified as Tier 2 (load contextually, not at bootstrap)
 - No working notes (those go in Tier 2)
 - No code specs (those go in Tier 2)
-- Only meta-rules and high-level timeline
+- Only meta-rules, bootstrap instructions, and high-level timeline
 
 **Why**: This project will become incredibly expansive. Tier 1 must stay lean so new sessions don't drown in context.
 
@@ -278,6 +337,53 @@ project-root/
     ├── future.md
     └── basin-partitioning/             [Tier 3: If needed]
 ```
+
+---
+
+## System Prompts as Experimental Apparatus
+
+**Critical Recognition**: VS Code system prompts are not just configuration - they are **experimental apparatus**.
+
+**What System Prompts Do**:
+- Inject on every LLM turn (always in context)
+- Define "inference rules" for documentation navigation
+- Create reproducible LLM behavior patterns
+
+**Project Requirement**: All collaborators must use identical system prompts for reproducibility
+
+**Documentation**: See `human-facing-documentation/system-prompts.md` for:
+- VS Code JSON configuration
+- End-of-session protocol trigger keywords
+- Validation procedures
+- Meta-cognitive insights on self-referential application
+
+**Why This Matters**: Different system prompts = different navigation patterns = different experimental results. This project applies graph theory to documentation structure; system prompts define the traversal rules.
+
+---
+
+## End-of-Session Protocol
+
+**Systematic procedure** for closing work sessions:
+
+**Triggered by**: User says "execute end-of-session protocol", "wrap up session", "end of session", "close session", or "summarize session"
+
+**7-Step Process**:
+1. **Session Summary**: What was accomplished, decisions made, discoveries, blockers
+2. **Meta-Update Check**: Did you modify system documentation? (conditional meta-maintenance loading)
+3. **Dependency Check**: Verify consistency with dependencies listed in metadata (max depth 2)
+4. **Project Timeline Update**: Append High/Medium priority work to project-timeline.md
+5. **Directory-Specific Documentation**: Update directory session-log.md if exists
+6. **Git Status Check**: Review changed files, prompt user for commit
+7. **Final Checklist**: Verify all steps completed
+
+**Token Budgets**:
+- Normal session: ~2-3k tokens
+- Meta session (system doc changes): ~8-12k tokens
+- Complex session (multiple directories): ~5-8k tokens
+
+**Complete Protocol**: See [end-of-session-protocol.md](../llm-facing-documentation/end-of-session-protocol.md)
+
+**Why**: Closes the meta-documentation loop. Changes to documentation system must update meta-maintenance files to maintain self-referential consistency.
 
 ---
 

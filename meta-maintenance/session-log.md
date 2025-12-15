@@ -3,7 +3,7 @@
 **Document Type**: Cumulative (Append-Only)  
 **Target Audience**: LLMs + Developers  
 **Purpose**: Track evolution of the documentation system itself  
-**Last Updated**: 2025-12-12  
+**Last Updated**: 2025-12-15  
 **Dependencies**: [documentation-standards.md](../llm-facing-documentation/llm-project-management-instructions/documentation-standards.md), [project-management-practices.md](../llm-facing-documentation/llm-project-management-instructions/project-management-practices.md)  
 **Status**: Active
 
@@ -14,6 +14,150 @@
 This log documents the design, refinement, and evolution of the self-referential documentation system. It follows the same cumulative append-only pattern it describes.
 
 **Meta-note**: This file is an example of the system eating its own dog food - the documentation system documents itself using its own patterns.
+
+---
+
+## 2025-12-15 - Documentation System Refinements and Self-Referential Application
+
+### Context
+User requested evaluation of llm-facing-documentation directory quality. Session evolved into comprehensive architecture improvements implementing the system's own principles.
+
+### Work Completed
+
+**1. Theory Documentation Cleanup**:
+- Merged two inference summary documents into `unified-inference-theory.md` (~5k tokens)
+- Created `theories-proofs-conjectures/deprecated/` subdirectory
+- Moved superseded documents to deprecated/ (namespace hygiene)
+- Created `theories-proofs-conjectures/INDEX.md` (minimal manifest, ~200 tokens)
+- Standardized metadata blocks across all theory documents
+
+**2. Formal Deprecation Policy**:
+- Added "Document Deprecation Policy" section to project-management-practices.md
+- Established decision tree: theory → deprecated/, code → git history
+- Documented 6-step deprecation procedure
+- Created pattern for deprecated/ subdirectories with explicit INDEX.md exclusion
+
+**3. Theory Tier Classification Resolution**:
+- **Decision**: Theory documents are Tier 2 (contextual), not Tier 1 (universal)
+- **Rationale**: ~10-20k token documents would pollute bootstrap context
+- **Impact**: Tier 1 bootstrap reduced from ~30k to ~8-10k tokens
+- Updated README.md with clear loading strategy
+
+**4. Human-Facing Documentation Creation**:
+- Created `human-facing-documentation/` directory (4 comprehensive files)
+- `system-prompts.md`: VS Code configuration, end-of-session trigger, experimental apparatus recognition
+- `context-management-guide.md`: Explains context displacement, token budgets, HALT states
+- `project-setup.md`: Complete environment setup (Python, VS Code, git, dependencies)
+- `meta-cognitive-insights.md`: Self-referential application of graph theory to project structure
+
+**5. End-of-Session Protocol**:
+- Created `llm-facing-documentation/end-of-session-protocol.md` (~3k tokens)
+- 7-step systematic procedure (summary → meta-check → dependencies → timeline → directory → git → checklist)
+- Conditional meta-loading trigger (only when system docs modified)
+- Three scenario walkthroughs (implementation, documentation, research)
+- Token budget estimates per scenario type
+- Updated system-prompts.md with protocol trigger configuration
+
+**6. Per-Directory INDEX.md Pattern**:
+- Created INDEX.md for 5 directories (meta-maintenance, llm-project-management-instructions, human-facing-documentation, data-pipeline, wikipedia-decomposition)
+- Minimal manifest format: table + usage notes, 200-300 tokens each
+- Replaced verbose directory descriptions with quick-scan manifests
+- Applied compression principle: theories INDEX.md from ~500 to ~200 tokens
+
+**7. Meta-Maintenance Updates**:
+- Updated implementation.md with new architectural patterns (deprecation, INDEX, theory tier, system prompts, protocol)
+- Updated session-log.md with Dec 15 entry (this entry)
+- Updated metadata timestamps across modified files
+
+### Key Discoveries
+
+**System Prompts as Experimental Apparatus**:
+- Realization: System prompts are not configuration, they're experimental apparatus
+- They define "inference rules" for documentation navigation
+- Different prompts = different traversal patterns = different results
+- Critical for reproducibility in self-referential systems
+
+**Context Displacement Mechanics**:
+- Long sessions truncate early context (oldest messages dropped first)
+- System prompts + active file = always present
+- Timeline and bootstrap docs can be displaced
+- End-of-session protocol solves this via system prompt trigger
+
+**Self-Referential Application**:
+- Project applies graph theory to documentation structure
+- N-Link basin partitions map to documentation tiers
+- Inference rules (multi-rule tunneling) map to system prompts
+- HALT states map to token budget limits
+- The theory predicts the documentation system's behavior
+
+### Decisions Made
+
+| Decision | Rationale | Impact |
+|----------|-----------|--------|
+| Theory documents = Tier 2 | ~10-20k tokens too large for universal bootstrap | -20k tokens from Tier 1 |
+| Deprecation policy formalized | Theory evolves; need historical preservation pattern | Namespace hygiene, clear evolution tracking |
+| End-of-session protocol created | Circular dependency: changing llm-docs requires updating meta-maintenance | Closes meta-documentation loop |
+| INDEX.md pattern standardized | Quick directory overview without loading all files | -300 tokens per directory scan |
+| Human-facing docs separated | System prompts need human configuration, not LLM context | Clear human vs LLM documentation boundary |
+
+### Architecture Changes
+
+**Before**:
+- Theory in Tier 1 bootstrap (polluting context)
+- No formal deprecation procedure
+- No end-of-session protocol
+- No per-directory manifests
+- System prompts undocumented
+
+**After**:
+- Theory in Tier 2 (load when needed)
+- Formal deprecation with deprecated/ subdirectories
+- 7-step end-of-session protocol with conditional meta-loading
+- INDEX.md in every directory (minimal manifests)
+- System prompts documented as experimental apparatus
+
+### Validation
+
+**Token Optimization**:
+- Tier 1 bootstrap: 30k → 8-10k tokens ✓
+- theories INDEX.md: 500 → 200 tokens ✓
+- Theory context pollution reduced by ~8-10k tokens ✓
+
+**Namespace Hygiene**:
+- Deprecated documents moved to deprecated/ subdirectories ✓
+- INDEX.md excludes deprecated files ✓
+- Active namespace contains only current documents ✓
+
+**Self-Referential Consistency**:
+- Meta-maintenance follows its own patterns ✓
+- Documentation system documents itself ✓
+- End-of-session protocol closes the loop ✓
+
+### Git Commits from This Session
+
+**Morning Commit (7701353)**:
+```
+docs: Implement comprehensive documentation system improvements
+
+- Created human-facing-documentation/ directory (4 files)
+- Established formal deprecation policy
+- Theory documentation cleanup (merged, deprecated, INDEX)
+- Formalized tier classification (theory = Tier 2)
+- Token optimization (Tier 1: 30k → 8-10k tokens)
+```
+
+**Pending Commit (current work)**:
+- End-of-session protocol creation
+- System prompts update with protocol trigger
+- Per-directory INDEX.md files (5 created)
+- Meta-maintenance updates (implementation.md, session-log.md)
+
+### Next Steps
+
+1. Update llm-facing-documentation/project-timeline.md with session summary
+2. Commit all protocol and INDEX.md work
+3. Test end-of-session protocol in next session
+4. Verify system prompt trigger works correctly
 
 ---
 

@@ -40,15 +40,19 @@ Add to your VS Code `settings.json`:
 {
   "github.copilot.chat.codeGeneration.instructions": [
     {
-      "text": "When user says 'execute end-of-session protocol', 'wrap up session', or 'summarize session': (1) Request files llm-facing-documentation/llm-project-management-instructions/project-management-practices.md and documentation-standards.md if not already in context, (2) Follow documented end-of-session procedures from project-management-practices.md, (3) Update project-timeline.md with session summary"
+      "text": "When user says 'execute end-of-session protocol', 'wrap up session', 'end of session', 'close session', or 'summarize session': (1) Request llm-facing-documentation/end-of-session-protocol.md if not in context, (2) Request llm-facing-documentation/llm-project-management-instructions/project-management-practices.md and documentation-standards.md if not in context, (3) Follow the 7-step protocol documented in end-of-session-protocol.md sequentially"
     }
   ]
 }
 ```
 
-**Purpose**: Ensures LLM can execute session logging even after long sessions where initial context is truncated.
+**Purpose**: Ensures LLM can execute systematic session closing even after long sessions where initial context is truncated.
+
+**What it triggers**: 7-step protocol including session summary, meta-update check, dependency verification, timeline update, directory documentation, git status, and final checklist.
 
 **Token cost**: ~150 tokens injected per turn (minimal overhead)
+
+**Full protocol**: See [end-of-session-protocol.md](../llm-facing-documentation/end-of-session-protocol.md) for complete procedure.
 
 ---
 
@@ -73,8 +77,9 @@ Add to your VS Code `settings.json`:
 To verify prompts are active:
 1. Start new chat session
 2. Say "execute end-of-session protocol"
-3. LLM should request the two documentation files if not already loaded
-4. If LLM doesn't know what to do → prompts not configured correctly
+3. LLM should request end-of-session-protocol.md first, then project-management-practices.md and documentation-standards.md if not already loaded
+4. LLM should execute the 7-step protocol sequentially
+5. If LLM doesn't know what to do → prompts not configured correctly
 
 ---
 

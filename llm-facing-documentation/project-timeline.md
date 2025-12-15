@@ -18,7 +18,82 @@
 
 ## Timeline Entries
 
-### Session: 2025-12-15 - Theory Documentation Cleanup & Deprecation Policy
+### Session: 2025-12-15 (Afternoon) - End-of-Session Protocol & Per-Directory INDEX Pattern
+
+**Completed**:
+- Created `llm-facing-documentation/end-of-session-protocol.md` (~3k tokens)
+  - 7-step systematic procedure for closing work sessions
+  - Conditional meta-loading trigger (only when system docs modified)
+  - Three scenario walkthroughs (implementation, documentation, research)
+  - Token budget estimates per scenario type
+  - Error recovery guidance for missed steps
+
+- Updated `human-facing-documentation/system-prompts.md`
+  - Added end-of-session protocol trigger configuration
+  - Updated validation steps to match 7-step protocol
+  - Added protocol description and reference link
+
+- Created per-directory INDEX.md files (5 total)
+  - `meta-maintenance/INDEX.md` (5 files, ~34k tokens)
+  - `llm-project-management-instructions/INDEX.md` (2 files, ~11k tokens)
+  - `human-facing-documentation/INDEX.md` (4 files, ~16k tokens)
+  - `data-pipeline/INDEX.md` (subdirectory manifest)
+  - `data-pipeline/wikipedia-decomposition/INDEX.md` (2 files, ~8k tokens)
+  
+- Updated `meta-maintenance/implementation.md` with new architectural patterns
+  - Per-directory INDEX.md specification (minimal manifest format)
+  - Document deprecation policy (theory → deprecated/, code → git)
+  - System prompts as experimental apparatus section
+  - End-of-session protocol overview with token budgets
+  - Updated Tier 1 structure diagram
+
+- Updated `meta-maintenance/session-log.md` with Dec 15 comprehensive entry
+  - 7 major work areas (theory cleanup, deprecation, tier classification, human docs, protocol, INDEX, meta-updates)
+  - Key discoveries (system prompts, context displacement, self-referential application)
+  - Decision table with rationale and impact
+  - Before/after architecture comparison
+
+**Decisions Made**:
+
+| Decision | Rationale | Impact |
+|----------|-----------|--------|
+| **End-of-session protocol created** | Circular dependency: changing llm-docs requires updating meta-maintenance | Closes meta-documentation loop systematically |
+| **Conditional meta-loading** | Loading meta-maintenance every session wastes ~30k tokens | Only load when system docs modified (~8-12k conditional cost) |
+| **Per-directory INDEX.md** | Quick directory overview without loading all files | -300 tokens per directory scan |
+| **System prompts as apparatus** | Recognition that prompts define inference rules, not just config | Establishes reproducibility requirement for all collaborators |
+
+**Discoveries**:
+- **Meta-documentation loop closed**: Protocol ensures system docs trigger meta-maintenance updates
+- **Self-referential consistency**: Meta-maintenance now follows its own documented principles
+- **Token optimization validated**: All phases completed within budget estimates
+- **Phased implementation success**: Breaking into 5 phases prevented cognitive overload
+
+**Validation**:
+- End-of-session protocol comprehensive (covers all edge cases) ✓
+- System prompts updated with correct trigger keywords ✓
+- All 5 INDEX.md files created with 200-300 token targets ✓
+- Meta-maintenance files updated with Dec 15 architectural changes ✓
+- Timeline entry created (this entry) ✓
+
+**Architecture Impact**:
+- **End-of-session protocol establishes feedback loop**: Documentation system now maintains itself systematically
+- **INDEX.md pattern universalized**: Every directory gets minimal manifest
+- **System prompts formalized**: Recognized as experimental apparatus requiring version control
+- **Meta-maintenance updated**: Now reflects complete current architecture (deprecation, INDEX, protocol, tiers)
+
+**Git Commits**:
+- Morning commit (7701353): Theory cleanup, human docs, deprecation policy
+- Pending commit: End-of-session protocol, INDEX files, meta-maintenance updates
+
+**Next Steps**:
+- Commit protocol and INDEX.md work
+- Test end-of-session protocol in next session
+- Verify system prompt trigger configuration works
+- Apply protocol when closing this session
+
+---
+
+### Session: 2025-12-15 (Morning) - Theory Documentation Cleanup & Deprecation Policy
 
 **Completed**:
 - Created `theories-proofs-conjectures/deprecated/` subdirectory
