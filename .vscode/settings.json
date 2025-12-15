@@ -1,0 +1,7 @@
+{
+  "github.copilot.chat.codeGeneration.instructions": [
+    {
+      "text": "When user says 'execute end-of-session protocol', 'wrap up session', 'end of session', 'close session', or 'summarize session': (1) Request llm-facing-documentation/end-of-session-protocol.md if not in context, (2) Request llm-facing-documentation/llm-project-management-instructions/project-management-practices.md and documentation-standards.md if not in context, (3) Follow the 7-step protocol documented in end-of-session-protocol.md sequentially"
+    }
+  ]
+}
