@@ -25,54 +25,48 @@ This project applies formal graph theory to self-referential systems (Wikipedia,
 
 ## Initial Setup
 
-### 1. Clone Repository
+### Quick Start (Automated)
 
-```powershell
-git clone <repository-url>
-cd "Self Reference Modeling"
-```
+**For LLM-assisted setup**: Open [initialization.md](../initialization.md) in GitHub Copilot Chat and say "execute these initialization steps"
 
-### 2. Python Environment
+The LLM will:
+1. Create virtual environment
+2. Activate environment
+3. Install dependencies from requirements.txt
+4. Verify installation
+5. Guide you to next steps
 
-```powershell
-# Create virtual environment
-python -m venv .venv
+**Result**: Fully configured Python environment ready for work
 
-# Activate (Windows)
-.\.venv\Scripts\Activate.ps1
+---
 
-# Activate (Unix/Mac)
-source .venv/bin/activate
+### Manual Setup (Step-by-Step)
 
-# Install dependencies
-pip install -r requirements.txt
-```
+See [initialization.md](../initialization.md) for detailed platform-specific commands.
+
+**Summary**:
+1. Create virtual environment: `python -m venv .venv`
+2. Activate environment: `.venv\Scripts\Activate.ps1` (Windows) or `source .venv/bin/activate` (macOS/Linux)
+3. Install dependencies: `pip install -r requirements.txt`
 
 **Core dependencies**:
-- pandas, numpy (data manipulation)
-- lxml, regex (Wikipedia parsing)
-- pytest, black (testing, formatting)
-- jupyter (notebooks)
+- mwparserfromhell (Wikipedia parsing)
+- mwxml (MediaWiki XML processing)
+- requests (HTTP client)
+
+---
 
 ### 3. VS Code Configuration
 
-**Required**: Configure system prompts
+**Workspace file included**: Open `self-reference-modeling.code-workspace`
 
-1. Open `.vscode/settings.json` (create if doesn't exist)
-2. Add configuration from `human-facing-documentation/system-prompts.md`
-3. Verify GitHub Copilot extension is active
+The workspace automatically configures:
+- Python interpreter path (`.venv/Scripts/python.exe` or `.venv/bin/python`)
+- System prompts for LLM navigation (`.vscode/settings.json`)
+- Recommended extensions (Python, Pylance, Jupyter, Markdown)
+- File exclusions and formatting rules
 
-**Recommended workspace settings**:
-```json
-{
-  "python.defaultInterpreterPath": ".venv/bin/python",
-  "editor.rulers": [100],
-  "files.exclude": {
-    "**/__pycache__": true,
-    "**/.pytest_cache": true
-  }
-}
-```
+**No manual configuration needed** - workspace settings are committed to repository
 
 ---
 
