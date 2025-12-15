@@ -5,14 +5,23 @@
 
 ---
 
-## Active Files
+## Core Files (Load when entering directory)
 
-| File | Purpose | Tokens |
-|------|---------|--------|
-| [data-sources.md](data-sources.md) | Wikipedia APIs, dumps, and data access methods | ~3k |
-| [implementation-guide.md](implementation-guide.md) | Pipeline architecture, parsing stages, graph extraction approach | ~5k |
+| File | Tier | Purpose | Tokens |
+|------|------|---------|--------|
+| [implementation-guide.md](implementation-guide.md) | 2 | Pipeline architecture and design | ~5k |
 
-**Total**: ~8k tokens
+**Load these when**: Working on Wikipedia data extraction pipeline
+
+---
+
+## Reference Files (Available as-needed)
+
+| File | Tier | Purpose | Tokens |
+|------|------|---------|--------|
+| [data-sources.md](data-sources.md) | 3 | Wikipedia/MediaWiki technical resources | ~3k |
+
+**Load these when**: Adding new data sources or citing Wikipedia technical details (historical reproducibility)
 
 ---
 
@@ -20,14 +29,16 @@
 
 - **Phase**: Planning/Design
 - **Implementation**: Not started
-- **Dependencies**: Python, Wikipedia API, graph libraries (NetworkX or similar)
+- **Dependencies**: Python, mwparserfromhell, mwxml, requests
 
 ---
 
-## Notes
+## Usage
 
-- Load both files when implementing pipeline
-- data-sources.md for API details and data access patterns
-- implementation-guide.md for architecture and design decisions
+**First time in wikipedia-decomposition/**: Load implementation-guide.md for complete pipeline context
+
+**Working on specific tasks**:
+- Implementing extraction → Use implementation-guide.md
+- Adding data sources → Update data-sources.md
 
 ---

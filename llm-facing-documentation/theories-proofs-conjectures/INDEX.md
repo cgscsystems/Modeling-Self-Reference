@@ -1,30 +1,40 @@
 # Theory Documents Index
 
-**Tier**: 2  
-**Purpose**: Directory manifest for theories-proofs-conjectures/  
+**Purpose**: Mathematical foundations for self-referential graph analysis  
 **Last Updated**: 2025-12-15
 
 ---
 
-## Active Documents
+## All Files Tier 2 (Load all when working on theory)
 
-| Document | Tokens | Description |
-|----------|--------|-------------|
-| [unified-inference-theory.md](unified-inference-theory.md) | ~5k | Complete theory integration (load first) |
-| [n-link-rule-theory.md](n-link-rule-theory.md) | ~8k | Foundational theorems, basin partitions |
-| [database-inference-graph-theory.md](database-inference-graph-theory.md) | ~10k | Database applications, multi-rule tunneling |
+| Document | Purpose | Tokens |
+|----------|---------|--------|
+| [unified-inference-theory.md](unified-inference-theory.md) | Comprehensive integration of all formal theories | ~5k |
+| [n-link-rule-theory.md](n-link-rule-theory.md) | Foundational theorems for deterministic traversal | ~10k |
+| [database-inference-graph-theory.md](database-inference-graph-theory.md) | Extension to typed graphs and multi-rule tunneling | ~10k |
 
-**Total**: ~23k tokens
+**Total**: ~25k tokens (formalized = lightweight)
 
 ---
 
-## Deprecated
+## Deprecated Documents
 
-Location: [deprecated/](deprecated/)
+**Location**: [deprecated/](deprecated/)
+- `inference-summary.md` - Superseded by unified-inference-theory.md
+- `inference-summary-with-event-tunneling.md` - Superseded by unified-inference-theory.md
 
-- `inference-summary.md` → superseded by unified-inference-theory.md
-- `inference-summary-with-event-tunneling.md` → superseded by unified-inference-theory.md
+**Never load** documents in deprecated/ directory.
 
-**Do not load** deprecated documents.
+---
+
+## Usage
+
+**When working on theory**: Load all three active documents for complete mathematical context
+
+**When NOT to load**: Regular implementation work (use project summary in README.md instead)
+
+**Load order**:
+1. unified-inference-theory.md (overview)
+2. n-link-rule-theory.md + database-inference-graph-theory.md (details)
 
 ---

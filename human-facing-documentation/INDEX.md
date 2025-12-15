@@ -5,24 +5,23 @@
 
 ---
 
-## Active Files
+## Not for LLM Context Loading
 
-| File | Purpose | Tokens |
-|------|---------|--------|
-| [system-prompts.md](system-prompts.md) | VS Code configuration for reproducible LLM behavior (experimental apparatus) | ~3k |
-| [context-management-guide.md](context-management-guide.md) | Explains LLM context displacement and token budget mechanics | ~4k |
-| [project-setup.md](project-setup.md) | Complete environment setup guide (Python, VS Code, git, dependencies) | ~5k |
-| [meta-cognitive-insights.md](meta-cognitive-insights.md) | Self-referential application of graph theory to project structure | ~4k |
+These documents are **for humans only**. LLMs should not load these files during normal session work.
 
-**Total**: ~16k tokens
+| File | Purpose |
+|------|----------|
+| [system-prompts.md](system-prompts.md) | VS Code configuration (experimental apparatus) |
+| [context-management-guide.md](context-management-guide.md) | Explains LLM context mechanics for humans |
+| [project-setup.md](project-setup.md) | Environment setup guide |
+| [meta-cognitive-insights.md](meta-cognitive-insights.md) | Self-referential theory application |
 
 ---
 
-## Notes
+## Usage
 
-- These documents are **for humans**, not for LLM context loading
-- system-prompts.md is critical for reproducibility (experimental apparatus)
-- Read all four files when onboarding to the project
-- LLM should not load these unless specifically asked by user
+**For humans**: Read all files when onboarding to understand project setup and LLM collaboration patterns
+
+**For LLMs**: Do not load unless user explicitly requests a specific file
 
 ---

@@ -13,31 +13,42 @@
 
 This document describes a **self-referential, recursive documentation system** designed for LLM-facing projects. The system solves the "snapshot staleness" problem through cumulative, append-only documentation with progressive context loading.
 
-**Key Principle**: Documentation that grows over time without requiring full re-reads each session.
+**Key Principle**: LLM-Facing self-referenatial documentation system that specifies three tiers of context depth.
 
 ---
 
 ## Architecture
 
+```
+Tier 0: .vscode\settings.json
+├── Not included in context loads
+├── Outside of this information hierarchy system but important to be aware of 
+├── This is the custom session instruction template for this project
+```
+
 ### Three-Tier Information Pyramid
 
 ```
+
 Tier 1: Universal (llm-facing-documentation/)
+├── Loaded for EVERY new LLM session.
+├── All contained within llm-facing-documentation directory
 ├── Read every session (~8-12k tokens)
 ├── Meta-docs: How to write/maintain docs
 ├── Timeline: Changelog-style index with drill-down links
-└── Theory: Foundational papers (never change)
 
 Tier 2: Contextual (data-pipeline/, meta-maintenance/, n-link-analysis/, etc.)
 ├── Read only when working in that directory
+├── Directories denote structural and semantic distinctness
 ├── session-log.md: Working history, decisions, discoveries
 ├── implementation.md: Crystallized spec (this document)
 ├── data-sources.md: Reference materials, external links
 └── future.md: TODOs, open questions, next steps
 
 Tier 3: Granular (Tier 2 subdirectories)
-├── Read only when debugging specific subsystem
-├── Same structure as Tier 2 (session-log, future, etc.)
+├── Read only when prompted or when debugging or deep-diving
+├── data-sources.md: Reference materials, external links, llm-facing-documentation\theories-proofs-conjectures
+├── future.md: TODOs, open questions, next steps
 └── Maximum depth: No Tier 4 (use code comments instead)
 ```
 

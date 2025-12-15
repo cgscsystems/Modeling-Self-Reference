@@ -5,7 +5,7 @@
 
 ---
 
-## Active Files
+## All Files Tier 1 (Always loaded at session start)
 
 | File | Purpose | Tokens |
 |------|---------|--------|
@@ -18,15 +18,8 @@
 
 ## Usage
 
-**Load both files** when:
-- Writing new documentation
-- Making architectural changes
-- Executing end-of-session protocol
-- Deprecating documents
+**Bootstrap**: Both files loaded every session as part of Tier 1 universal context
 
-**Load only documentation-standards.md** when:
-- Formatting existing documents
-- Adding metadata blocks
-- Quick reference for writing style
+**When editing these files**: Load meta-maintenance/ directory (implementation.md + writing-guide.md for architectural context)
 
 ---
