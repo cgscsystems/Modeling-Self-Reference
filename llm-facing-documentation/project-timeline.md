@@ -3,7 +3,7 @@
 **Document Type**: Cumulative history  
 **Target Audience**: LLMs  
 **Purpose**: Chronological record of project evolution, decisions, and discoveries  
-**Last Updated**: 2025-12-15  
+**Last Updated**: 2025-12-29  
 **Status**: Active (append-only)
 
 ---
@@ -17,6 +17,39 @@
 ---
 
 ## Timeline Entries
+
+### Session: 2025-12-29 - N-Link Sequence Pipeline Complete
+
+**Completed**:
+- Prose-only link extraction (`parse-xml-prose-links.py`)
+  - Strips templates, tables, refs, comments from wikitext
+  - Output: `links_prose.parquet` (214.2M prose links with position, 1.67 GB)
+  - Processing: 53 minutes over 69 XML files
+
+- N-Link sequence builder (`build-nlink-sequences-v3.py`)
+  - Vectorized Pandas approach (1000x faster than iterrows, DuckDB-compatible)
+  - Resolves titles → page IDs while preserving order
+  - Output: `nlink_sequences.parquet` (17.97M pages, 206.3M ordered links, 686 MB)
+  - Processing: ~5 minutes for full resolution + sort + groupby
+
+- Deprecated slower/failed implementations
+  - Moved to `scripts/deprecated/` with explanations
+  - `build-nlink-sequences.py`: DuckDB OOM on list() aggregation
+  - `build-nlink-sequences-v2.py`: Too slow with Pandas iterrows()
+
+- Updated documentation with Quick Start
+  - INDEX.md: Added run order, output summary, script categorization
+  - implementation-guide.md: Added prerequisites, step-by-step execution, file specs
+
+**Impact**:
+- **Data pipeline complete**: All extraction work finished. Future sessions do analysis only (reads parquet)
+- **N-Link ready**: Can now compute f_N(page_id) = link_sequence[N-1] for basin partition experiments
+- **Pattern documented**: Vectorized approach + streaming for large datasets
+
+**Key Discovery**:
+- Vectorized Pandas on 200M+ rows beats row-by-row iteration and DuckDB aggregation by orders of magnitude
+
+---
 
 ### Session: 2025-12-15 (Evening) - Tier System Clarification & INDEX Standardization
 
