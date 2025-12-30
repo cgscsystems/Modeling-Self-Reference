@@ -5,7 +5,7 @@
 **Purpose**: Complete extraction pipeline from Wikipedia XML to clean N-Link dataset  
 **Last Updated**: 2025-12-29  
 **Dependencies**: [data-sources.md](./data-sources.md)  
-**Status**: Design Revised - Implementation Pending
+**Status**: Complete - All extraction scripts implemented and run
 
 ---
 
@@ -23,19 +23,18 @@ All data stored in `data/wikipedia/` (gitignored, see `.gitkeep` for documentati
 
 ```
 data/wikipedia/
-├── raw/                           # Downloaded dumps (~23GB total)
-│   ├── enwiki-YYYYMMDD-pages-articles-multistream.xml.bz2
-│   ├── enwiki-YYYYMMDD-page.sql.gz
-│   ├── enwiki-YYYYMMDD-redirect.sql.gz
-│   └── enwiki-YYYYMMDD-page_props.sql.gz
+├── raw/                           # Downloaded dumps (~100GB uncompressed)
+│   ├── enwiki-20251220-pages-articles-multistream*.xml  # 69 XML files
+│   ├── enwiki-20251220-page.sql.gz
+│   ├── enwiki-20251220-redirect.sql.gz
+│   └── enwiki-20251220-page_props.sql.gz
 │
-└── processed/                     # Extracted data (~3GB total)
-    ├── pages.parquet              # All pages with flags
-    ├── links.parquet              # page_id → ordered link sequence
-    ├── redirects.parquet          # page_id → target_page_id
-    ├── unmatched_links.parquet    # Failed matches for debugging
-    ├── wikipedia.duckdb           # Combined queryable database
-    └── extraction_log.json        # Provenance metadata
+└── processed/                     # Extracted data (~5.4GB total)
+    ├── pages.parquet              # 64.7M rows, 985 MB - all pages
+    ├── redirects.parquet          # 15.0M rows, 189 MB - redirect mappings
+    ├── disambig_pages.parquet     # 376K rows, 1.8 MB - disambiguation IDs
+    ├── links.parquet              # 353.4M rows, 2.84 GB - raw links
+    └── links_resolved.parquet     # 237.6M rows, 1.39 GB - resolved edges
 ```
 
 **Storage Format**: Parquet (columnar, compressed, portable) + DuckDB for queries.
@@ -48,94 +47,113 @@ data/wikipedia/
 
 ### `pages.parquet`
 
-Complete metadata for all extracted pages.
+Complete metadata for all pages from the `page` SQL dump.
 
-**Format**: Apache Parquet (columnar, compressed)
+**Format**: Apache Parquet (ZSTD compressed)
 
-**Schema**:
+**Schema** (actual):
 ```
 page_id: int64 (primary key)
-page_title: string (canonical, exact case)
 namespace: int32 (0 = main article)
+title: string (canonical, underscores replaced with spaces)
 is_redirect: bool
-is_disambiguation: bool
-is_stub: bool
-byte_size: int64
-link_count: int32
-extraction_status: string (enum: success|partial|failed|skipped)
 ```
+
+**Statistics**:
+- Total rows: 64,709,137
+- File size: 984.6 MB
+- NS0 (main) pages: 18,803,531
+- NS0 content articles (non-redirect): 7,109,811
 
 **Example** (as DataFrame):
 ```
-   page_id    page_title  namespace  is_redirect  is_disambiguation  ...
-0       12     Anarchism          0        False              False
-1    89342          Snow          0        False              False
-2   175623          SNOW          0        False               True
-3      892          EBay          0        False              False
+   page_id  namespace                 title  is_redirect
+0       10          0   AccessibleComputing         True
+1       12          0             Anarchism        False
+2       13          0    AfghanistanHistory         True
+3       14          0  AfghanistanGeography         True
 ```
 
 **Field Descriptions**:
 - `page_id`: Primary key from Wikipedia `page` table
-- `page_title`: Canonical page title (exact case, underscores converted to spaces in XML)
-- `namespace`: 0 = main article namespace (we only extract namespace 0)
-- `is_redirect`: True if redirect page
-- `is_disambiguation`: True if disambiguation page (from `page_props`)
-- `is_stub`: True if stub article (from `page_props`)
-- `byte_size`: Size of raw wikitext in bytes
-- `link_count`: Number of internal links found after template stripping
-- `extraction_status`: `success`, `partial`, `failed`, or `skipped`
+- `namespace`: 0 = main article, 1 = talk, 14 = category, etc.
+- `title`: Page title with underscores converted to spaces
+- `is_redirect`: True if page is a redirect
 
 ---
 
 ### `links.parquet`
 
-Ordered link sequences for each page, preserving document order from prose.
+Raw extracted wikilinks from XML article content (before title resolution).
 
-**Format**: Apache Parquet (columnar, compressed)
+**Format**: Apache Parquet (ZSTD compressed)
 
-**Schema**:
+**Schema** (actual):
 ```
-page_id: int64
-link_sequence: list<int64>  # Ordered list of target page_ids
-positions: list<int64>      # Corresponding byte positions (parallel array)
+from_id: int64    # Source page ID
+to_title: string  # Target page title (as written in [[...]])
 ```
+
+**Statistics**:
+- Total rows: 353,449,165
+- File size: 2.84 GB
+- Extraction time: 31 minutes (69 XML files)
 
 **Example** (as DataFrame):
 ```
-   page_id               link_sequence              positions
-0       12  [8091, 9382, 12890, 8091]  [145, 567, 892, 1234]
-1    89342      [175623, 8091, 23456]        [234, 456, 789]
-2   175623          [89342, 89342, 89342]        [120, 450, 680]
+   from_id                                    to_title
+0       10                      Computer_accessibility
+1       12                        Political_philosophy
+2       12                          Political_movement
+3       12                                   Authority
 ```
 
 **Properties**:
-- Sorted by byte position (ascending)
-- Multiple links to same target preserved with different positions
-- Position = byte offset in **cleaned** wikitext (post-template-stripping)
-- Allows duplicate target_ids to track multiple mentions
+- One row per link occurrence (duplicates preserved)
+- `to_title` is raw link target before `|` or `#`
+- Links extracted with regex: `\[\[([^\[\]|#]+)`
+- Includes links to redirects, non-existent pages, etc.
 
 ---
 
-### `unmatched_links.parquet`
+### `links_resolved.parquet`
 
-Failed link matches for debugging and redlink analysis.
+Resolved link graph with page IDs for both source and target.
 
-**Format**: Apache Parquet
+**Format**: Apache Parquet (ZSTD compressed)
 
-**Schema**:
+**Schema** (actual):
 ```
-page_id: int64
-link_text: string      # Original link text that failed to match
-position: int64        # Byte offset in cleaned wikitext
+from_id: int64  # Source page ID
+to_id: int64    # Target page ID (resolved)
 ```
 
-**Note**: One row per unmatched link (denormalized for easy querying).
+**Statistics**:
+- Total rows: 237,645,648
+- File size: 1.39 GB
+- Resolution time: 17.6 seconds
 
-**Use Cases**:
-- Identify redlinks (links to non-existent pages)
-- Debug parsing edge cases
-- Track temporal changes (pages created after decomposition)
-- Find malformed wikitext
+**Example** (as DataFrame):
+```
+   from_id     to_id
+0  4205775  69991491
+1  4205840    459132
+2  4205756       698
+3  4205840  23785316
+```
+
+**Resolution Process**:
+1. Join `to_title` with `pages.title` for direct matches
+2. Follow redirects via `redirect_lookup` table
+3. Exclude: disambiguation pages, self-links, non-existent targets
+4. Deduplicate edges (same from→to only appears once)
+
+**Filtering Applied**:
+- ✅ Links to content pages (NS0, non-redirect)
+- ✅ Redirects resolved to final target
+- ❌ Links to non-existent pages (redlinks)
+- ❌ Links to disambiguation pages
+- ❌ Self-links (from_id = to_id)
 
 ---
 
@@ -143,11 +161,27 @@ position: int64        # Byte offset in cleaned wikitext
 
 Redirect mappings from SQL dump.
 
-**Format**: Apache Parquet
+**Format**: Apache Parquet (ZSTD compressed)
 
-**Schema**:
+**Schema** (actual):
 ```
-page_id: int64              # Redirect page's ID
+from_id: int64       # Redirect page's ID
+to_namespace: int32  # Target namespace
+to_title: string     # Target page title
+```
+
+**Statistics**:
+- Total rows: 15,024,669
+- File size: 189.3 MB
+- NS0 redirects: 11,693,720
+
+**Example** (as DataFrame):
+```
+   from_id  to_namespace                       to_title
+0       10             0         Computer_accessibility
+1       13             0         History_of_Afghanistan
+2       14             0       Geography_of_Afghanistan
+```
 page_title: string          # Redirect page's title
 target_title: string        # Target page title (as stored in redirect table)
 target_page_id: int64       # Resolved target page_id (nullable if target doesn't exist)
@@ -624,30 +658,33 @@ result = duckdb.sql("""
 
 ### Size Estimates
 
-Based on enwiki (English Wikipedia) as of December 2025:
+Based on enwiki-20251220 (English Wikipedia December 2025):
 
 **Raw Downloads** (to `data/wikipedia/raw/`):
 
-| File | Compressed |
-|------|------------|
-| XML dump | ~22GB |
-| page.sql.gz | ~600MB |
-| redirect.sql.gz | ~50MB |
-| page_props.sql.gz | ~100MB |
-| **Total** | **~23GB** |
+| File | Size |
+|------|------|
+| XML dump (69 multistream files) | ~100GB uncompressed |
+| page.sql.gz | ~2.5GB |
+| redirect.sql.gz | ~150MB |
+| page_props.sql.gz | ~250MB |
 
 **Processed Output** (to `data/wikipedia/processed/`):
 
-| File | Size (Parquet) |
-|------|----------------|
-| pages.parquet | ~100MB |
-| links.parquet | ~1.5GB |
-| redirects.parquet | ~30MB |
-| unmatched_links.parquet | ~50MB |
-| wikipedia.duckdb | ~2GB |
-| **Total** | **~3-4GB** |
+| File | Rows | Size |
+|------|------|------|
+| pages.parquet | 64.7M | 985 MB |
+| redirects.parquet | 15.0M | 189 MB |
+| disambig_pages.parquet | 376K | 1.8 MB |
+| links.parquet | 353.4M | 2.84 GB |
+| links_resolved.parquet | 237.6M | 1.39 GB |
+| **Total** | | **~5.4 GB** |
 
-**Note**: Parquet compression is very effective for this data (repetitive integers, sorted).
+**Processing Times**:
+- SQL parsing: ~15 minutes
+- XML link extraction: ~31 minutes (69 files)
+- Link resolution: ~18 seconds
+- **Total pipeline**: ~47 minutes
 
 ---
 
