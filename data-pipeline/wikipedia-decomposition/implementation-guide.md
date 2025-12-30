@@ -9,6 +9,62 @@
 
 ---
 
+## Quick Start: Running the Pipeline
+
+If you're starting from scratch with a fresh Wikipedia dump, run scripts in this order:
+
+### Prerequisites
+
+```bash
+# From repository root
+python -m venv .venv
+.venv/Scripts/activate  # Windows
+pip install pyarrow duckdb pandas
+```
+
+### Step 1: Download Data
+
+Download from https://dumps.wikimedia.org/enwiki/YYYYMMDD/ to `data/wikipedia/raw/`:
+- `enwiki-YYYYMMDD-pages-articles-multistream*.xml.bz2` (all 69 parts)
+- `enwiki-YYYYMMDD-page.sql.gz`
+- `enwiki-YYYYMMDD-redirect.sql.gz`
+- `enwiki-YYYYMMDD-page_props.sql.gz`
+
+### Step 2: Run Extraction Scripts
+
+```bash
+cd data-pipeline/wikipedia-decomposition/scripts
+
+# 1. Parse SQL dumps → page metadata (pages, redirects, disambig)
+python parse-sql-to-parquet.py          # ~2 min, outputs 3 parquet files
+
+# 2. Extract prose-only links from XML (strips templates/tables/refs)
+python parse-xml-prose-links.py         # ~53 min, outputs links_prose.parquet
+
+# 3. Resolve link titles → page IDs with order preserved
+python build-nlink-sequences-v3.py      # ~5 min, outputs nlink_sequences.parquet
+```
+
+### Step 3: Verify Output
+
+```bash
+python quick-stats.py                   # Run verification queries
+```
+
+### Output Summary
+
+| File | Rows | Size | Purpose |
+|------|------|------|---------|
+| `pages.parquet` | 64.7M | 985 MB | Page metadata |
+| `redirects.parquet` | 15.0M | 189 MB | Redirect mappings |
+| `disambig_pages.parquet` | 376K | 1.8 MB | Disambiguation IDs |
+| `links_prose.parquet` | 214.2M | 1.67 GB | Prose-only links with positions |
+| `nlink_sequences.parquet` | 18.0M | 686 MB | **N-Link sequences** (final output) |
+
+**Total**: ~3.5 GB processed data
+
+---
+
 ## Overview
 
 Complete extraction from enwiki XML dumps with full metadata preservation. This decomposition approach parses the massive XML **once**, extracts **everything** with proper tags, and lets downstream tools filter what they need.
@@ -29,13 +85,17 @@ data/wikipedia/
 │   ├── enwiki-20251220-redirect.sql.gz
 │   └── enwiki-20251220-page_props.sql.gz
 │
-└── processed/                     # Extracted data (~5.4GB total)
+└── processed/                     # Extracted data (~3.5GB total)
     ├── pages.parquet              # 64.7M rows, 985 MB - all pages
     ├── redirects.parquet          # 15.0M rows, 189 MB - redirect mappings
     ├── disambig_pages.parquet     # 376K rows, 1.8 MB - disambiguation IDs
-    ├── links.parquet              # 353.4M rows, 2.84 GB - raw links
-    └── links_resolved.parquet     # 237.6M rows, 1.39 GB - resolved edges
+    ├── links_prose.parquet        # 214.2M rows, 1.67 GB - prose links w/ position
+    └── nlink_sequences.parquet    # 18.0M rows, 686 MB - N-Link sequences (FINAL)
 ```
+
+**Legacy Files** (from earlier pipeline, not needed for N-Link):
+- `links.parquet` - Raw links without position (353M rows, 2.84 GB)
+- `links_resolved.parquet` - Resolved edges without order (237M rows, 1.39 GB)
 
 **Storage Format**: Parquet (columnar, compressed, portable) + DuckDB for queries.
 
@@ -154,6 +214,86 @@ to_id: int64    # Target page ID (resolved)
 - ❌ Links to non-existent pages (redlinks)
 - ❌ Links to disambiguation pages
 - ❌ Self-links (from_id = to_id)
+
+**Note**: This file does NOT preserve link order. For N-Link experiments, use `nlink_sequences.parquet`.
+
+---
+
+### `links_prose.parquet`
+
+Prose-only wikilinks with position preserved (templates, tables, refs stripped).
+
+**Format**: Apache Parquet (ZSTD compressed)
+
+**Schema**:
+```
+from_id: int64        # Source page ID
+link_position: int32  # Character position in cleaned prose
+to_title: string      # Target page title (before resolution)
+```
+
+**Statistics**:
+- Total rows: 214,239,496
+- File size: 1.67 GB
+- Extraction time: 53 minutes
+
+**Pre-processing Applied**:
+- ✅ Templates stripped (`{{...}}`)
+- ✅ Tables stripped (`{|...|}`)
+- ✅ References stripped (`<ref>...</ref>`)
+- ✅ Comments stripped (`<!--...-->`)
+- ✅ Galleries, nowiki, math, code tags stripped
+
+**Why Prose-Only?**: Templates/tables contain reused components (navboxes, infoboxes) that create artificial "gravity wells" in N-Link traversal. Prose links reflect actual editorial intent.
+
+---
+
+### `nlink_sequences.parquet` ⭐
+
+**THE FINAL OUTPUT FOR N-LINK THEORY**
+
+Ordered link sequences for each page, enabling `f_N(page)` function.
+
+**Format**: Apache Parquet (ZSTD compressed)
+
+**Schema**:
+```
+page_id: int64              # Source page ID
+link_sequence: list<int64>  # Ordered array of target page IDs
+```
+
+**Statistics**:
+- Total rows: 17,972,018
+- Total resolved links: 206,322,770
+- File size: 686 MB
+- Build time: ~5 minutes
+
+**Usage**:
+```python
+# N-Link function: f_N(page_id) = link_sequence[N-1]
+# Example: f_1(page_id) = first link, f_2(page_id) = second link, etc.
+
+import pyarrow.parquet as pq
+table = pq.read_table('nlink_sequences.parquet')
+
+# Get sequence for specific page
+page_row = table.filter(table['page_id'] == 12).to_pandas().iloc[0]
+sequence = page_row['link_sequence']
+print(f"f_1(12) = {sequence[0]}")  # First link from page 12
+print(f"f_5(12) = {sequence[4]}")  # Fifth link from page 12
+```
+
+**Sample Data**:
+```
+Page 12: [23040, 99232, 170653, 6512, 1182927, ...] (599 total)
+Page 303: [18618239, 816925, 401342, 30395, 48830, ...] (758 total)
+```
+
+**Resolution Applied**:
+- ✅ Redirects resolved to final target
+- ❌ Disambiguation pages excluded
+- ❌ Self-links excluded
+- ❌ Unresolvable titles excluded
 
 ---
 
