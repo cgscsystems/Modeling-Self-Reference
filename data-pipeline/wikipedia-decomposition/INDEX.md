@@ -31,6 +31,7 @@ See [implementation-guide.md](implementation-guide.md) for full details.
 | File | Tier | Purpose | Tokens |
 |------|------|---------|--------|
 | [data-sources.md](data-sources.md) | 3 | Wikipedia/MediaWiki technical resources | ~3k |
+| [downloaded-and-derived-file-index.md](downloaded-and-derived-file-index.md) | 3 | Exact snapshot list of raw downloads and processed outputs (by filename) | ~2k |
 
 **Load these when**: Adding new data sources or citing Wikipedia technical details (historical reproducibility)
 
