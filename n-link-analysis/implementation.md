@@ -3,7 +3,7 @@
 **Document Type**: Implementation  
 **Target Audience**: LLMs + Developers  
 **Purpose**: Define how to compute basin partitions and validation metrics from Wikipedia N-Link sequences  
-**Last Updated**: 2025-12-30  
+**Last Updated**: 2025-12-31  
 **Dependencies**: [../data-pipeline/wikipedia-decomposition/INDEX.md](../data-pipeline/wikipedia-decomposition/INDEX.md), [../llm-facing-documentation/theories-proofs-conjectures/n-link-rule-theory.md](../llm-facing-documentation/theories-proofs-conjectures/n-link-rule-theory.md)  
 **Status**: Draft
 
@@ -63,6 +63,16 @@ Planned artifacts (format: Parquet):
 - `basin_stats_N={N}.parquet`: per-terminal metrics (terminal_id, type, basin_size, cycle_length)
 - `summary_over_N.parquet`: one row per N (P_HALT, num_terminals, largest_basin, etc.)
 - `universal_attractors.parquet`: terminal frequency across N
+
+### Visualization Artifacts (Human-Facing)
+
+Some workflows export a *basin point cloud* artifact for interactive inspection:
+- Parquet schema: `(page_id, parent_id, depth, x, y, z)`
+- Output location: `data/wikipedia/processed/analysis/` (gitignored)
+
+Visualization tooling lives in `n-link-analysis/viz/` and is intentionally Parquet-first:
+- `viz/render-full-basin-geometry.py` exports the artifact.
+- `viz/dash-basin-geometry-viewer.py` renders it (3D + 2D views).
 
 ---
 

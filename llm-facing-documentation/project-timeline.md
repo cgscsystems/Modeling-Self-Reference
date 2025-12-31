@@ -3,7 +3,7 @@
 **Document Type**: Cumulative history  
 **Target Audience**: LLMs  
 **Purpose**: Chronological record of project evolution, decisions, and discoveries  
-**Last Updated**: 2025-12-30  
+**Last Updated**: 2025-12-31  
 **Status**: Active (append-only)
 
 ---
@@ -17,6 +17,35 @@
 ---
 
 ## Timeline Entries
+
+### Session: 2025-12-31 - Basin Geometry Visualization Pipeline (Parquet-First)
+
+**Completed**:
+- Reframed the basin visualization work as a human-facing pipeline that renders precomputed Parquet artifacts (no live reverse-expansion in Dash).
+- Moved visualization tooling into `n-link-analysis/viz/`:
+  - `viz/dash-basin-geometry-viewer.py` (3D violin point cloud, 2D interval layout, 2D fan+edges)
+  - `viz/render-full-basin-geometry.py` (offline basin mapping + Parquet export + optional HTML preview)
+- Updated `n-link-analysis/INDEX.md` to separate empirical scripts vs visualization tools.
+
+**Decisions Made**:
+| Decision | Rationale |
+|----------|-----------|
+| Dash app renders only precomputed basin artifacts | Keep interactivity fast and deterministic; expensive computation happens offline |
+| Visualization tools live outside `scripts/` | Make the directory semantics reflect “empirical analysis” vs “human visualization pipeline” |
+
+**Discoveries**:
+- Treating the basin as a point cloud artifact enables cheap rendering even when the underlying expansion is expensive.
+
+**Validation**:
+- Verified the moved Dash app entrypoint runs and legacy path can forward to the new location.
+
+**Architecture Impact**:
+- Introduced an explicit `n-link-analysis/viz/` lane for visualization tooling that consumes generated artifacts.
+
+**Next Steps**:
+- User to review locally, then push to GitHub.
+
+---
 
 ### Session: 2025-12-30 - Contracts Layer for Theory↔Experiment↔Evidence + Empirical N-Link Analysis
 

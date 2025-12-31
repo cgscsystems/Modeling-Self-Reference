@@ -3,8 +3,24 @@
 **Document Type**: Cumulative  
 **Target Audience**: LLMs + Developers  
 **Purpose**: Append-only record of analysis decisions, experiments, and outcomes  
-**Last Updated**: 2025-12-30  
+**Last Updated**: 2025-12-31  
 **Status**: Active
+
+---
+
+### 2025-12-31 - Basin Geometry Viewer Reclassified as Visualization
+
+**Completed**:
+- Split human-facing visualization tooling out of `scripts/` into `viz/`.
+- Added:
+	- `viz/dash-basin-geometry-viewer.py`
+	- `viz/render-full-basin-geometry.py`
+- Updated `INDEX.md` to document the new layout.
+
+**Decision**:
+- Treat the Dash basin viewer as a visualization workbench that consumes precomputed Parquet artifacts (no live reverse-expansion).
+
+Commit: 722e63d
 
 ---
 
