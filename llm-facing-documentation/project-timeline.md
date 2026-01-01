@@ -18,6 +18,43 @@
 
 ## Timeline Entries
 
+### Session: 2026-01-01 - Data Inventory and Consolidation
+
+**Completed**:
+- Comprehensive data inventory of project (~147 GB total across 825+ files)
+- Created consolidated directory structure at `data/wikipedia/processed/consolidated/`
+- Organized copies into three views: by-date, by-type, by-n-value
+- Created `organize-consolidated-data.py` utility script
+- Created README.md and MANIFEST.md documentation
+
+**Discoveries**:
+| Finding | Details |
+|---------|---------|
+| Heavy duplication | 605 TSV files, ~500 are duplicates across run tags |
+| Common tags | reproduction_2025-12-31 (107), multi_n_jan_2026 (69), test-runs (213) |
+| N=5 dominance | 168 files for N=5, followed by N=3 (99) |
+| Raw storage | 137 GB with both compressed and uncompressed versions |
+
+**Decisions Made**:
+| Decision | Rationale |
+|----------|-----------|
+| Preserve all files (copies) | User preference for short-term data preservation |
+| Three-view organization | Different use cases need by-date, by-type, by-n-value groupings |
+| Script in n-link-analysis/scripts/ | Consistent with existing script organization |
+
+**Files Created**:
+| File | Description |
+|------|-------------|
+| `n-link-analysis/scripts/organize-consolidated-data.py` | Idempotent script to maintain consolidated copies |
+| `data/wikipedia/processed/consolidated/README.md` | Usage documentation |
+| `data/wikipedia/processed/consolidated/MANIFEST.md` | Detailed file listing |
+
+**Architecture Impact**:
+- New utility for data organization (run after new analysis to update consolidated views)
+- No changes to original data files or analysis pipeline
+
+---
+
 ### Session: 2026-01-01 - Multiplex Explorer Bug Fix
 
 **Completed**:

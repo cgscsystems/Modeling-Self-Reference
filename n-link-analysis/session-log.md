@@ -8,6 +8,31 @@
 
 ---
 
+### 2026-01-01 - Data Inventory and Consolidation
+
+**What was tried**:
+- Comprehensive inventory of all data files in the project
+- Created consolidated directory with organized copies
+
+**What worked**:
+- `organize-consolidated-data.py`: Idempotent script to copy analysis files into three views
+- Three organization schemes: by-date, by-type, by-n-value
+- 637 files organized (605 TSV + 32 parquet)
+
+**Key discoveries**:
+- 147 GB total project data (137 GB raw, 7.5 GB processed, 1.7 GB analysis)
+- Heavy duplication in analysis/: ~500 files are duplicates across run tags
+- Most common tags: reproduction_2025-12-31 (107), test-runs (213), multi_n_jan_2026 (69)
+- N=5 has most analysis files (168), followed by N=3 (99)
+
+**Artifacts produced**:
+- `n-link-analysis/scripts/organize-consolidated-data.py`
+- `data/wikipedia/processed/consolidated/` (README.md, MANIFEST.md, organized copies)
+
+**Next**: Run script after future analysis to maintain organization
+
+---
+
 ### 2026-01-01 - Tunneling Phase 1 Complete + WH Feedback Addressed
 
 **What was tried**:
