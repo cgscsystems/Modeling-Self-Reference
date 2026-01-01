@@ -21,6 +21,10 @@ Proposed next-session doc-only fix (no new analysis, no changing empirical numbe
 
 Also: keep an eye on tag consistency when comparing cross-N outputs (e.g., `test_*` vs `multi_n_jan_2026`).
 
+Additional tunneling breadcrumb:
+
+- See [llm-facing-documentation/theories-proofs-conjectures/database-inference-graph-theory.md](../llm-facing-documentation/theories-proofs-conjectures/database-inference-graph-theory.md) (Corollary 3.2) for the “exhaustive labeling shrinks search space” note and the framing that fixed-$N$ basins are 1D slices of a multiplex over $(\text{page}, N)$ connected by tunneling at shared nodes.
+
 ## Current State
 
 ### Completed Infrastructure ✓

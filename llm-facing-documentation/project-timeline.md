@@ -18,6 +18,32 @@
 
 ## Timeline Entries
 
+### Session: 2026-01-01 - Multiplex “Basins as Slices” Framing + Breadcrumbs
+
+**Completed**:
+- Added a tunneling/multiplex breadcrumb to n-link-analysis docs for Matt’s next session
+- Formalized the “exhaustive basin labeling shrinks search space” corollary + multiplex slice interpretation in the theory doc
+
+**Decisions Made**:
+| Decision | Rationale |
+|----------|-----------|
+| Treat fixed-$N$ basins as multiplex slices | Supports tunneling hypothesis framing and clarifies cross-$N$ intersections |
+| Emphasize search-shrinking labeling | Makes “exhaustive mapping over time reduces remaining work” explicit |
+
+**Discoveries**:
+- The useful unit for tunneling work is a multiplex over $(\text{page}, N)$; fixed-rule basins are 1D cross-sections.
+
+**Validation**:
+- Changes are documentation-only; committed and pushed.
+
+**Architecture Impact**:
+- Adds an explicit conceptual bridge from fixed-$N$ basin partitions to multiplex components connected by tunneling.
+
+**Next Steps**:
+- Define a precise tunneling rule and a multiplex connectivity target (reachability vs SCC vs undirected connectivity) before building any exhaustive intersection-mapping tooling.
+
+---
+
 ### Session: 2026-01-01 (Late Night) - Multi-N Phase Transition Complete (N=3-10 Full Curve)
 
 **Completed**:

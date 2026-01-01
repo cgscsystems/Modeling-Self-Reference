@@ -8,6 +8,22 @@
 
 ---
 
+### 2026-01-01 (Wrap-up) - Multiplex “Basins as Slices” Breadcrumb (Tunneling)
+
+**Context**: Clarified the tunneling framing: fixed-$N$ basins are 1D slices of a multiplex over $(\text{page}, N)$ (or more general rule index). Exhaustive labeling under a fixed rule shrinks the remaining search space as basins are assigned.
+
+**What was decided**:
+- Use: start from a node → forward iterate to its terminus (cycle or HALT) → reverse-expand to map the corresponding fixed-rule structure.
+- Treat cross-$N$ intersections as shared page identities across layers, yielding multiplex components that can unify seemingly disjoint fixed-$N$ basins.
+
+**Breadcrumbs for Matt**:
+- NEXT-STEPS: narrative alignment breadcrumb (entry breadth vs depth) + tag consistency.
+- Theory doc: added Corollary 3.2 (“exhaustive basin labeling is search-shrinking”) + multiplex slice interpretation.
+
+**Suggested Tier-1 next action (design-level, no new data required)**:
+- Define a precise tunneling rule (allowed $N$ moves and when), then define the multiplex connectivity target (directed reachability vs SCC vs undirected connectivity).
+- Specify a minimal artifact for progress: e.g., a small TSV mapping a seed set of pages to their terminal IDs across a small $N$ range to detect intersections.
+
 ### 2026-01-01 (Night) - Multi-N Phase Transition Complete (N=3-10 Full Analysis)
 
 **What was tried**:
