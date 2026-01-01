@@ -54,9 +54,5 @@
 		"ghcr.io/devcontainers/features/git:1": {}
 	},
 
-	"mounts": [
-		"source=${localWorkspaceFolder},target=/workspaces/${localWorkspaceFolderBasename},type=bind,consistency=cached"
-	],
-
 	"remoteUser": "vscode"
 }
