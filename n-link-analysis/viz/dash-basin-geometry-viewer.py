@@ -18,6 +18,10 @@ Views
    - Converts the interval x-position into an angular coordinate.
    - Draws parent→child links (optionally bundled) for a tributary/radiating look.
 
+4) 3D fan + edges
+    - Same fan projection as (3), but rendered in 3D.
+    - Uses depth as both fan radius and z-height (simple cone) for a rotatable view.
+
 Run (repo root)
 --------------
   python n-link-analysis/viz/dash-basin-geometry-viewer.py --host 127.0.0.1 --port 8054
@@ -268,6 +272,32 @@ def _get_color_values(
     return df["depth"].to_numpy(dtype=np.float32)
 
 
+def _robust_unit_scale(values: np.ndarray) -> np.ndarray:
+    """Robustly scale to approximately [-1, 1] using quantiles.
+
+    Intended for visualization embeddings where raw magnitudes may vary widely.
+    """
+
+    v = np.asarray(values, dtype=np.float64)
+    if v.size == 0:
+        return v
+    if np.all(~np.isfinite(v)):
+        return np.zeros_like(v)
+
+    finite = v[np.isfinite(v)]
+    if finite.size == 0:
+        return np.zeros_like(v)
+
+    q05 = float(np.quantile(finite, 0.05))
+    q50 = float(np.quantile(finite, 0.50))
+    q95 = float(np.quantile(finite, 0.95))
+    half = max(1e-9, (q95 - q05) / 2.0)
+    out = (v - q50) / half
+    out = np.clip(out, -1.0, 1.0)
+    out[~np.isfinite(out)] = 0.0
+    return out
+
+
 def build_recursive_space_2d_figure_from_df(
     df: pd.DataFrame,
     *,
@@ -506,6 +536,230 @@ def build_fan_edges_2d_figure_from_df(
     return fig
 
 
+def build_fan_edges_3d_figure_from_df(
+    df: pd.DataFrame,
+    *,
+    title: str,
+    max_points: int,
+    sampling_mode: str,
+    depth_min: int,
+    depth_max: int,
+    point_size: float,
+    point_opacity: float,
+    seed: int,
+    show_edges: bool,
+    max_edges: int,
+    edge_opacity: float,
+    edge_width: float,
+    angle_span_degrees: float,
+    radius_step: float,
+    edge_depth_max: int,
+    bundle_edges: bool,
+    bundle_pull: float,
+    x2: pd.Series,
+    subtree_span: pd.Series,
+    out_degree: pd.Series,
+    color_mode: str,
+    z_mode: str,
+    z_scale: float,
+    camera: dict | None,
+) -> go.Figure:
+    dmin = int(max(0, depth_min))
+    dmax = int(depth_max)
+    if dmax <= 0:
+        dmax = int(df["depth"].max())
+
+    df_f = df[(df["depth"] >= dmin) & (df["depth"] <= dmax)]
+    if df_f.empty:
+        fig = go.Figure()
+        fig.update_layout(title=f"{title} (no points in depth range)")
+        return fig
+
+    df_plot_base = df_f.copy()
+    df_plot_base["x2"] = x2.loc[df_plot_base.index]
+    df_plot_base["_span"] = subtree_span.loc[df_plot_base.index]
+    df_plot_base["_outdeg"] = out_degree.loc[df_plot_base.index]
+
+    df_points = _sample_pointcloud(df_plot_base, max_points=int(max_points), mode=str(sampling_mode), seed=int(seed)).copy()
+
+    span_rad = float(angle_span_degrees) * (np.pi / 180.0)
+    theta = df_points["x2"].to_numpy(dtype=np.float64) * (span_rad / 2.0)
+    depth = df_points["depth"].to_numpy(dtype=np.float64)
+    r = depth * float(radius_step)
+    px = r * np.cos(theta)
+    py = r * np.sin(theta)
+
+    z_mode_n = (z_mode or "depth_cone").strip().lower()
+    z_scale_f = float(z_scale)
+    if z_scale_f <= 0:
+        z_scale_f = 1.0
+
+    if z_mode_n == "flat":
+        pz = np.zeros_like(depth)
+    elif z_mode_n == "parquet_z":
+        zraw = df_points["z"].to_numpy(dtype=np.float64)
+        pz = _robust_unit_scale(zraw) * z_scale_f * float(radius_step) * np.maximum(1.0, depth)
+    elif z_mode_n == "crystal_span":
+        span_log = np.log10(1.0 + df_points["_span"].to_numpy(dtype=np.float64))
+        pz = _robust_unit_scale(span_log) * z_scale_f * float(radius_step) * np.maximum(1.0, depth)
+    elif z_mode_n == "twist":
+        # Helical twist: depth cone with an angular-dependent lift.
+        pz = depth * float(radius_step) + (theta / max(1e-9, (span_rad / 2.0))) * z_scale_f * float(radius_step) * 5.0
+    elif z_mode_n == "watershed_bowl":
+        # Bowl: higher depth drops "down" into a basin.
+        max_r = max(1e-9, float(dmax) * float(radius_step))
+        pz = -((r / max_r) ** 2) * z_scale_f * max_r
+    else:
+        # Default: simple cone.
+        pz = depth * float(radius_step)
+
+    fig = go.Figure()
+
+    if show_edges:
+        if "parent_id" not in df_plot_base.columns:
+            raise ValueError("Pointcloud parquet is missing parent_id; regenerate with viz/render-full-basin-geometry.py")
+
+        df_edges = df_plot_base
+        edmax = int(edge_depth_max or 0)
+        if edmax > 0:
+            df_edges = df_edges[df_edges["depth"] <= edmax]
+
+        if int(max_edges) > 0 and len(df_edges) > int(max_edges):
+            df_edges = _sample_pointcloud(df_edges, max_points=int(max_edges), mode="random", seed=int(seed))
+
+        x2_e = x2.loc[df_edges.index].to_numpy(dtype=np.float64)
+        theta_e = x2_e * (span_rad / 2.0)
+        depth_e = df_edges["depth"].to_numpy(dtype=np.float64)
+        r_e = depth_e * float(radius_step)
+        ex = r_e * np.cos(theta_e)
+        ey = r_e * np.sin(theta_e)
+
+        if z_mode_n == "flat":
+            ez = np.zeros_like(depth_e)
+        elif z_mode_n == "parquet_z":
+            zraw_e = df_edges["z"].to_numpy(dtype=np.float64)
+            ez = _robust_unit_scale(zraw_e) * z_scale_f * float(radius_step) * np.maximum(1.0, depth_e)
+        elif z_mode_n == "crystal_span":
+            span_log_e = np.log10(1.0 + df_edges["_span"].to_numpy(dtype=np.float64))
+            ez = _robust_unit_scale(span_log_e) * z_scale_f * float(radius_step) * np.maximum(1.0, depth_e)
+        elif z_mode_n == "twist":
+            ez = depth_e * float(radius_step) + (theta_e / max(1e-9, (span_rad / 2.0))) * z_scale_f * float(radius_step) * 5.0
+        elif z_mode_n == "watershed_bowl":
+            max_r = max(1e-9, float(dmax) * float(radius_step))
+            ez = -((r_e / max_r) ** 2) * z_scale_f * max_r
+        else:
+            ez = depth_e * float(radius_step)
+
+        ids_e = df_edges["page_id"].to_numpy(dtype=np.int64)
+        parent_e = df_edges["parent_id"].to_numpy(dtype=object)
+        span_e = df_edges["_span"].to_numpy(dtype=np.float64)
+
+        coord: dict[int, tuple[float, float, float, float]] = {
+            int(i): (float(x), float(y), float(z), float(s))
+            for i, x, y, z, s in zip(ids_e.tolist(), ex.tolist(), ey.tolist(), ez.tolist(), span_e.tolist(), strict=False)
+        }
+
+        spans = np.array([s for _, (_, _, _, s) in coord.items()], dtype=np.float64)
+        if spans.size:
+            q1 = float(np.quantile(spans, 0.50))
+            q2 = float(np.quantile(spans, 0.90))
+        else:
+            q1, q2 = 1.0, 10.0
+
+        bins = [
+            {"name": "edges_small", "xs": [], "ys": [], "zs": [], "w": 0.8},
+            {"name": "edges_med", "xs": [], "ys": [], "zs": [], "w": 1.4},
+            {"name": "edges_big", "xs": [], "ys": [], "zs": [], "w": 2.3},
+        ]
+
+        pull = float(bundle_pull)
+        pull = 0.0 if pull < 0.0 else (1.0 if pull > 1.0 else pull)
+
+        for cid, pid in zip(ids_e.tolist(), parent_e.tolist(), strict=False):
+            if pid is None or str(pid) == "<NA>":
+                continue
+            parent_id = int(pid)
+            a = coord.get(int(cid))
+            b = coord.get(parent_id)
+            if a is None or b is None:
+                continue
+            ax, ay, az, aspan = a
+            bx, by, bz, _ = b
+
+            if aspan >= q2:
+                bucket = bins[2]
+            elif aspan >= q1:
+                bucket = bins[1]
+            else:
+                bucket = bins[0]
+
+            if bundle_edges and pull > 0.0:
+                mx = ax * (1.0 - pull) + bx * pull
+                my = ay * (1.0 - pull) + by * pull
+                mz = az * (1.0 - pull) + bz * pull
+                bucket["xs"].extend([ax, mx, bx, None])
+                bucket["ys"].extend([ay, my, by, None])
+                bucket["zs"].extend([az, mz, bz, None])
+            else:
+                bucket["xs"].extend([ax, bx, None])
+                bucket["ys"].extend([ay, by, None])
+                bucket["zs"].extend([az, bz, None])
+
+        for b in bins:
+            if not b["xs"]:
+                continue
+            fig.add_trace(
+                go.Scatter3d(
+                    x=b["xs"],
+                    y=b["ys"],
+                    z=b["zs"],
+                    mode="lines",
+                    line=dict(
+                        color=f"rgba(80,80,80,{float(edge_opacity):.3f})",
+                        width=float(edge_width) * float(b["w"]),
+                    ),
+                    hoverinfo="skip",
+                    name=b["name"],
+                )
+            )
+
+    color = _get_color_values(
+        df_points,
+        color_mode=str(color_mode or "depth"),
+        subtree_span=df_points["_span"],
+        out_degree=df_points["_outdeg"],
+    )
+
+    fig.add_trace(
+        go.Scatter3d(
+            x=px,
+            y=py,
+            z=pz,
+            mode="markers",
+            marker=dict(
+                size=float(point_size),
+                color=color,
+                colorscale="Viridis",
+                opacity=float(point_opacity),
+            ),
+            hoverinfo="skip",
+            name="points",
+        )
+    )
+
+    scene = dict(xaxis=dict(visible=False), yaxis=dict(visible=False), zaxis=dict(visible=False))
+    if camera:
+        scene["camera"] = camera
+
+    fig.update_layout(
+        title=title,
+        showlegend=False,
+        margin=dict(l=0, r=0, t=40, b=0),
+        scene=scene,
+    )
+    return fig
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--host", type=str, default="127.0.0.1")
@@ -534,6 +788,7 @@ def main() -> int:
                                     {"label": "3D point cloud (violin)", "value": "pointcloud"},
                                     {"label": "2D recursive space (interval)", "value": "recursive2d"},
                                     {"label": "2D fan (top-down) + edges", "value": "fan2d"},
+                                    {"label": "3D fan + edges", "value": "fan3d"},
                                 ],
                                 value="pointcloud",
                             ),
@@ -658,6 +913,31 @@ def main() -> int:
                                     html.Br(),
                                     html.Label("Radius step (per depth)"),
                                     dcc.Input(id="fan-radius-step", type="number", value=1.0, min=0.05, max=10.0, step=0.05),
+                                    html.Br(),
+                                    html.Label("3D fan z-mode"),
+                                    dcc.Dropdown(
+                                        id="fan3d-z-mode",
+                                        options=[
+                                            {"label": "Depth cone (default)", "value": "depth_cone"},
+                                            {"label": "Flat disc", "value": "flat"},
+                                            {"label": "Parquet z (robust scaled)", "value": "parquet_z"},
+                                            {"label": "Crystal (span lift)", "value": "crystal_span"},
+                                            {"label": "Twist (helical)", "value": "twist"},
+                                            {"label": "Watershed (bowl)", "value": "watershed_bowl"},
+                                        ],
+                                        value="depth_cone",
+                                        clearable=False,
+                                    ),
+                                    html.Label("3D z-scale"),
+                                    dcc.Slider(
+                                        id="fan3d-z-scale",
+                                        min=0.1,
+                                        max=4.0,
+                                        step=0.1,
+                                        value=1.0,
+                                        marks=None,
+                                        tooltip={"placement": "bottom", "always_visible": False},
+                                    ),
                                 ],
                                 id="dataset-controls",
                             ),
@@ -704,6 +984,8 @@ def main() -> int:
         State("fan-edge-width", "value"),
         State("fan-angle-span", "value"),
         State("fan-radius-step", "value"),
+        State("fan3d-z-mode", "value"),
+        State("fan3d-z-scale", "value"),
         State("graph", "relayoutData"),
         prevent_initial_call=True,
     )
@@ -727,6 +1009,8 @@ def main() -> int:
         fan_edge_width,
         fan_angle_span,
         fan_radius_step,
+        fan3d_z_mode,
+        fan3d_z_scale,
         relayout_data,
     ):
         t0 = time.time()
@@ -786,6 +1070,34 @@ def main() -> int:
                     subtree_span=subtree_span,
                     out_degree=out_degree,
                     color_mode=str(pc_color_mode or "depth"),
+                )
+            elif mode == "fan3d":
+                fig = build_fan_edges_3d_figure_from_df(
+                    df,
+                    title=f"3D fan + edges ({Path(str(pc_path)).name})",
+                    max_points=int(pc_max_points or 0),
+                    sampling_mode=str(pc_sampling or "by_depth"),
+                    depth_min=int(pc_depth_min or 0),
+                    depth_max=int(pc_depth_max or 0),
+                    point_size=float(pc_point_size or 2.0),
+                    point_opacity=float(pc_opacity or 0.85),
+                    seed=0,
+                    show_edges=bool(fan_show_edges) and ("on" in (fan_show_edges or [])),
+                    max_edges=int(fan_max_edges or 0),
+                    edge_opacity=float(fan_edge_opacity or 0.14),
+                    edge_width=float(fan_edge_width or 1.0),
+                    angle_span_degrees=float(fan_angle_span or 150.0),
+                    radius_step=float(fan_radius_step or 1.0),
+                    edge_depth_max=int(fan_edge_depth_max or 0) or int(pc_depth_max or 0),
+                    bundle_edges=bool(fan_bundle_edges) and ("on" in (fan_bundle_edges or [])),
+                    bundle_pull=float(fan_bundle_pull or 0.35),
+                    x2=x2,
+                    subtree_span=subtree_span,
+                    out_degree=out_degree,
+                    color_mode=str(pc_color_mode or "depth"),
+                    z_mode=str(fan3d_z_mode or "depth_cone"),
+                    z_scale=float(fan3d_z_scale or 1.0),
+                    camera=camera,
                 )
             else:
                 fig = build_pointcloud_figure_from_df(
