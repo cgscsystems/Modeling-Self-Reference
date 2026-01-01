@@ -41,11 +41,13 @@ This is the *primary index* for contract objects, and should be treated as appen
   - [analyze-path-characteristics.py](../../n-link-analysis/scripts/analyze-path-characteristics.py) (path-level mechanism analysis)
   - [compare-cycle-evolution.py](../../n-link-analysis/scripts/compare-cycle-evolution.py) (individual cycle tracking across N)
   - [analyze-cycle-link-profiles.py](../../n-link-analysis/scripts/analyze-cycle-link-profiles.py) (article link structure analysis)
+  - [analyze-basin-entry-breadth.py](../../n-link-analysis/scripts/analyze-basin-entry-breadth.py) (entry breadth measurement and depth analysis)
 - **Evidence**:
   - [REPRODUCTION-OVERVIEW.md](../../n-link-analysis/empirical-investigations/REPRODUCTION-OVERVIEW.md) (N∈{3,5,7} comprehensive summary)
   - [PHASE-TRANSITION-REFINED.md](../../n-link-analysis/empirical-investigations/PHASE-TRANSITION-REFINED.md) (N∈{3,4,5,6,7} refined analysis)
   - [MECHANISM-ANALYSIS.md](../../n-link-analysis/empirical-investigations/MECHANISM-ANALYSIS.md) (premature convergence mechanism, path characteristics)
   - [MASSACHUSETTS-CASE-STUDY.md](../../n-link-analysis/empirical-investigations/MASSACHUSETTS-CASE-STUDY.md) (cycle formation + hub connectivity case study)
+  - [ENTRY-BREADTH-RESULTS.md](../../n-link-analysis/empirical-investigations/ENTRY-BREADTH-RESULTS.md) (entry breadth hypothesis refuted, depth dominance discovered)
   - [CROSS-N-FINDINGS.md](../../CROSS-N-FINDINGS.md) (publication-quality discovery summary)
   - Phase transition visualizations: `n-link-analysis/report/assets/phase_transition_n3_to_n7.png`
   - Coverage analysis: `n-link-analysis/report/assets/coverage_vs_basin_mass.png`, `coverage_zones_analysis.png`
@@ -56,6 +58,7 @@ This is the *primary index* for contract objects, and should be treated as appen
   - Cycle evolution data: `data/wikipedia/processed/analysis/cycle_evolution_summary.tsv`, `cycle_dominance_matrix.tsv`, `universal_cycles.tsv`
   - Data outputs: `data/wikipedia/processed/analysis/*_n={3,4,5,6,7}_*` (~105 files total)
   - Link degree distribution: `data/wikipedia/processed/analysis/link_degree_distribution*.tsv`
+  - Entry breadth data: `data/wikipedia/processed/analysis/entry_breadth_n={3,4,5,6,7}_full_analysis_2025_12_31.tsv`, `entry_breadth_summary_*.tsv`
 - **Key Finding**:
   - **Refined**: N=5 is an isolated spike (65× amplification from N=4), not a plateau
   - N=4 is a local minimum (30k nodes) - smaller than N=3 (102k)! Asymmetric curve: sharp rise (65×), gradual fall (7-9×)
@@ -68,8 +71,10 @@ This is the *primary index* for contract objects, and should be treated as appen
   - Same 6 terminal cycles persist across N with radically different properties (up to 4289× size variation)
 - **Theory Claim Evaluated**:
   - **Refuted**: "Basin structure is universal across N" → Structure is rule-dependent, not graph-intrinsic
+  - **Refuted**: "Entry breadth dominates basin mass" → Entry breadth DECREASES with N (0.75× from N=4→N=5), opposite of prediction
   - **Supported**: "Finite self-referential graphs partition into basins under deterministic rules" → Holds for all N∈{3,4,5,6,7}
-  - **New hypothesis**: Basin mass = Entry_Breadth × Path_Survival × Convergence_Optimality (replaces simple coverage model)
+  - **Supported**: "Depth dominates basin mass" → Basin depth increases 13× (N=4→N=5), explains 65× mass amplification
+  - **New hypothesis**: Basin mass = Entry_Breadth × Depth^α × Path_Survival where α ≈ 2.0-2.5 (depth power-law)
   - **New hypothesis**: Basin mass peaks occur at ~30-35% coverage threshold (potentially universal for scale-free networks)
 - **Notes**:
   - Basin properties emerge from rule-graph coupling (deterministic rule selectivity × graph degree distribution)

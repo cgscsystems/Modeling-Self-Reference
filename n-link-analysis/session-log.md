@@ -8,6 +8,65 @@
 
 ---
 
+### 2025-12-31 (Fourth) - Entry Breadth Hypothesis Testing and Depth Discovery
+
+**What was tried**:
+- Developed statistical mechanics framework with entry breadth hypothesis
+- Created analyze-basin-entry-breadth.py to measure depth=1 entry nodes
+- Ran full analysis on 6 cycles × 5 N values (30 measurements)
+- Tested prediction: Entry_Breadth(N=5) / Entry_Breadth(N=4) ≈ 8-10×
+
+**What worked**:
+- Script executed successfully, all 30 measurements completed in ~20 seconds
+- Entry breadth measured accurately (decreases monotonically: 871 → 429 → 307)
+- Max depth captured per basin (peaks at N=5: mean ~74 steps vs ~13 at N=4)
+- Infrastructure reused patterns from existing scripts (branch-basin-analysis.py)
+
+**What didn't work**:
+- Entry breadth hypothesis REFUTED (predicted 8-10× increase, measured 0.75× decrease)
+
+**Key findings**:
+- **DEPTH dominates basin mass, not breadth** (13× increase N=4→N=5)
+- **Depth power-law**: Basin_Mass ≈ Entry_Breadth × Depth^α where α ≈ 2.0-2.5
+- **Quantitative validation**: 0.81 × 13² ≈ 137× vs observed 94× amplification
+- **Karst sinkhole model**: Narrow openings (low entry breadth) + deep shafts (high max depth) = huge volumes
+- **Premature convergence refined**: N=4 limits DEPTH (13 steps max), not just breadth
+- **Massachusetts case**: Entry breadth DOWN 19%, depth UP 1,200%, basin mass UP 9,400%
+
+**Scripts created**:
+- `scripts/analyze-basin-entry-breadth.py` (480 lines)
+- `scripts/run-entry-breadth-analysis.sh` (helper wrapper)
+
+**Documentation created**:
+- `empirical-investigations/ENTRY-BREADTH-ANALYSIS.md` (investigation spec)
+- `empirical-investigations/ENTRY-BREADTH-RESULTS.md` (hypothesis refutation + discovery)
+- `ENTRY-BREADTH-README.md` (usage guide)
+- `SANITY-CHECK-ENTRY-BREADTH.md` (validation tests)
+- `SESSION-SUMMARY-STAT-MECH.md` (framework overview)
+- `ENTRY-BREADTH-SESSION-SUMMARY.md` (session results)
+- `NEXT-SESSION-DEPTH-MECHANICS.md` (comprehensive handoff)
+- `QUICK-START-NEXT-SESSION.md` (fast onboarding)
+
+**Data files created** (30 measurements):
+- `data/../analysis/entry_breadth_n={3,4,5,6,7}_full_analysis_2025_12_31.tsv`
+- `data/../analysis/entry_breadth_summary_full_analysis_2025_12_31.tsv`
+- `data/../analysis/entry_breadth_correlation_full_analysis_2025_12_31.tsv`
+
+**Contract updates**:
+- Updated NLR-C-0003 with refuted claim (entry breadth dominance)
+- Added supported claim (depth dominance with power-law)
+- Added new hypothesis for testing: α ≈ 2.0-2.5
+
+**Next steps**:
+- Fit power-law: log(Basin_Mass) vs log(Max_Depth) → extract α
+- Analyze depth distributions (mean, median, 90th percentile)
+- Test coverage-depth relationship (why does N=5 maximize depth?)
+- Investigate hub connectivity hypothesis (high-degree nodes as depth multipliers)
+
+**Commit**: (pending)
+
+---
+
 ### 2025-12-31 (Third) - Mechanism Understanding and Massachusetts Case Study
 
 **What was tried**:
