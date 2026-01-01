@@ -8,6 +8,59 @@
 
 ---
 
+### 2026-01-01 (Evening) - Complete Basin Visualization Suite Generation
+
+**What was tried**:
+- Generated updated human-facing report with harness outputs using render-human-report.py --tag harness_2026-01-01
+- Created 3D basin visualizations for all 9 N=5 cycles using render-full-basin-geometry.py
+- Ran 6 basin renderers in parallel (Sea_salt, Mountain, Latvia, Precedent, American_Revolutionary_War, Thermosetting_polymer)
+- Previously generated 3 basins (Kingdom, Massachusetts, Autumn)
+- Launched Dash interactive basin viewer on port 8055
+
+**What worked**:
+- All 9 basin pointcloud renderers completed successfully (0.3-0.8s each)
+- Generated 9 interactive HTML files (680KB-1.5MB) with Plotly 3D controls
+- Generated 9 Parquet datasets (1.2MB-3.1MB) for Dash viewer
+- Dash viewer launched successfully and can load all pointcloud files
+- Parallel execution maximized throughput on multi-core system
+- Limited node counts (46k-121k per basin) balanced fidelity with performance
+
+**What didn't work**:
+- Initial port 8054 already in use for Dash viewer (resolved by using port 8055)
+
+**Key findings**:
+- **Thermosetting_polymer basin is extraordinarily deep**: Max depth 48 steps (2× deeper than any other), Z-height 16.80, mean depth 22.54, gradual steady growth over 48 layers
+- **Basin shape taxonomy identified** - 5 distinct geometric patterns:
+  1. Explosive Wide (Massachusetts): depth 8, massive width (121k sampled from 1M+, 25% of Wikipedia)
+  2. Skyscraper Trunk (Thermosetting_polymer): depth 48, narrow funnel (99.97% single entry via "Concrete")
+  3. Tall Trunk (Mountain depth 20, Sea_salt depth 14): late exponential growth at depth 14-20
+  4. Hub-Driven (Kingdom depth 9, Precedent depth 23): early peak at depth 4-5, then taper
+  5. Balanced (Latvia, American_Revolutionary_War, Autumn): mid-range peaks at depth 7-12
+- **Massachusetts depth paradox**: Largest basin (1M+ nodes) but shallowest max depth (8); explosive width growth at depths 6-7 (42,940 nodes at depth 7 alone)
+- **Sea_salt late peak pattern**: Peaks at depth 14 with 28,400 nodes, continuous exponential growth
+- **Depth distribution reveals funnel vs tree structure**: Hub-driven basins peak early (depth 4-9), trunk basins peak late (depth 14-25)
+
+**Visualization outputs created**:
+- HTML: n-link-analysis/report/assets/basin_pointcloud_3d_n=5_cycle=*.html (9 files)
+- Parquet: data/wikipedia/processed/analysis/basin_pointcloud_n=5_cycle=*.parquet (9 files)
+- PNG report assets: 10 regenerated visualizations in report/assets/
+- Updated overview.md human-facing report
+
+**Architecture validation**:
+- Visualization infrastructure fully exercised across all N=5 cycles
+- Dash viewer integration validated with real pointcloud data
+- Baseline established for cross-N comparison (same visualizations can be generated for N=3,4,6,7)
+- Confirmed render-full-basin-geometry.py handles varied basin sizes (46k-121k nodes) reliably
+
+**Next steps**:
+- User to explore Dash viewer (http://127.0.0.1:8055) and HTML visualizations
+- Generate cross-N visualizations (N=3-7) to show basin shape evolution
+- Deep-dive Thermosetting_polymer to understand extraordinary depth mechanism
+
+Commit: (pending - visualizations generated, not yet committed)
+
+---
+
 ### 2026-01-01 - Harness Infrastructure Creation
 
 **What was tried**:
