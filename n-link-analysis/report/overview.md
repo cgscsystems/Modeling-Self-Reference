@@ -79,7 +79,7 @@
         ## How to Regenerate
 
         From repo root:
-        - `python n-link-analysis/scripts/render-human-report.py --tag test_n2_validated`
+        - `python n-link-analysis/scripts/render-human-report.py --tag multi_n_jan_2026`
 
         This rewrites:
         - `n-link-analysis/report/overview.md`
