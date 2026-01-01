@@ -18,6 +18,54 @@
 
 ## Timeline Entries
 
+### Session: 2026-01-01 - WH Feedback Response + Tunneling Phase 1 Complete
+
+**Completed**:
+- Added MM provenance to NLR-C-0001 and NLR-C-0003 in contract-registry.md
+- Created 5 new scripts for cross-N multiplex analysis:
+  - `answer-wh-cycle-attachment.py` - traces pages to terminal cycles at each N
+  - `compute-hyperstructure-coverage.py` - computes hyperstructure (union across N)
+  - `build-multiplex-table.py` - unified (page_id, N, cycle) structure
+  - `normalize-cycle-identity.py` - canonical cycle naming
+  - `compute-intersection-matrix.py` - pairwise basin overlap, tunnel node identification
+- Created `WH-FEEDBACK-ANSWERS.md` documenting responses to all WH PR questions
+- Created `data/wikipedia/processed/multiplex/` directory with:
+  - `multiplex_basin_assignments.parquet` (2.04M rows, 10.6 MB)
+  - `cycle_identity_map.tsv`
+  - `basin_intersection_summary.tsv`
+  - `basin_intersection_by_cycle.tsv`
+
+**Decisions Made**:
+| Decision | Rationale |
+|----------|-----------|
+| Cycle canonicalization by alphabetical sort | "Massachusetts__Gulf_of_Maine" → "Gulf_of_Maine__Massachusetts" for consistent identity |
+| Prefer latest dated files when duplicates | 2026-01-01 tags preferred over 2025-12-31 |
+| Store multiplex data in separate directory | Cross-N structures are distinct from per-N analysis |
+
+**Discoveries**:
+- **Massachusetts cycle only exists at N=5**: At N=4, Massachusetts → Atlantic_Ocean → Ethiopia↔Eritrea (NOT Gulf_of_Maine)
+- **Boston reaches New_Hampshire↔Vermont at N=5**, not Massachusetts basin - geographic proximity doesn't predict basin membership
+- **9,018 tunnel nodes identified**: Pages belonging to different cycles at different N values
+- **Basin intersection across N is extremely low**: Jaccard ~0.001-0.01; same cycle at different N contains mostly different pages
+- **Hyperstructure coverage ~28-50%**: Lower than WH's 2/3 estimate (data incomplete for full enumeration)
+
+**Validation**:
+- Ran all 5 new scripts successfully
+- Verified multiplex table contains expected 2.04M rows across N∈{3,4,5,6,7}
+- Confirmed tunnel node examples show genuine cross-N cycle switching
+
+**Architecture Impact**:
+- Phase 1 of TUNNELING-ROADMAP.md complete
+- Multiplex data layer established for Phase 2 tunnel identification
+- New infrastructure pattern: unified cross-N tables in `multiplex/` directory
+
+**Next Steps**:
+- Phase 2: Tunnel node classification and frequency analysis
+- Phase 3: Multiplex connectivity graph construction
+- Full hyperstructure enumeration (requires generating all basin assignment parquets)
+
+---
+
 ### Session: 2026-01-01 - Human Collaboration Documentation Infrastructure
 
 **Completed**:

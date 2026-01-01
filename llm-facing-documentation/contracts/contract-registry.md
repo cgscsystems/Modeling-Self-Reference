@@ -13,6 +13,9 @@ This is the *primary index* for contract objects, and should be treated as appen
 ### NLR-C-0001 — Long-tail basin size under fixed-N traversal (Wikipedia proving ground)
 
 - **Status**: supported (empirical; scope: Wikipedia namespace 0, non-redirect pages)
+- **Provenance**:
+  - Theory originator: WH (N-link rule concept, basin partition framework)
+  - Implementation & empirical analysis: MM (2025-12-29 onwards)
 - **Theory**:
   - [n-link-rule-theory.md](../theories-proofs-conjectures/n-link-rule-theory.md) (basins, cycles, terminals)
   - [unified-inference-theory.md](../theories-proofs-conjectures/unified-inference-theory.md) (integration framing)
@@ -30,6 +33,9 @@ This is the *primary index* for contract objects, and should be treated as appen
 ### NLR-C-0003 — N-dependent phase transition in basin structure (Wikipedia)
 
 - **Status**: supported (empirical; scope: Wikipedia namespace 0, non-redirect pages, N∈{3,4,5,6,7,8,9,10})
+- **Provenance**:
+  - Theory originator: WH (N-link rule concept, phase transition hypothesis)
+  - Implementation & empirical analysis: MM (2025-12-31 onwards, Multi-N phase transition complete)
 - **Theory**:
   - [n-link-rule-theory.md](../theories-proofs-conjectures/n-link-rule-theory.md) (N-link rule definition, basin partitioning)
   - Extends NLR-C-0001 to cross-N comparison

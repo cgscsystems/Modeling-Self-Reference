@@ -8,7 +8,33 @@
 
 ---
 
-### 2026-01-01 (Wrap-up) - Multiplex “Basins as Slices” Breadcrumb (Tunneling)
+### 2026-01-01 - Tunneling Phase 1 Complete + WH Feedback Addressed
+
+**What was tried**:
+- Answered WH's PR feedback questions (cycle attachment, hyperstructure coverage)
+- Built Phase 1 tunneling infrastructure per TUNNELING-ROADMAP.md
+
+**What worked**:
+- `answer-wh-cycle-attachment.py`: Massachusetts reaches itself at N=5, but Ethiopia↔Eritrea at N=4
+- `build-multiplex-table.py`: Unified 2.04M rows across N∈{3,4,5,6,7}
+- `compute-intersection-matrix.py`: Identified **9,018 tunnel nodes** (pages in different cycles at different N)
+- Basin intersection is extremely low (Jaccard ~0.001) confirming N-dependence
+
+**Key discoveries**:
+- Massachusetts↔Gulf_of_Maine cycle **only exists at N=5**
+- Boston at N=5 reaches New_Hampshire↔Vermont, NOT Massachusetts
+- 9,018 pages demonstrably switch cycles when N changes
+
+**Artifacts produced**:
+- `data/wikipedia/processed/multiplex/multiplex_basin_assignments.parquet` (10.6 MB)
+- `data/wikipedia/processed/multiplex/basin_intersection_*.tsv`
+- `n-link-analysis/empirical-investigations/WH-FEEDBACK-ANSWERS.md`
+
+**Next**: Phase 2 tunnel classification, Phase 3 multiplex graph construction
+
+---
+
+### 2026-01-01 (Wrap-up) - Multiplex "Basins as Slices" Breadcrumb (Tunneling)
 
 **Context**: Clarified the tunneling framing: fixed-$N$ basins are 1D slices of a multiplex over $(\text{page}, N)$ (or more general rule index). Exhaustive labeling under a fixed rule shrinks the remaining search space as basins are assigned.
 
