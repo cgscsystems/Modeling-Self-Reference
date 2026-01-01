@@ -18,6 +18,92 @@
 
 ## Timeline Entries
 
+### Session: 2026-01-01 - Phases 2 & 3 Tunneling Complete + Documentation Fix
+
+**Completed**:
+- **Documentation fix** (quick win):
+  - Fixed narrative inconsistency in MECHANISM-ANALYSIS.md (breadcrumb item)
+  - Changed "entry breadth dominates" → "depth dominates" throughout
+  - Added cross-references to ENTRY-BREADTH-RESULTS.md and DEPTH-SCALING-ANALYSIS.md
+  - Updated NEXT-STEPS.md breadcrumb section to mark fix as completed
+
+- **Phase 2: Tunnel Node Identification**:
+  - Created `find-tunnel-nodes.py` - Pivots multiplex table to identify multi-basin pages
+  - Created `classify-tunnel-types.py` - Categorizes tunnel behavior (progressive vs alternating)
+  - Created `compute-tunnel-frequency.py` - Ranks tunnel nodes by importance score
+  - Created `TUNNEL-NODE-ANALYSIS.md` - Full investigation documentation
+  - Added NLR-C-0004 to contract-registry.md
+
+- **Phase 3: Multiplex Connectivity Analysis**:
+  - Created `build-multiplex-graph.py` - Constructs (page_id, N) edge graph with within-N and tunnel edges
+  - Created `compute-multiplex-reachability.py` - BFS reachability analysis, layer connectivity matrix
+  - Created `visualize-multiplex-slice.py` - Layer heatmap, 3D Plotly visualization, tunnel summary charts
+  - Created `MULTIPLEX-CONNECTIVITY.md` - Full Phase 3 investigation documentation
+  - Generated 3 visualizations: heatmap (PNG), 3D multiplex (HTML), tunnel summary (PNG)
+
+**Discoveries**:
+- **Phase 2**:
+  - **9,018 tunnel nodes** identified (0.45% of 2M pages in hyperstructure)
+  - **Progressive switching dominates** (98.7%) - basins change monotonically with N
+  - **Alternating tunnels rare** (1.3%) - only 116 pages switch back and forth
+  - **Gulf_of_Maine__Massachusetts is tunnel hub** - appears in 61% of basin pairs
+  - **Tunnel nodes are shallow** (mean depth 11.1 vs typical 50+) - near cycle cores
+  - **All tunnel nodes bridge exactly 2 basins** - no 3+ basin tunnels found
+
+- **Phase 3**:
+  - **9.7M total edges** in multiplex graph (86.26 MB)
+  - **99.2% within-N edges** - layers are nearly independent
+  - **0.8% tunnel edges** (79,845) - sparse but real cross-N connectivity
+  - **N=5 is the tunnel hub** - most cross-N edges (9,172 total)
+  - **Adjacent layers connect more** - N=5↔N=6 has 4,845 edges each direction
+  - **Gulf_of_Maine reaches tunnel nodes** - 29 of 637 reachable nodes are tunnels (only cycle to do so)
+  - **All sampled tunnel nodes span all 5 N values** - deep structural importance
+
+**Decisions Made**:
+| Decision | Rationale |
+|----------|-----------|
+| Use canonical_cycle_id for basin identity | Ensures consistent identity across naming conventions |
+| Progressive vs alternating classification | Captures the dominant monotonic tunneling pattern |
+| Tunnel score = basins × log(1+trans) × (100/depth) | Balances breadth, dynamism, and structural centrality |
+| Within-N + tunnel edge types | Separates layer-internal from cross-layer connectivity |
+| Sample 5000 edges for 3D visualization | Balances visual clarity with structural representation |
+
+**Validation**:
+- All 6 scripts (3 Phase 2 + 3 Phase 3) run successfully
+- Output files generated in `data/wikipedia/processed/multiplex/`
+- Layer connectivity matrix symmetric as expected
+- Visualizations generated without errors (Qt warning is cosmetic)
+
+**Architecture Impact**:
+- Phases 2 and 3 of TUNNELING-ROADMAP.md complete
+- 12 files now in multiplex directory (Phase 1 + Phase 2 + Phase 3 outputs)
+- Corollary 3.2 (Multiplex Structure) empirically validated
+- NLR-C-0004 contract progressing through phases
+
+**Data Files Created**:
+| File | Size | Description |
+|------|------|-------------|
+| `tunnel_nodes.parquet` | 9.69 MB | All pages with basin_at_N{3-7} columns |
+| `tunnel_classification.tsv` | - | Type and transition details |
+| `tunnel_frequency_ranking.tsv` | - | Ranked by tunnel_score |
+| `multiplex_edges.parquet` | 86.26 MB | Full (page_id, N) edge graph |
+| `multiplex_layer_connectivity.tsv` | 618 B | N×N edge count matrix |
+| `multiplex_reachability_summary.tsv` | 677 B | Per-cycle reachability stats |
+
+**Visualizations Created**:
+| File | Format | Description |
+|------|--------|-------------|
+| `multiplex_layer_connectivity.png` | PNG | Heatmap of N×N connectivity |
+| `multiplex_visualization.html` | HTML | Interactive 3D Plotly visualization |
+| `tunnel_summary_chart.png` | PNG | Three-panel tunnel statistics |
+
+**Next Steps**:
+- Phase 4: Tunnel Mechanisms (`extract-tunnel-link-context.py`, `compare-basin-stability.py`, `correlate-depth-tunneling.py`)
+- Page title lookup for tunnel nodes (semantic analysis)
+- Cycle-to-cycle reachability via tunneling
+
+---
+
 ### Session: 2026-01-01 - Phase 2 Tunneling Complete + Documentation Fix
 
 **Completed**:
