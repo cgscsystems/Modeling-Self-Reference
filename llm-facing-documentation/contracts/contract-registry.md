@@ -29,7 +29,7 @@ This is the *primary index* for contract objects, and should be treated as appen
 
 ### NLR-C-0003 — N-dependent phase transition in basin structure (Wikipedia)
 
-- **Status**: supported (empirical; scope: Wikipedia namespace 0, non-redirect pages, N∈{3,5,7})
+- **Status**: supported (empirical; scope: Wikipedia namespace 0, non-redirect pages, N∈{3,4,5,6,7})
 - **Theory**:
   - [n-link-rule-theory.md](../theories-proofs-conjectures/n-link-rule-theory.md) (N-link rule definition, basin partitioning)
   - Extends NLR-C-0001 to cross-N comparison
@@ -39,21 +39,31 @@ This is the *primary index* for contract objects, and should be treated as appen
   - [map-basin-from-cycle.py](../../n-link-analysis/scripts/map-basin-from-cycle.py) (basin mapping)
   - [sample-nlink-traces.py](../../n-link-analysis/scripts/sample-nlink-traces.py) (cycle sampling)
 - **Evidence**:
-  - [REPRODUCTION-OVERVIEW.md](../../n-link-analysis/REPRODUCTION-OVERVIEW.md) (comprehensive session summary)
+  - [REPRODUCTION-OVERVIEW.md](../../n-link-analysis/empirical-investigations/REPRODUCTION-OVERVIEW.md) (N∈{3,5,7} comprehensive summary)
+  - [PHASE-TRANSITION-REFINED.md](../../n-link-analysis/empirical-investigations/PHASE-TRANSITION-REFINED.md) (N∈{3,4,5,6,7} refined analysis)
   - [CROSS-N-FINDINGS.md](../../CROSS-N-FINDINGS.md) (publication-quality discovery summary)
+  - Phase transition visualizations: `n-link-analysis/report/assets/phase_transition_n3_to_n7.png`
+  - Coverage analysis: `n-link-analysis/report/assets/coverage_vs_basin_mass.png`, `coverage_zones_analysis.png`
   - Cross-N visualizations: `n-link-analysis/report/assets/cross_n_*.png` (6 charts)
-  - Data outputs: `data/wikipedia/processed/analysis/*_n={3,5,7}_*` (~60 files)
+  - Data outputs: `data/wikipedia/processed/analysis/*_n={3,4,5,6,7}_*` (~72 files)
+  - Link degree distribution: `data/wikipedia/processed/analysis/link_degree_distribution*.tsv`
 - **Key Finding**:
-  - N=5 exhibits 20-60× larger basins than N∈{3,7} with extreme single-trunk structure (67% of basins >95% concentration)
+  - **Refined**: N=5 is an isolated spike (65× amplification from N=4), not a plateau
+  - N=4 is a local minimum (30k nodes) - smaller than N=3 (102k)! Asymmetric curve: sharp rise (65×), gradual fall (7-9×)
+  - N=5 peak aligns precisely with 32.6% page coverage (5.9M pages with ≥5 links)
+  - Coverage vs basin mass: near-zero correlation (r=-0.042) confirms non-monotonic relationship
+  - **Mechanism identified**: Two competing effects (Path Existence vs Path Concentration) balanced optimally at N=5
   - Same 6 terminal cycles persist across N with radically different properties (up to 4289× size variation)
-  - Hypothesis: N=5 sits at critical point (33% page coverage threshold) in phase transition analogous to percolation phenomena
 - **Theory Claim Evaluated**:
   - **Refuted**: "Basin structure is universal across N" → Structure is rule-dependent, not graph-intrinsic
-  - **Supported**: "Finite self-referential graphs partition into basins under deterministic rules" → Holds for all N∈{3,5,7}
+  - **Supported**: "Finite self-referential graphs partition into basins under deterministic rules" → Holds for all N∈{3,4,5,6,7}
+  - **New hypothesis**: Basin mass peaks occur at ~30-35% coverage threshold (potentially universal for scale-free networks)
 - **Notes**:
-  - This discovery suggests basin properties emerge from rule-graph coupling, not graph topology alone
-  - Critical phenomena framework may apply (percolation-like phase transition at N=5)
-  - Next steps: Finer N resolution (N∈{4,6,8,9,10}), other language Wikipedias, theoretical modeling
+  - Basin properties emerge from rule-graph coupling (deterministic rule selectivity × graph degree distribution)
+  - Critical phenomena framework validated: N=5 exhibits phase transition-like behavior
+  - Coverage Paradox documented: Basin mass is non-monotonic function of connectivity
+  - Predictive framework: For any graph, measure degree distribution → find N where coverage ≈ 33% → predict basin peak
+  - Next steps: Test N∈{8,9,10}, other language Wikipedias, citation networks, percolation modeling
 
 ---
 

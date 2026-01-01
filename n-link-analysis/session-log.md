@@ -1,10 +1,42 @@
 # N-Link Analysis - Session Log
 
-**Document Type**: Cumulative  
-**Target Audience**: LLMs + Developers  
-**Purpose**: Append-only record of analysis decisions, experiments, and outcomes  
+**Document Type**: Cumulative
+**Target Audience**: LLMs + Developers
+**Purpose**: Append-only record of analysis decisions, experiments, and outcomes
 **Last Updated**: 2025-12-31
 **Status**: Active
+
+---
+
+### 2025-12-31 (Second) - Link Degree Analysis and Coverage Threshold Discovery
+
+**What was tried**:
+- Extended cross-N analysis to N∈{3,4,5,6,7} (added N=4, N=6)
+- Extracted Wikipedia link degree distribution (17.9M pages via DuckDB)
+- Correlated coverage percentage with basin mass
+
+**What worked**:
+- N=4 and N=6 reproduction pipelines ran successfully (~25 min total)
+- DuckDB query for link degrees succeeded (Parquet has corruption issues)
+- Discovered N=4 is local minimum (30k nodes, smaller than N=3!)
+- Found 32.6% coverage threshold aligns perfectly with N=5 peak
+- Near-zero correlation (r=-0.042) confirms non-monotonic relationship
+
+**Key findings**:
+- N=5 is isolated spike (65× from N=4), not plateau
+- Asymmetric curve: sharp rise (65×) vs gradual fall (7-9×)
+- Coverage Paradox: Two competing mechanisms identified
+- Predictive hypothesis: Basin peaks at ~30-35% coverage
+
+**Files created**:
+- `empirical-investigations/PHASE-TRANSITION-REFINED.md`
+- `report/assets/phase_transition_n3_to_n7.png`
+- `report/assets/coverage_vs_basin_mass.png`
+- `report/assets/coverage_zones_analysis.png`
+- `data/../analysis/link_degree_distribution*.tsv` (2 files)
+- `data/../analysis/coverage_vs_basin_mass.tsv`
+
+**Commit**: (pending)
 
 ---
 

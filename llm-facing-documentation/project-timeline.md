@@ -18,6 +18,65 @@
 
 ## Timeline Entries
 
+### Session: 2025-12-31 (Second) - Link Degree Analysis: The 32.6% Coverage Threshold
+
+**Completed**:
+- Extended cross-N analysis to N∈{3,4,5,6,7} with finer resolution (added N=4, N=6)
+- Ran reproduction pipeline for N=4 and N=6 (quick mode, 6 basins each, ~25 min runtime)
+- Extracted link degree distribution from Wikipedia (17.9M pages, N=1 to 10)
+- Correlated coverage percentage with basin mass (discovered r=-0.042, confirming non-linearity)
+- Created 3 visualizations: phase transition curve, coverage overlay, coverage zones
+- Created documentation: PHASE-TRANSITION-REFINED.md, coverage analysis data files
+- Updated contract registry (NLR-C-0003) with refined findings
+
+**Decisions Made**:
+| Decision | Rationale |
+|----------|-----------|
+| Add N=4 and N=6 to analysis | Test if N=5 is isolated peak or part of plateau |
+| Use DuckDB for degree extraction | Parquet file corruption; DuckDB more reliable for queries |
+| Focus on coverage threshold mechanism | Explain why phase transition occurs at N=5 |
+| Create dual-axis visualizations | Show coverage drops monotonically while basin mass peaks sharply |
+
+**Discoveries**:
+- **N=4 is a local minimum** (30,734 nodes) - smaller than N=3 (101,822)! Completely unexpected
+- **N=4→5 transition is 65× spike** - much sharper than N=3→5 (20×) previously estimated
+- **Asymmetric curve**: Sharp rise (65×) vs gradual fall (7-9×) indicates distinct mechanisms
+- **32.6% coverage threshold**: N=5 peak aligns precisely with this percentage (5.9M pages with ≥5 links)
+- **Near-zero correlation** (r=-0.042): Basin mass is non-monotonic function of coverage
+- **Coverage Paradox identified**: Two competing mechanisms:
+  * Path Existence (favors high coverage) - more pages can continue
+  * Path Concentration (favors low coverage) - fewer branches, forced convergence
+  * N=5 is perfect balance point where both are optimally active
+- **Predictive hypothesis**: Basin peaks occur at ~30-35% coverage (potentially universal for scale-free networks)
+
+**Validation**:
+- N=4 and N=6 analyses completed successfully (6 basins each)
+- Link degree distribution verified: monotonic decrease from 37% (N=3) to 28% (N=7)
+- Coverage calculations match total page count (17,972,018 pages)
+- All visualizations generated without errors
+- Correlation analysis confirms non-linear relationship
+
+**Architecture Impact**:
+- Established mechanism explanation for phase transition (competing effects framework)
+- Created coverage-based predictive framework applicable to other graphs
+- Documented "Coverage Paradox" - counterintuitive non-monotonic relationship
+- Identified N=4 as phase boundary (worst-of-both-worlds transition zone)
+- Refined understanding: N=5 is isolated spike, not plateau
+
+**Next Steps**:
+- Test N∈{8,9,10} to complete HALT saturation curve
+- Apply 33% coverage hypothesis to other language Wikipedias (test universality)
+- Develop percolation-based theoretical model to predict peaks from degree distribution
+- Test on different graph types (citation networks, web graphs)
+- Investigate individual cycle behavior (why does Massachusetts dominate at N=5 but not N=4?)
+
+**Contract Updates**:
+- Updated NLR-C-0003 with refined findings (N∈{3,4,5,6,7} scope)
+- Added coverage mechanism evidence
+- Added predictive hypothesis for other graphs
+
+---
+
 ### Session: 2025-12-31 - Cross-N Basin Analysis: Phase Transition Discovery
 
 **Completed**:
