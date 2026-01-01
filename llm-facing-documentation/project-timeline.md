@@ -3,7 +3,7 @@
 **Document Type**: Cumulative history  
 **Target Audience**: LLMs  
 **Purpose**: Chronological record of project evolution, decisions, and discoveries  
-**Last Updated**: 2026-01-01
+**Last Updated**: 2026-01-02
 **Status**: Active (append-only)
 
 ---
@@ -17,6 +17,59 @@
 ---
 
 ## Timeline Entries
+
+### Session: 2026-01-02 - Tributary Tree Visualization Suite & N=5 Peak Validation
+
+**Completed**:
+- Generated 6 new 3D tributary tree visualizations for N=5 cycles
+  - American_Revolutionary_War ↔ Eastern_United_States (87 nodes, 85 edges)
+  - Autumn ↔ Summer (112 nodes, 110 edges)
+  - Latvia ↔ Lithuania (120 nodes, 118 edges)
+  - Mountain ↔ Hill (127 nodes, 125 edges)
+  - Precedent ↔ Civil_law (107 nodes, 106 edges)
+  - Sea_salt ↔ Seawater (78 nodes, 76 edges)
+- All visualizations saved to [n-link-analysis/report/assets/repro/](../n-link-analysis/report/assets/repro/)
+- Initiated N=5 validation run with test_n5_validated tag
+- Obtained critical Massachusetts basin measurement: 1,009,471 nodes at N=5
+
+**Decisions Made**:
+| Decision | Rationale |
+|----------|-----------|
+| Use consistent parameters (k=5, levels=3, depth=10) | Enables direct visual comparison across all cycles |
+| Stop harness early after Massachusetts basin computed | Already obtained critical data: N=5 (1.01M) vs N=6 (523K) confirms N=5 is peak |
+| Validate N=5 with same tag as other test runs | Enables apples-to-apples comparison with framework testing data |
+
+**Discoveries**:
+- **N=5 peak confirmed**: Massachusetts basin at N=5 (1,009,471 nodes) is 1.93× larger than N=6 (523,176 nodes)
+- **Framework testing contradiction resolved**: N=6 appeared larger due to lack of direct N=5 comparison with same methodology
+- **Complete visualization suite**: Now have 3D tributary trees for 8/9 N=5 cycles (missing only Thermosetting_polymer with k=5 parameters)
+
+**Validation**:
+- All 6 tributary tree visualizations generated successfully (4.4M HTML files each)
+- Massachusetts basin reached depth=160 before frontier exhaustion (1,255 entry branches)
+- Consistent rendering across all cycles using same force-layout algorithm
+
+**Architecture Impact**:
+- Visualization assets now comprehensive for N=5 analysis
+- Tributary tree pattern established for future N values
+- N=5 vs N=6 comparison validates phase transition curve methodology
+
+**Next Steps**:
+- Complete full Multi-N analysis (N=3-10) for comprehensive phase transition mapping
+- Generate remaining tributary trees with consistent parameters (Thermosetting_polymer k=5)
+- Begin Tier 1.2 (Hub connectivity deep-dive) or Tier 2 (Theory validation) work
+
+**Files Created**:
+- n-link-analysis/report/assets/repro/tributary_tree_3d_n=5_cycle=American_Revolutionary_War__Eastern_United_States_k=5_levels=3_depth=10.html + .json
+- n-link-analysis/report/assets/repro/tributary_tree_3d_n=5_cycle=Autumn__Summer_k=5_levels=3_depth=10.html + .json
+- n-link-analysis/report/assets/repro/tributary_tree_3d_n=5_cycle=Latvia__Lithuania_k=5_levels=3_depth=10.html + .json
+- n-link-analysis/report/assets/repro/tributary_tree_3d_n=5_cycle=Mountain__Hill_k=5_levels=3_depth=10.html + .json
+- n-link-analysis/report/assets/repro/tributary_tree_3d_n=5_cycle=Precedent__Civil_law_k=5_levels=3_depth=10.html + .json
+- n-link-analysis/report/assets/repro/tributary_tree_3d_n=5_cycle=Sea_salt__Seawater_k=5_levels=3_depth=10.html + .json
+- data/wikipedia/processed/analysis/basin_n=5_cycle=Massachusetts__Gulf_of_Maine_test_n5_validated_layers.tsv (partial)
+- data/wikipedia/processed/analysis/branches_n=5_cycle=Massachusetts__Gulf_of_Maine_test_n5_validated_branches_*.tsv (partial)
+
+---
 
 ### Session: 2026-01-01 (Late Evening) - Framework Testing & Multi-N Infrastructure Validation
 
