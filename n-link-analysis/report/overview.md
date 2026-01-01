@@ -16,7 +16,7 @@
         ## Trunkiness Dashboard
 
         Dashboard input:
-        - `data/wikipedia/processed/analysis/branch_trunkiness_dashboard_n=5_reproduction_2025-12-31.tsv`
+        - `data/wikipedia/processed/analysis/branch_trunkiness_dashboard_n=5_test_2026-01-01.tsv`
 
         **Charts**:
         - ![Top-1 share](assets/trunkiness_top1_share.png)
@@ -39,40 +39,41 @@
         ## Dominance Collapse (Threshold Run)
 
             Collapse dashboard input:
-            - `data/wikipedia/processed/analysis/dominance_collapse_dashboard_n=5_reproduction_2025-12-31_seed=dominant_enters_cycle_title_thr=0.5.tsv`
+            - `data/wikipedia/processed/analysis/dominance_collapse_dashboard_n=5_test_2026-01-01.tsv`
 
             Preview (sorted by min share):
 
-            | seed_title                 | first_below_threshold_hop | min_share | stop_reason     | stop_at_title          |
-| -------------------------- | ------------------------- | --------- | --------------- | ---------------------- |
-| American_Revolutionary_War | 5.0                       | 0.280     | share_below_0.5 | California             |
-| Hill                       | 19.0                      | 0.282     | share_below_0.5 | Iran                   |
-| Curing_(chemistry)         | 21.0                      | 0.299     | share_below_0.5 | Christianity           |
-| Lithuania                  | 16.0                      | 0.355     | share_below_0.5 | Construction           |
-| Animal                     | 0.0                       | 0.366     | share_below_0.5 | Animal                 |
-| Seawater                   | 12.0                      | 0.371     | share_below_0.5 | Canada                 |
-| Summer                     | 14.0                      | 0.470     | share_below_0.5 | Adelaide               |
-| Precedent                  | 2.0                       | 0.479     | share_below_0.5 | Executive_(government) |
-| Massachusetts              |                           | 0.763     | max_hops        | Salary                 |
+            | seed_title                 | first_below_threshold_hop | min_share | stop_reason     | stop_at_title                     |
+| -------------------------- | ------------------------- | --------- | --------------- | --------------------------------- |
+| American_Revolutionary_War | 5.0                       | 0.280     | share_below_0.5 | California                        |
+| Hill                       | 19.0                      | 0.282     | share_below_0.5 | Iran                              |
+| Lithuania                  | 16.0                      | 0.355     | share_below_0.5 | Construction                      |
+| Animal                     | 0.0                       | 0.366     | share_below_0.5 | Animal                            |
+| Seawater                   | 12.0                      | 0.371     | share_below_0.5 | Canada                            |
+| Summer                     | 14.0                      | 0.470     | share_below_0.5 | Adelaide                          |
+| Precedent                  | 2.0                       | 0.479     | share_below_0.5 | Executive_(government)            |
+| Curing_(chemistry)         |                           | 0.648     | max_hops        | Son_of_God_(Christianity)         |
+| Massachusetts              |                           | 0.763     | max_hops        | Criminal_law_of_the_United_States |
 
         ## Example Chases (Dominant Share vs Hop)
 
         These are pulled from any available `dominant_upstream_chain_n=5_from=*.tsv` artifacts.
 
-
+        - dominant_upstream_chain_n=5_from=Massachusetts.tsv
 
         **Charts** (share + basin size per chase):
 
-
+        - ![chart](assets/chase_dominant_upstream_chain_n=5_from=Massachusetts_share.png)
+- ![chart](assets/chase_dominant_upstream_chain_n=5_from=Massachusetts_basin.png)
 
         **Overlay comparison**:
 
-        (overlay not available)
+        - ![overlay](assets/chase_overlay_dominant_share.png)
 
         ## How to Regenerate
 
         From repo root:
-        - `python n-link-analysis/scripts/render-human-report.py --tag reproduction_2025-12-31`
+        - `python n-link-analysis/scripts/render-human-report.py --tag test_2026-01-01`
 
         This rewrites:
         - `n-link-analysis/report/overview.md`
