@@ -18,6 +18,46 @@
 
 ## Timeline Entries
 
+### Session: 2026-01-01 (Night) - Tunneling Visualization Suite
+
+**Completed**:
+- Created `n-link-analysis/viz/tunneling/` directory with 6 visualization tools
+- Built comprehensive human-facing exploration tools for tunneling analysis results
+
+**Files Created**:
+| File | Lines | Description |
+|------|-------|-------------|
+| `sankey-basin-flows.py` | ~200 | Standalone Sankey HTML for cross-basin page flows |
+| `tunnel-node-explorer.py` | ~250 | Searchable/sortable DataTables HTML for 9,018 tunnel nodes |
+| `tunneling-dashboard.py` | ~450 | 5-tab Dash dashboard (Overview, Flows, Nodes, Stability, Validation) |
+| `path-tracer-tool.py` | ~350 | Interactive per-page path tracer across N values |
+| `launch-tunneling-viz.py` | ~150 | Unified launcher for static generation + servers |
+| `README.md` | ~80 | Usage documentation |
+
+**Visualization Outputs**:
+| Output | Type | Description |
+|--------|------|-------------|
+| `tunneling_sankey.html` | Static HTML | Interactive Sankey showing N=4→N=5→N=6 transitions |
+| `tunnel_node_explorer.html` | Static HTML | Searchable table with export, pagination, filtering |
+| Dashboard @ :8060 | Dash server | Multi-tab exploration with charts and tables |
+| Path Tracer @ :8061 | Dash server | Per-page basin membership timeline |
+
+**Usage**:
+```bash
+# Generate static HTML
+python launch-tunneling-viz.py --static
+
+# Start all servers
+python launch-tunneling-viz.py --all --open-browser
+```
+
+**Architecture Impact**:
+- Human users can now explore tunneling results without running analysis scripts
+- Static HTML files work offline in any browser
+- Dash dashboards provide real-time filtering and interaction
+
+---
+
 ### Session: 2026-01-01 (Late Night) - Tunneling Scripts Reorganization
 
 **Completed**:

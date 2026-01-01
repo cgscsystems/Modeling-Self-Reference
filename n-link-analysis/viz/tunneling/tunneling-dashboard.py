@@ -719,7 +719,7 @@ def main():
     print("Press Ctrl+C to stop")
     print()
 
-    app.run_server(debug=args.debug, port=args.port)
+    app.run(debug=args.debug, port=args.port)
 
 
 if __name__ == "__main__":

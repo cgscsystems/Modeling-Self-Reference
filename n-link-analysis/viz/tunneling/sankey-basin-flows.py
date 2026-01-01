@@ -115,7 +115,10 @@ def create_sankey_diagram(flows_df: pd.DataFrame) -> go.Figure:
 
             # Link color: slightly transparent version of source basin color
             base_color = get_basin_color(row["from_basin"])
-            link_colors.append(base_color.replace("#", "rgba(") + ", 0.4)" if "#" in base_color else base_color)
+            # Convert hex to rgba with transparency
+            hex_color = base_color.lstrip("#")
+            r, g, b = tuple(int(hex_color[i:i+2], 16) for i in (0, 2, 4))
+            link_colors.append(f"rgba({r}, {g}, {b}, 0.5)")
 
             customdata.append({
                 "from_basin": get_short_name(row["from_basin"]),
@@ -124,17 +127,6 @@ def create_sankey_diagram(flows_df: pd.DataFrame) -> go.Figure:
                 "to_n": row["to_n"],
                 "count": row["count"],
             })
-
-    # Convert link colors to proper RGBA format
-    rgba_colors = []
-    for color in link_colors:
-        if color.startswith("rgba"):
-            rgba_colors.append(color)
-        else:
-            # Convert hex to rgba
-            hex_color = color.lstrip("#")
-            r, g, b = tuple(int(hex_color[i:i+2], 16) for i in (0, 2, 4))
-            rgba_colors.append(f"rgba({r}, {g}, {b}, 0.5)")
 
     # Build figure
     fig = go.Figure(data=[go.Sankey(
@@ -151,7 +143,7 @@ def create_sankey_diagram(flows_df: pd.DataFrame) -> go.Figure:
             source=sources,
             target=targets,
             value=values,
-            color=rgba_colors,
+            color=link_colors,
             hovertemplate=(
                 "<b>%{source.label}</b> → <b>%{target.label}</b><br>"
                 "Pages: %{value:,}<extra></extra>"
