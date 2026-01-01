@@ -15,3 +15,4 @@
 | [MASSACHUSETTS-CASE-STUDY.md](MASSACHUSETTS-CASE-STUDY.md) | Why does Massachusetts dominate at N=5 (94× larger than N=4)? (Cycle formation + hub connectivity) | Complete | 2025-12-31 |
 | [ENTRY-BREADTH-ANALYSIS.md](ENTRY-BREADTH-ANALYSIS.md) | Does entry breadth explain basin mass? (Statistical mechanics framework validation) | Complete | 2025-12-31 |
 | [ENTRY-BREADTH-RESULTS.md](ENTRY-BREADTH-RESULTS.md) | Entry breadth results: Hypothesis refuted, depth dominates! | Complete | 2025-12-31 |
+| [DEPTH-SCALING-ANALYSIS.md](DEPTH-SCALING-ANALYSIS.md) | What is the universal depth-mass power-law relationship? (Large-scale α measurement) | Complete | 2025-12-31 |
