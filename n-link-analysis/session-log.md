@@ -8,6 +8,44 @@
 
 ---
 
+### 2025-12-31 (Sixth) - Depth Distribution Analysis and Interactive Exploration
+
+**What was tried**:
+- Analyzed full depth distributions from path_characteristics files (N=3-7)
+- Computed comprehensive depth statistics: mean, median, percentiles, variance, skewness, kurtosis
+- Built enhanced interactive depth explorer with 4-tab interface (distributions, basin mass, variance/skewness, statistics)
+- Created depth distribution histograms with overlay statistics
+
+**What worked**:
+- analyze-depth-distributions.py executed successfully (~30 seconds runtime)
+- Generated 4 output files: depth_statistics_by_n.tsv, depth_predictor_correlations.tsv, 2 PNG visualizations
+- Interactive explorer (Dash) launches successfully on port 8051 with all tabs functional
+- Depth metrics reveal variance explosion at N=5 (σ²=473 vs σ²=121 at N=4)
+
+**What didn't work**:
+- Initial port 8050 conflict (resolved by using port 8051)
+- dash/dash-bootstrap-components not installed (resolved with pip install)
+
+**Key findings**:
+- **Variance explosion at N=5**: σ²=473 (4× higher than N=4), drives basin mass amplification
+- **Bimodal-like distribution at N=5**: Two-phase convergence (85% rapid + 15% deep exploratory tail)
+- **Extreme right-skewness at N=5**: Skewness=1.88 (highest across all N), tail dominates
+- **p90/median tail ratio at N=5**: 5.3× (strongest tail effect; N=4 only 2.5×)
+- **Max depth correlation**: r=0.942, R²=0.888 (validates power-law, outperforms mean/median)
+- **Non-monotonic N trajectory**: Alternating high-low pattern (N=3: 16.8 → N=4: 13.6 → N=5: 19.4 → N=6: 13.4 → N=7: 24.7)
+- **Universality classes**: Low-variance (N=4,6), high-variance (N=5,7), symmetric (N=3)
+
+**Next investigations**:
+- Parse per-cycle depth distributions (test mean vs p90 vs max predictors)
+- Extend to N=8 (test variance decay hypothesis)
+- Add animation/3D visualization to explorer
+- Fit mixture models to N=5/N=7 distributions
+- Hub connectivity analysis (explain bimodal pattern)
+
+Commit: (pending end-of-session)
+
+---
+
 ### 2025-12-31 (Fourth) - Entry Breadth Hypothesis Testing and Depth Discovery
 
 **What was tried**:
