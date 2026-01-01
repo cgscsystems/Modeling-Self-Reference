@@ -18,6 +18,21 @@
 
 ## Timeline Entries
 
+### Session: 2026-01-01 - Multiplex Explorer Bug Fix
+
+**Completed**:
+- Fixed `dash-multiplex-explorer.py`: Two callbacks (`update_basin_pairs`, `update_reachability`) missing `Input` triggers
+- Added `Input("tabs", "active_tab")` to both callbacks
+- All 4 tabs now render data correctly
+
+**Discovery**:
+- Dash callbacks without `Input` decorators silently fail (never fire)
+
+**Validation**:
+- Dashboard tested at http://127.0.0.1:8056 - all tabs functional
+
+---
+
 ### Session: 2026-01-01 - Multiplex Tunnel Explorer (Visualization Tool)
 
 **Completed**:

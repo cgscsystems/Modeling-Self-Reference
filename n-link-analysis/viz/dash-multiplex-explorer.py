@@ -562,9 +562,10 @@ def update_tunnel_table(tunnel_type, basin_pair, min_score):
 @callback(
     [Output("basin-pair-network", "figure"),
      Output("top-basin-pairs", "children"),
-     Output("basin-pair-bar", "figure")]
+     Output("basin-pair-bar", "figure")],
+    [Input("tabs", "active_tab")]
 )
-def update_basin_pairs():
+def update_basin_pairs(active_tab):
     """Update basin pair visualizations."""
     if tunnel_class_df.empty:
         empty_fig = go.Figure()
@@ -665,9 +666,10 @@ def update_basin_pairs():
 @callback(
     [Output("reachability-stacked", "figure"),
      Output("intersection-heatmap", "figure"),
-     Output("intersection-bar", "figure")]
+     Output("intersection-bar", "figure")],
+    [Input("tabs", "active_tab")]
 )
-def update_reachability():
+def update_reachability(active_tab):
     """Update reachability visualizations."""
     # Stacked bar for reachability by N
     if reachability_df.empty:
