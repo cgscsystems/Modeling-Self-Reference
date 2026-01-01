@@ -18,6 +18,43 @@
 
 ## Timeline Entries
 
+### Session: 2026-01-01 - Documentation Consistency Fix + Session Planning
+
+**Completed**:
+- Fixed narrative inconsistency in MECHANISM-ANALYSIS.md (breadcrumb item from NEXT-STEPS.md)
+  - Added update notice at top explaining entry breadth hypothesis was refuted
+  - Changed "entry breadth dominates" language to "depth dominates" throughout
+  - Updated formula references to `Basin_Mass = Entry_Breadth × Depth^2.5`
+  - Added cross-references to ENTRY-BREADTH-RESULTS.md and DEPTH-SCALING-ANALYSIS.md
+  - Marked entry breadth investigation as completed/refuted in Next Steps section
+  - Updated analogies from "drainage basin" to "karst sinkhole" (depth-focused)
+- Updated NEXT-STEPS.md breadcrumb section to mark narrative fix as completed
+
+**Decisions Made**:
+| Decision | Rationale |
+|----------|-----------|
+| Preserve original document with inline corrections | Maintains historical record while correcting misattributions |
+| Use blockquote callouts for updates | Clear visual distinction between original content and corrections |
+| Cross-link to refuting/validating documents | Enables readers to trace the scientific progression |
+
+**Discoveries**:
+- None (documentation-only session)
+
+**Validation**:
+- All edits preserve original empirical observations (mechanism patterns remain valid)
+- Only causal attributions corrected (entry breadth → depth as dominant factor)
+- Cross-references verified to correct target documents
+
+**Architecture Impact**:
+- Documentation now internally consistent across investigation chain
+- MECHANISM-ANALYSIS.md → ENTRY-BREADTH-RESULTS.md → DEPTH-SCALING-ANALYSIS.md form coherent narrative
+
+**Next Steps**:
+- Begin Phase 2 of TUNNELING-ROADMAP.md (tunnel node classification and frequency analysis)
+- Create `find-tunnel-nodes.py`, `classify-tunnel-types.py`, `compute-tunnel-frequency.py`
+
+---
+
 ### Session: 2026-01-01 - WH Feedback Response + Tunneling Phase 1 Complete
 
 **Completed**:
