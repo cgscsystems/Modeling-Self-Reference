@@ -45,10 +45,16 @@
 
 ## Visualization (Human-Facing)
 
+**For complete documentation**: See [viz/README.md](viz/README.md)
+
 | Tool | Purpose | Status |
 |------|---------|--------|
-| [viz/dash-basin-geometry-viewer.py](viz/dash-basin-geometry-viewer.py) | Dash workbench for rendering basin geometry from precomputed Parquet (3D violin, 2D interval, 2D fan+edges) | Active |
-| [viz/render-full-basin-geometry.py](viz/render-full-basin-geometry.py) | Map a basin exhaustively and export a 3D point-cloud “geometric object” (Parquet + optional HTML preview) | Active |
+| [viz/batch-render-basin-images.py](viz/batch-render-basin-images.py) | Batch render basin visualizations as static images (PNG/SVG/PDF) with customizable styles | Active |
+| [viz/generate-publication-figures.sh](viz/generate-publication-figures.sh) | One-click generation of complete publication figure set (multiple resolutions and colorscales) | Active |
+| [viz/generate-style-variants.sh](viz/generate-style-variants.sh) | Generate 5 colorscale variants per basin (Viridis, Plasma, Inferno, Cividis, Greys) | Active |
+| [viz/create-visualization-gallery.py](viz/create-visualization-gallery.py) | Generate responsive HTML gallery for browsing all visualizations | Active |
+| [viz/render-full-basin-geometry.py](viz/render-full-basin-geometry.py) | Map a basin exhaustively and export 3D point-cloud (Parquet + optional HTML preview) | Active |
+| [viz/dash-basin-geometry-viewer.py](viz/dash-basin-geometry-viewer.py) | Interactive Dash app for exploring basin geometry (3D violin, 2D interval, 2D fan+edges) | Active |
 
 ---
 

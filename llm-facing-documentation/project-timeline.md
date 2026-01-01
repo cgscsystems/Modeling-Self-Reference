@@ -1,9 +1,9 @@
 # Project Timeline
 
-**Document Type**: Cumulative history  
-**Target Audience**: LLMs  
-**Purpose**: Chronological record of project evolution, decisions, and discoveries  
-**Last Updated**: 2026-01-02
+**Document Type**: Cumulative history
+**Target Audience**: LLMs
+**Purpose**: Chronological record of project evolution, decisions, and discoveries
+**Last Updated**: 2026-01-01
 **Status**: Active (append-only)
 
 ---
@@ -17,6 +17,69 @@
 ---
 
 ## Timeline Entries
+
+### Session: 2026-01-01 (Late Night) - Basin Visualization Automation Infrastructure
+
+**Completed**:
+- Created comprehensive visualization automation infrastructure (5 tools, 1100+ lines)
+- Built `batch-render-basin-images.py` (374 lines) - batch PNG/SVG/PDF renderer with customizable styles
+- Built `generate-publication-figures.sh` (108 lines) - one-click complete publication set
+- Built `generate-style-variants.sh` (150 lines) - 5 colorscale variants per basin
+- Built `create-visualization-gallery.py` (300+ lines) - responsive HTML gallery with metadata
+- Wrote `viz/README.md` (300+ lines) - complete documentation with examples
+- Generated 9 individual basin PNGs (1600×1000) and 1 comparison grid (3600×2400)
+- Created HTML gallery page with thumbnails, metadata, and download links
+- Installed kaleido dependency for static image export
+
+**Decisions Made**:
+| Decision | Rationale |
+|----------|-----------|
+| Use kaleido for static exports | Industry standard for Plotly → PNG/SVG/PDF, well-maintained |
+| Single-cycle naming in lists | Matches actual pointcloud file naming convention |
+| Multiple specialized scripts vs monolithic | Different use cases: batch, publication, variants, gallery |
+| 5 colorscale variants | Covers all needs: standard, high-contrast, warm, cool, B&W |
+| Responsive HTML gallery | Better UX than file listing, showcases basin taxonomy |
+
+**Discoveries**:
+- **Pointcloud naming**: Files use single cycle member (e.g., "Massachusetts") not full pair
+- **File size efficiency**: High-res PNGs (3200×2400) are ~4-6 MB, manageable for publication
+- **Gallery value**: HTML index with metadata significantly improves asset browsability
+- **Batch automation benefit**: 9 basins + grid generated in <2 minutes total
+
+**Validation**:
+- All 9 N=5 basins rendered successfully with consistent styling
+- Comparison grid generated (3×3 layout, 9.3 MB)
+- Gallery HTML displays correctly with all metadata and links
+- Scripts handle missing files gracefully with clear error messages
+- All 5 tools tested and documented
+
+**Architecture Impact**:
+- **New automation tier**: Visualization automation sits above analysis scripts
+- **Multi-format output**: PNG (web/reports), SVG (editing), PDF (publications)
+- **Gallery pattern**: Established template for HTML indexes of generated assets
+- **Style variants pattern**: Reusable approach for colorscale/opacity variations
+- **Documentation standard**: viz/README.md as template for tool directory docs
+
+**Next Steps**:
+- Generate style variants for key basins (Massachusetts, Thermosetting polymer)
+- Create cross-N comparison visualizations (same cycle across N values)
+- Explore animation options (N=3 → N=10 transitions, 360° rotations)
+- Consider video renders for presentations
+
+**Files Created**:
+- n-link-analysis/viz/batch-render-basin-images.py
+- n-link-analysis/viz/generate-publication-figures.sh
+- n-link-analysis/viz/generate-style-variants.sh
+- n-link-analysis/viz/create-visualization-gallery.py
+- n-link-analysis/viz/README.md
+- n-link-analysis/report/assets/basin_3d_n=5_cycle=*.png (9 files)
+- n-link-analysis/report/assets/basin_comparison_grid_n=5.png
+- n-link-analysis/report/assets/gallery.html
+
+**Files Modified**:
+- n-link-analysis/INDEX.md (added visualization tools section)
+
+---
 
 ### Session: 2026-01-02 - Tributary Tree Visualization Suite & N=5 Peak Validation
 
