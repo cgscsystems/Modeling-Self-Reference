@@ -18,6 +18,49 @@
 
 ## Timeline Entries
 
+### Session: 2026-01-01 - Multiplex Tunnel Explorer (Visualization Tool)
+
+**Completed**:
+- Created `dash-multiplex-explorer.py` (~450 lines) - Interactive Dash dashboard for Phase 2-3 data
+- Created `MULTIPLEX-EXPLORER-GUIDE.md` - Comprehensive usage documentation
+- Updated `n-link-analysis/viz/README.md` with new tool
+
+**Features** (4-tab interface):
+| Tab | Purpose |
+|-----|---------|
+| Layer Connectivity | N×N heatmap, cross-layer edge statistics |
+| Tunnel Nodes | Filterable/sortable table of 9,018 tunnels with scoring |
+| Basin Pairs | Network visualization of basin connections via tunneling |
+| Reachability | Per-cycle BFS reach, Jaccard intersection heatmaps |
+
+**Decisions Made**:
+| Decision | Rationale |
+|----------|-----------|
+| Port 8056 | Avoids conflict with existing dashboards (8050-8055) |
+| 4-tab interface | Separates connectivity, nodes, pairs, reachability concerns |
+| Bootstrap + Plotly stack | Consistent with existing viz infrastructure |
+
+**Validation**:
+- Dashboard starts successfully, loads all Phase 2-3 data (~20MB)
+- All 4 tabs render without errors
+- Filtering and sorting functional
+
+**Architecture Impact**:
+- New human-facing visualization tool for multiplex/tunneling exploration
+- Extends viz/ directory pattern with multiplex-specific dashboard
+
+**Files Created**:
+| File | Lines | Description |
+|------|-------|-------------|
+| `n-link-analysis/viz/dash-multiplex-explorer.py` | ~450 | Interactive Dash dashboard |
+| `n-link-analysis/viz/MULTIPLEX-EXPLORER-GUIDE.md` | ~200 | Usage documentation |
+
+**Next Steps**:
+- Phase 4: Tunnel Mechanisms (per TUNNELING-ROADMAP.md)
+- Page title lookup for tunnel node semantic analysis
+
+---
+
 ### Session: 2026-01-01 - Phases 2 & 3 Tunneling Complete + Documentation Fix
 
 **Completed**:

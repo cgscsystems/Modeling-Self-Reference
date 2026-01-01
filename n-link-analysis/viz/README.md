@@ -29,11 +29,14 @@ python n-link-analysis/viz/render-full-basin-geometry.py \
   --max-plot-points 120000
 ```
 
-### Launch Interactive Dashboard
+### Launch Interactive Dashboards
 
 ```bash
-# Start Dash viewer for exploring basin geometries
+# Basin geometry viewer (3D point clouds, interval layouts)
 python n-link-analysis/viz/dash-basin-geometry-viewer.py --port 8055
+
+# Multiplex tunnel explorer (cross-N connectivity, tunnel nodes)
+python n-link-analysis/viz/dash-multiplex-explorer.py --port 8056
 ```
 
 ## Scripts
@@ -107,6 +110,32 @@ python n-link-analysis/viz/dash-basin-geometry-viewer.py
 # Custom port
 python n-link-analysis/viz/dash-basin-geometry-viewer.py --port 8060
 ```
+
+### `dash-multiplex-explorer.py`
+**Purpose**: Interactive exploration of cross-N basin connectivity and tunnel nodes
+
+**Key Features**:
+- Layer connectivity matrix (N×N heatmap)
+- Tunnel node browser with filtering and scoring
+- Basin pair network visualization
+- Cycle reachability analysis
+
+**Tabs**:
+1. **Layer Connectivity**: Heatmap of within-N vs cross-N edges
+2. **Tunnel Nodes**: Searchable table with 9,018 tunnel nodes
+3. **Basin Pairs**: Network showing which basins connect via tunneling
+4. **Reachability**: Per-cycle BFS reach across N layers
+
+**Common Usage**:
+```bash
+# Launch on default port
+python n-link-analysis/viz/dash-multiplex-explorer.py
+
+# Custom port
+python n-link-analysis/viz/dash-multiplex-explorer.py --port 8080
+```
+
+**See**: [MULTIPLEX-EXPLORER-GUIDE.md](MULTIPLEX-EXPLORER-GUIDE.md) for detailed usage
 
 ## Output Locations
 
