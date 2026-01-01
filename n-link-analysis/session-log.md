@@ -8,6 +8,41 @@
 
 ---
 
+### 2026-01-01 (Late Evening) - Framework Testing & Multi-N Infrastructure Validation
+
+**What was tried**:
+- Executed comprehensive framework testing plan from FRAMEWORK-TESTING-PLAN.md
+- Ran harness for N∈{2,3,4,6,7,8,10} in quick mode (34 scripts × 7 N values = 238 executions)
+- Initially attempted parallel execution of all 7 N values simultaneously
+- Fixed bugs in compute-trunkiness-dashboard.py, compare-cycle-evolution.py, run-analysis-harness.py
+- Ran cross-N comparison scripts with 7 N values
+- Documented complete test results in FRAMEWORK-TESTING-PLAN.md
+
+**What worked**:
+- Sequential execution (one N at a time) after killing parallel runs - completed successfully
+- All 9 test cases achieved 100% success rate (TC0.1-TC0.4, TC1.1-TC1.3, TC2.1-TC2.2)
+- Bug fixes resolved all N≠5 hardcoding issues:
+  - Added --n parameter to compute-trunkiness-dashboard.py (backwards compatible)
+  - Made compare-cycle-evolution.py handle arbitrary N values with conditional logic
+  - Fixed path resolution by passing absolute --analysis-dir
+- Cross-N comparison generated valid cycle evolution summaries and visualizations
+- Generated 161 analysis artifacts successfully
+- Framework now production-ready for Multi-N systematic analysis
+
+**What didn't work**:
+- Initial parallel execution (7 simultaneous harness runs) was too aggressive - killed all tasks
+- Scripts had systemic N=5 hardcoding preventing N≠5 analysis (4 bugs discovered)
+- Massachusetts deep-dive tried to access data for all N values without checking existence
+
+**Key findings**:
+- N=6 shows highest basin mass (523K nodes) in test runs, contradicting earlier N=5 peak
+- Zero universal cycles across N∈{2,3,4,6,7,8,10} - cycle landscape highly N-dependent
+- Framework validation revealed would-be blockers for production Multi-N analysis
+
+**Commits**: 818e28a (testing plan update), 2b8803f (visualization script update), 97ede40 (filtering fix)
+
+---
+
 ### 2026-01-01 (Evening) - Complete Basin Visualization Suite Generation
 
 **What was tried**:

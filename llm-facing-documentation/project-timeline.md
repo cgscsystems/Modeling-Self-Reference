@@ -18,6 +18,51 @@
 
 ## Timeline Entries
 
+### Session: 2026-01-01 (Late Evening) - Framework Testing & Multi-N Infrastructure Validation
+
+**Completed**:
+- Executed comprehensive framework testing plan across N∈{2,3,4,6,7,8,10} (7 N values)
+- Validated 100% script success rate: 238 total script executions (7 N-values × 34 scripts each)
+- Fixed 4 critical bugs blocking N≠5 analysis (hardcoded N=5 assumptions)
+- Generated 161 analysis artifacts across all tested N values
+- Updated FRAMEWORK-TESTING-PLAN.md with complete test execution summary and results
+- Modified scripts: compute-trunkiness-dashboard.py, compare-cycle-evolution.py, run-analysis-harness.py
+
+**Decisions Made**:
+- **Sequential vs parallel execution**: After killing 7 parallel harness runs, chose sequential one-at-a-time execution for better monitoring and debugging
+- **Parameterization approach**: Fixed scripts to handle arbitrary N values with conditional logic rather than adding special cases for each N
+- **Baseline selection**: Massachusetts deep-dive now uses first available N as baseline when N=5 doesn't exist (graceful fallback)
+
+**Discoveries**:
+- **N=6 peak contradicts earlier findings**: Basin mass at N=6 (523K nodes) exceeds N=5 in test data, suggesting need for direct N=5 comparison with same methodology
+- **No universal cycles**: Zero cycles appear across all tested N values {2,3,4,6,7,8,10}, indicating cycle landscape is highly N-dependent
+- **Systemic N=5 hardcoding**: Framework had multiple hardcoded assumptions that would have completely blocked production Multi-N analysis
+
+**Validation**:
+- All 9 test cases passed (TC0.1-TC0.4, TC1.1-TC1.3, TC2.1-TC2.2)
+- Cross-N comparison scripts successfully analyzed data across 7 N values
+- Generated cycle evolution summaries and Massachusetts deep-dive visualizations
+- Verified output files created correctly (161 artifacts)
+
+**Architecture Impact**:
+- **compute-trunkiness-dashboard.py**: Now parameterized with `--n` flag (backwards compatible, defaults to 5)
+- **run-analysis-harness.py**: Passes `--n` and `--analysis-dir` to dashboard script for correct path resolution
+- **compare-cycle-evolution.py**: Handles arbitrary N values with conditional baseline selection and filtered Massachusetts data
+- **Framework production-ready**: Infrastructure now validated for systematic Multi-N analysis (NEXT-STEPS.md Tier 1.1)
+
+**Next Steps**:
+- Run N=5 with same tag (test_n5_validated) to enable direct comparison with N=6 peak
+- Execute full Multi-N production analysis (N=3-10) for phase transition curve mapping
+- Begin Tier 1.2 (Hub connectivity deep-dive) or Tier 2 (Theory validation) work
+
+**Files Modified**:
+- n-link-analysis/FRAMEWORK-TESTING-PLAN.md (test results documentation)
+- n-link-analysis/scripts/compute-trunkiness-dashboard.py (added --n parameter)
+- n-link-analysis/scripts/compare-cycle-evolution.py (N-value filtering and conditional logic)
+- n-link-analysis/scripts/run-analysis-harness.py (pass --n to dashboard)
+
+---
+
 ### Session: 2026-01-01 (Evening) - Complete Basin Visualization Suite Generation
 
 **Completed**:
