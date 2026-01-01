@@ -10,18 +10,23 @@
 
 ## High Priority
 
-- [x] Implement Phase 1 fixed-N analysis (N in {3,5,7} complete; extend to {1,2,4,6,8,9,10,20})
-- [x] Produce per-N terminal/basin stats files (complete for N∈{3,5,7})
+- [x] Implement Phase 1 fixed-N analysis (N∈{3,4,5,6,7} complete)
+- [x] Produce per-N terminal/basin stats files (complete for N∈{3,4,5,6,7})
 - [x] Add lightweight title lookup for top terminals (implemented in reproduction script)
+- [x] Map finer N resolution (N∈{4,6}) to characterize phase transition curve - **DONE** 2025-12-31
+- [x] Link degree distribution analysis to correlate with basin mass peaks - **DONE** 2025-12-31
+- [x] Path characteristics analysis (convergence, HALT, branching) - **DONE** 2025-12-31
+- [x] Cycle evolution tracking across N - **DONE** 2025-12-31
+- [ ] Entry breadth analysis (count unique depth=1 nodes per basin)
 - [ ] Produce `summary_over_N.parquet` with $P_{HALT}(N)$ and terminal counts across wider N range
-- [ ] Map finer N resolution (N∈{4,6,8,9,10}) to characterize phase transition curve
+- [ ] Map N∈{8,9,10} to complete HALT saturation curve
 
 ## Medium Priority
 
-- [x] Universal attractors across N (terminal frequency) - Same 6 cycles found across N∈{3,5,7}
-- [ ] Basin overlap metrics across N (Jaccard / mapping matrix)
+- [x] Universal attractors across N (terminal frequency) - Same 6 cycles found across N∈{3,4,5,6,7}
 - [x] Validate heavy-tail / power-law conjecture - Confirmed for N=5 (67% high-trunk basins)
-- [ ] Link degree distribution analysis to correlate with basin mass peaks
+- [ ] Basin overlap metrics across N (Jaccard / mapping matrix)
+- [ ] Percolation model development (predict basin mass from degree distribution + N)
 - [ ] Test on other graphs (different language Wikipedias, citation networks)
 
 ## Low Priority

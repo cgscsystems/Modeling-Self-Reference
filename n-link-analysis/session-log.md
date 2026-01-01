@@ -8,6 +8,50 @@
 
 ---
 
+### 2025-12-31 (Third) - Mechanism Understanding and Massachusetts Case Study
+
+**What was tried**:
+- Built path characteristics analyzer (5,000 samples across N∈{3,4,5,6,7})
+- Built cycle evolution tracker (6 universal cycles across N)
+- Built link profile analyzer (investigated actual Wikipedia article structures)
+- Deep-dive on Massachusetts basin (why 94× larger at N=5 than N=4)
+
+**What worked**:
+- Path analysis revealed N=4 premature convergence (11 steps median, fastest)
+- N=5 has slowest rapid convergence rate (85.9% <50 steps) = broadest exploration
+- Cycle evolution tracking identified all 6 universal cycles with size ranges 10× to 1,285×
+- Massachusetts link profile: 1,120 outlinks, forms 2-cycle ONLY at N=5 (position 5 → Gulf_of_Maine)
+- Mean depth strongly correlates with basin mass (51.3 steps at N=5 vs 3.2 at N=4)
+
+**Key findings**:
+- **Premature convergence mechanism**: N=4 converges too fast for broad exploration
+- **Optimal exploration time**: N=5's 14% of paths taking >50 steps creates broad catchment
+- **Cycle position effect**: Massachusetts forms cycle only at N=5; points to non-cycling articles at other N
+- **Hub connectivity amplification**: 1,120 outlinks + cycle formation + optimal exploration = 94× amplification
+- Refined basin mass formula: Entry_Breadth × Path_Survival × Convergence_Optimality
+
+**Scripts created**:
+- `scripts/analyze-path-characteristics.py` (400 lines)
+- `scripts/visualize-mechanism-comparison.py` (200 lines)
+- `scripts/compare-cycle-evolution.py` (350 lines)
+- `scripts/analyze-cycle-link-profiles.py` (250 lines)
+
+**Documentation created**:
+- `empirical-investigations/MECHANISM-ANALYSIS.md` (~12k tokens)
+- `empirical-investigations/MASSACHUSETTS-CASE-STUDY.md` (~10k tokens)
+- Updated `empirical-investigations/INDEX.md` with 3 new completed investigations
+
+**Visualizations**:
+- `report/assets/mechanism_comparison_n3_to_n7.png` (4-panel path mechanisms)
+- `report/assets/bottleneck_analysis_n3_to_n7.png` (2-panel concentration)
+- `report/assets/cycle_evolution_basin_sizes.png` (universal cycles)
+- `report/assets/cycle_dominance_evolution.png` (dominance trends)
+- `report/assets/massachusetts_deep_dive.png` (4-panel case study)
+
+**Commit**: (pending)
+
+---
+
 ### 2025-12-31 (Second) - Link Degree Analysis and Coverage Threshold Discovery
 
 **What was tried**:

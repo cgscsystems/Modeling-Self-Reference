@@ -38,32 +38,47 @@ This is the *primary index* for contract objects, and should be treated as appen
   - [compare-across-n.py](../../n-link-analysis/scripts/compare-across-n.py) (cross-N analysis)
   - [map-basin-from-cycle.py](../../n-link-analysis/scripts/map-basin-from-cycle.py) (basin mapping)
   - [sample-nlink-traces.py](../../n-link-analysis/scripts/sample-nlink-traces.py) (cycle sampling)
+  - [analyze-path-characteristics.py](../../n-link-analysis/scripts/analyze-path-characteristics.py) (path-level mechanism analysis)
+  - [compare-cycle-evolution.py](../../n-link-analysis/scripts/compare-cycle-evolution.py) (individual cycle tracking across N)
+  - [analyze-cycle-link-profiles.py](../../n-link-analysis/scripts/analyze-cycle-link-profiles.py) (article link structure analysis)
 - **Evidence**:
   - [REPRODUCTION-OVERVIEW.md](../../n-link-analysis/empirical-investigations/REPRODUCTION-OVERVIEW.md) (N∈{3,5,7} comprehensive summary)
   - [PHASE-TRANSITION-REFINED.md](../../n-link-analysis/empirical-investigations/PHASE-TRANSITION-REFINED.md) (N∈{3,4,5,6,7} refined analysis)
+  - [MECHANISM-ANALYSIS.md](../../n-link-analysis/empirical-investigations/MECHANISM-ANALYSIS.md) (premature convergence mechanism, path characteristics)
+  - [MASSACHUSETTS-CASE-STUDY.md](../../n-link-analysis/empirical-investigations/MASSACHUSETTS-CASE-STUDY.md) (cycle formation + hub connectivity case study)
   - [CROSS-N-FINDINGS.md](../../CROSS-N-FINDINGS.md) (publication-quality discovery summary)
   - Phase transition visualizations: `n-link-analysis/report/assets/phase_transition_n3_to_n7.png`
   - Coverage analysis: `n-link-analysis/report/assets/coverage_vs_basin_mass.png`, `coverage_zones_analysis.png`
   - Cross-N visualizations: `n-link-analysis/report/assets/cross_n_*.png` (6 charts)
-  - Data outputs: `data/wikipedia/processed/analysis/*_n={3,4,5,6,7}_*` (~72 files)
+  - Mechanism visualizations: `n-link-analysis/report/assets/mechanism_comparison_n3_to_n7.png`, `bottleneck_analysis_n3_to_n7.png`
+  - Cycle visualizations: `n-link-analysis/report/assets/cycle_evolution_basin_sizes.png`, `cycle_dominance_evolution.png`, `massachusetts_deep_dive.png`
+  - Path characteristics data: `data/wikipedia/processed/analysis/path_characteristics_n={3,4,5,6,7}_mechanism_*` (15 files)
+  - Cycle evolution data: `data/wikipedia/processed/analysis/cycle_evolution_summary.tsv`, `cycle_dominance_matrix.tsv`, `universal_cycles.tsv`
+  - Data outputs: `data/wikipedia/processed/analysis/*_n={3,4,5,6,7}_*` (~105 files total)
   - Link degree distribution: `data/wikipedia/processed/analysis/link_degree_distribution*.tsv`
 - **Key Finding**:
   - **Refined**: N=5 is an isolated spike (65× amplification from N=4), not a plateau
   - N=4 is a local minimum (30k nodes) - smaller than N=3 (102k)! Asymmetric curve: sharp rise (65×), gradual fall (7-9×)
   - N=5 peak aligns precisely with 32.6% page coverage (5.9M pages with ≥5 links)
   - Coverage vs basin mass: near-zero correlation (r=-0.042) confirms non-monotonic relationship
-  - **Mechanism identified**: Two competing effects (Path Existence vs Path Concentration) balanced optimally at N=5
+  - **Mechanism identified**: Premature convergence at N=4 (paths converge in 11 steps, too fast for broad exploration)
+  - **Optimal exploration at N=5**: Paths converge in 12 steps median, but 14% take >50 steps (broadest catchment)
+  - **Cycle position matters**: Massachusetts forms 2-cycle ONLY at N=5 (5th link → Gulf_of_Maine → 5th link → Massachusetts)
+  - **Hub connectivity amplifies**: Massachusetts has 1,120 outlinks, major geographic/political hub, mean basin depth 51.3 steps at N=5 vs 3.2 at N=4
   - Same 6 terminal cycles persist across N with radically different properties (up to 4289× size variation)
 - **Theory Claim Evaluated**:
   - **Refuted**: "Basin structure is universal across N" → Structure is rule-dependent, not graph-intrinsic
   - **Supported**: "Finite self-referential graphs partition into basins under deterministic rules" → Holds for all N∈{3,4,5,6,7}
+  - **New hypothesis**: Basin mass = Entry_Breadth × Path_Survival × Convergence_Optimality (replaces simple coverage model)
   - **New hypothesis**: Basin mass peaks occur at ~30-35% coverage threshold (potentially universal for scale-free networks)
 - **Notes**:
   - Basin properties emerge from rule-graph coupling (deterministic rule selectivity × graph degree distribution)
   - Critical phenomena framework validated: N=5 exhibits phase transition-like behavior
   - Coverage Paradox documented: Basin mass is non-monotonic function of connectivity
+  - Premature convergence regime discovered: Paths can converge TOO FAST, preventing broad exploration
+  - Cycle formation position effect: Hub articles forming cycles at optimal N capture maximum basin mass
   - Predictive framework: For any graph, measure degree distribution → find N where coverage ≈ 33% → predict basin peak
-  - Next steps: Test N∈{8,9,10}, other language Wikipedias, citation networks, percolation modeling
+  - Next steps: Entry breadth validation, percolation modeling, cross-domain testing (other Wikipedias, citation networks)
 
 ---
 

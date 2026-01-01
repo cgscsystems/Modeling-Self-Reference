@@ -18,6 +18,69 @@
 
 ## Timeline Entries
 
+### Session: 2025-12-31 (Third) - Mechanism Understanding: Premature Convergence and the Massachusetts Case Study
+
+**Completed**:
+- Built path characteristics analysis infrastructure (`analyze-path-characteristics.py`, 400 lines)
+- Ran 5,000 path samples across N∈{3,4,5,6,7} analyzing convergence depth, HALT rate, path length, branching statistics
+- Built cycle evolution comparison infrastructure (`compare-cycle-evolution.py`, 350 lines)
+- Built cycle link profile analyzer (`analyze-cycle-link-profiles.py`, 250 lines)
+- Built mechanism comparison visualizer (`visualize-mechanism-comparison.py`, 200 lines)
+- Generated 18 new data files (15 path characteristics + 3 cycle evolution)
+- Created 5 publication-ready visualizations (mechanism comparison, bottleneck analysis, cycle evolution, Massachusetts deep-dive)
+- Wrote MECHANISM-ANALYSIS.md (~12k tokens) documenting premature convergence mechanism
+- Wrote MASSACHUSETTS-CASE-STUDY.md (~10k tokens) explaining Massachusetts 94× N=5 amplification
+- Updated contract registry (NLR-C-0003) with mechanism evidence and new hypotheses
+- Updated empirical investigations INDEX with 3 new completed investigations
+
+**Decisions Made**:
+| Decision | Rationale |
+|----------|-----------|
+| Use path-level metrics to explain basin mass variation | Aggregate statistics (basin size, dominance) don't reveal mechanisms; need individual path analysis |
+| Focus on Massachusetts as concrete case study | Highest dominance (50.7%) at N=5; allows testing abstract mechanisms on real Wikipedia article |
+| Track convergence depth distribution, not just median | Median hides critical information (14% of N=5 paths take >50 steps = broad exploration) |
+| Investigate actual Wikipedia article link structures | Abstract graph theory insufficient; need to understand WHY Massachusetts forms cycle at N=5 specifically |
+
+**Discoveries**:
+- **Premature Convergence Mechanism**: N=4 converges in 11 steps (fastest) but produces smallest basins (31k) - paths commit before exploring broadly
+- **Optimal Exploration Time**: N=5 has slowest rapid convergence rate (85.9% <50 steps vs 97.5% at N=4) - 14% of paths explore >50 steps
+- **Cycle Formation Position Effect**: Massachusetts forms 2-cycle ONLY at N=5 (5th link → Gulf_of_Maine → 5th link → Massachusetts); at other N values points to non-cycling articles
+- **Hub Connectivity Amplification**: Massachusetts has 1,120 outlinks (major political/geographic hub); mean basin depth 51.3 steps at N=5 vs 3.2 at N=4 (16× deeper)
+- **Mean Depth Predicts Basin Mass**: Strong correlation between mean depth and basin size across all cycles; deep basins = long average paths = broad exploration
+- **Universal Cycles with Variable Dominance**: All 6 cycles appear at all N, but amplification ranges 10× to 1,285×; Massachusetts has moderate amplification (94×) but highest dominance (51%)
+
+**Validation**:
+- 5,000 path traces completed successfully (1,000 per N value)
+- All scripts executed without errors
+- Cycle evolution data matches expected basin mass totals
+- Link profile analysis identified correct page_ids for cycle members (Massachusetts page_id=1,645,518, not 602,786)
+- Massachusetts basin depth distribution shows expected two-phase pattern (local neighborhood + distant convergence wave)
+
+**Architecture Impact**:
+- Refined basin mass formula: `Basin_Mass = Entry_Breadth × Path_Survival × Convergence_Optimality` (replaces simple coverage model)
+- Established path characteristics as mechanism analysis tool (extends sample-nlink-traces.py with 14 new metrics)
+- Created cycle evolution tracking capability (parameterized by N, tracks individual cycles across N values)
+- Added link profile analysis to investigation toolkit (examines actual Wikipedia article structures)
+- Introduced "premature convergence regime" as theoretical concept (paths can converge TOO FAST)
+- Introduced "cycle position effect" (WHERE cycles form determines basin size more than cycle identity)
+
+**Next Steps**:
+- Entry breadth validation (count unique depth=1 entry nodes per basin; test hypothesis N=5 has ~10× more entry points than N=4)
+- Percolation model development (mathematical framework predicting basin mass from graph degree distribution + rule index)
+- Cross-domain validation (Spanish/German Wikipedia, arXiv citation network, npm dependency graph)
+- Paper writing (2 publication-quality findings: premature convergence mechanism + Massachusetts case study)
+
+**Contract Updates**:
+- Updated NLR-C-0003 with:
+  - 3 new experiment scripts (path characteristics, cycle evolution, link profiles)
+  - 2 new evidence documents (MECHANISM-ANALYSIS.md, MASSACHUSETTS-CASE-STUDY.md)
+  - 8 new visualizations (mechanism, cycle, Massachusetts charts)
+  - 18 new data files
+  - Refined findings (premature convergence, optimal exploration, cycle position, hub connectivity)
+  - 2 new hypotheses (refined basin mass formula, cycle position effect)
+
+---
+
 ### Session: 2025-12-31 (Second) - Link Degree Analysis: The 32.6% Coverage Threshold
 
 **Completed**:
