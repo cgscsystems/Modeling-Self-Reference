@@ -227,7 +227,7 @@ def main() -> None:
     # 9. Compute trunkiness dashboard
     results["compute-trunkiness-dashboard"] = run_script(
         "compute-trunkiness-dashboard.py",
-        ["--tag", tag],
+        ["--tag", tag, "--n", str(n), "--analysis-dir", str(ANALYSIS_DIR)],
         description="Aggregate concentration metrics across all cycles",
     )
 
