@@ -18,6 +18,37 @@
 
 ## Timeline Entries
 
+### Session: 2026-01-01 - Human Collaboration Documentation Infrastructure
+
+**Completed**:
+- Reformatted `wh-mm_on-pr.md` with title, metadata, section headers (Hyperstructure Speculation, Logistics, IP/Attribution, etc.)
+- Reformatted `wh-mm_post-pr.md` with clear Q&A separation, markdown formatting, reference table
+- Created `human-facing-documentation/human-collaboration/INDEX.md` - naming conventions, contents table
+- Created `human-facing-documentation/human-collaboration/PROTOCOL.md` - intake process, formatting standards, participant registry
+- Updated `human-facing-documentation/INDEX.md` with Human Collaboration Archive section
+
+**Decisions Made**:
+| Decision | Rationale |
+|----------|-----------|
+| Naming convention `{from}-{to}_{topic}.md` | Clear attribution, sortable by participant |
+| Preserve voice/tone in archived communications | Attribution integrity; don't sanitize casual language |
+| Participant registry in PROTOCOL.md | Central place to track initials → names → roles |
+| Link to contracts when communications establish theory claims | Connects human discussions to formal IP/attribution system |
+
+**Discoveries**:
+- Human collaboration data needs same documentation rigor as LLM-facing docs
+- WH's PR feedback contains actionable research questions (hyperstructure coverage, cycle attachment)
+
+**Architecture Impact**:
+- New `human-collaboration/` subdirectory with INDEX + PROTOCOL pattern
+- Extends human-facing-documentation with archive capability for participant communications
+
+**Next Steps**:
+- Begin Phase 1 of Tunneling Roadmap (deferred from this session)
+- Archive additional communications as they occur following new PROTOCOL
+
+---
+
 ### Session: 2026-01-01 - Tunneling/Multiplex Implementation Roadmap
 
 **Completed**:
