@@ -101,6 +101,28 @@ def main() -> None:
         action="store_true",
         help="Generate 3D tributary tree visualization (slow)",
     )
+    parser.add_argument(
+        "--namespace",
+        type=int,
+        default=0,
+        help="Namespace for title resolution (default: 0 = main articles)",
+    )
+    parser.add_argument(
+        "--allow-redirects",
+        action="store_true",
+        help="Allow redirect pages when resolving titles",
+    )
+    parser.add_argument(
+        "--write-membership",
+        action="store_true",
+        help="Write full basin membership to Parquet (large file)",
+    )
+    parser.add_argument(
+        "--dominance-threshold",
+        type=float,
+        default=0.5,
+        help="Stop dominant chase when share falls below this (default: 0.5)",
+    )
 
     args = parser.parse_args()
 
@@ -145,15 +167,22 @@ def main() -> None:
     print(f"# STEP 1: Map Basin")
     print(f"{'#'*80}\n")
 
+    map_basin_args = [
+        "--n", str(n),
+        *cycle_args,
+        "--max-depth", str(args.max_depth),
+        "--log-every", "5",
+        "--out-prefix", f"basin_n={n}_cycle={cycle_key}_{tag}",
+        "--namespace", str(args.namespace),
+    ]
+    if args.allow_redirects:
+        map_basin_args.append("--allow-redirects")
+    if args.write_membership:
+        map_basin_args.append("--write-membership")
+
     results["map-basin"] = run_script(
         "map-basin-from-cycle.py",
-        [
-            "--n", str(n),
-            *cycle_args,
-            "--max-depth", str(args.max_depth),
-            "--log-every", "5",
-            "--out-prefix", f"basin_n={n}_cycle={cycle_key}_{tag}",
-        ],
+        map_basin_args,
         description=f"Map complete basin for {cycle_key}",
     )
 
@@ -162,16 +191,21 @@ def main() -> None:
     print(f"# STEP 2: Branch Analysis")
     print(f"{'#'*80}\n")
 
+    branch_args = [
+        "--n", str(n),
+        *cycle_args,
+        "--max-depth", "0",
+        "--top-k", str(args.top_k),
+        "--log-every", "10",
+        "--out-prefix", f"branches_n={n}_cycle={cycle_key}_{tag}",
+        "--namespace", str(args.namespace),
+    ]
+    if args.allow_redirects:
+        branch_args.append("--allow-redirects")
+
     results["branch-analysis"] = run_script(
         "branch-basin-analysis.py",
-        [
-            "--n", str(n),
-            *cycle_args,
-            "--max-depth", "0",
-            "--top-k", str(args.top_k),
-            "--log-every", "10",
-            "--out-prefix", f"branches_n={n}_cycle={cycle_key}_{tag}",
-        ],
+        branch_args,
         description=f"Quantify branch structure for {cycle_key}",
     )
 
@@ -181,14 +215,19 @@ def main() -> None:
         print(f"# STEP 3: Chase Dominant Upstream")
         print(f"{'#'*80}\n")
 
+        chase_args = [
+            "--n", str(n),
+            "--seed-title", seed_title,
+            "--max-hops", str(args.max_hops),
+            "--dominance-threshold", str(args.dominance_threshold),
+            "--namespace", str(args.namespace),
+        ]
+        if args.allow_redirects:
+            chase_args.append("--allow-redirects")
+
         results["chase-dominant"] = run_script(
             "chase-dominant-upstream.py",
-            [
-                "--n", str(n),
-                "--seed-title", seed_title,
-                "--max-hops", str(args.max_hops),
-                "--dominance-threshold", "0.5",
-            ],
+            chase_args,
             description=f"Chase dominant upstream trunk from {seed_title}",
         )
     else:
@@ -201,14 +240,19 @@ def main() -> None:
         print(f"# STEP 4: Find Preimages")
         print(f"{'#'*80}\n")
 
+        preimage_args = [
+            "--n", str(n),
+            "--target-title", cycle_titles[0],
+            "--limit", "100",
+            "--resolve-source-titles",
+            "--namespace", str(args.namespace),
+        ]
+        if args.allow_redirects:
+            preimage_args.append("--allow-redirects")
+
         results["find-preimages"] = run_script(
             "find-nlink-preimages.py",
-            [
-                "--n", str(n),
-                "--target-title", cycle_titles[0],
-                "--limit", "100",
-                "--resolve-source-titles",
-            ],
+            preimage_args,
             description=f"Find preimages for {cycle_titles[0]}",
         )
     else:
@@ -221,15 +265,20 @@ def main() -> None:
         print(f"# STEP 5: Render 3D Tributary Tree")
         print(f"{'#'*80}\n")
 
+        render_args = [
+            "--n", str(n),
+            *cycle_args,
+            "--top-k", "5",
+            "--max-levels", "4",
+            "--max-depth", "12",
+            "--namespace", str(args.namespace),
+        ]
+        if args.allow_redirects:
+            render_args.append("--allow-redirects")
+
         results["render-3d"] = run_script(
             "render-tributary-tree-3d.py",
-            [
-                "--n", str(n),
-                *cycle_args,
-                "--top-k", "5",
-                "--max-levels", "4",
-                "--max-depth", "12",
-            ],
+            render_args,
             description=f"Render 3D tributary tree for {cycle_key}",
         )
 
