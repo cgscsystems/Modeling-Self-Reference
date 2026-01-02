@@ -72,5 +72,5 @@ tmp/
 Thumbs.db
 
 # Large analysis outputs (mounted separately)
-n-link-analysis/report/assets/
+# Note: report/assets/ is included for the Reports Gallery service
 n-link-analysis/scripts/output/

@@ -10,6 +10,7 @@ Docker-based deployment for the N-Link Rule Analysis platform, providing a REST 
 | **Basin Viewer** | 8055 | 3D/2D visualization of basin geometry and point clouds |
 | **Multiplex Analyzer** | 8056 | Cross-N analysis, phase transitions, and layer connectivity |
 | **Tunneling Explorer** | 8060 | Tunnel node analysis, basin flows, and path tracing |
+| **Reports Gallery** | 8070 | Static HTML reports, interactive visualizations, and analysis figures |
 
 ## Prerequisites
 
@@ -69,6 +70,7 @@ Access the services:
 - Basin Viewer: http://localhost:8055
 - Multiplex Analyzer: http://localhost:8056
 - Tunneling Explorer: http://localhost:8060
+- Reports Gallery: http://localhost:8070
 
 ### Start Individual Services
 
@@ -81,6 +83,9 @@ docker-compose up -d api tunneling
 
 # All dashboards (API auto-starts as dependency)
 docker-compose up -d basin-viewer multiplex tunneling
+
+# Reports gallery (standalone, no API needed)
+docker-compose up -d reports
 ```
 
 ### Stop Services
@@ -165,6 +170,9 @@ docker run nlink-analysis:latest basin-viewer
 docker run nlink-analysis:latest multiplex
 docker run nlink-analysis:latest tunneling
 
+# Reports gallery
+docker run nlink-analysis:latest reports
+
 # All services in one container
 docker run nlink-analysis:latest all
 
@@ -213,10 +221,10 @@ docker-compose exec api python -c "from nlink_api.main import app; print('OK')"
 │  │  :8000   │    │    :8060     │    │     :8055       │   │
 │  └────┬─────┘    └──────────────┘    └─────────────────┘   │
 │       │                                                     │
-│       │          ┌──────────────┐                          │
-│       │          │   Multiplex  │                          │
-│       │          │    :8056     │                          │
-│       │          └──────────────┘                          │
+│       │          ┌──────────────┐    ┌─────────────────┐   │
+│       │          │   Multiplex  │    │    Reports      │   │
+│       │          │    :8056     │    │     :8070       │   │
+│       │          └──────────────┘    └─────────────────┘   │
 │       │                                                     │
 ├───────┼─────────────────────────────────────────────────────┤
 │       │                                                     │
@@ -234,6 +242,8 @@ docker-compose exec api python -c "from nlink_api.main import app; print('OK')"
 │                                                             │
 └─────────────────────────────────────────────────────────────┘
 ```
+
+Note: The Reports service serves static HTML files built into the Docker image and does not require the data volume.
 
 ## Troubleshooting
 

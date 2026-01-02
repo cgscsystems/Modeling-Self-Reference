@@ -18,6 +18,49 @@
 
 ## Timeline Entries
 
+### Session: 2026-01-02 - Docker Reports Gallery & Data Mount Fixes
+
+**Completed**:
+- Added Reports Gallery service to Docker deployment (port 8070)
+- Created `n-link-analysis/report/assets/index.html` redirect page
+- Updated `docker/entrypoint.sh` with `reports` mode
+- Fixed symlink data resolution by adding HF cache volume mount to all services
+- Fixed `dash-basin-geometry-viewer.py` mkdir bug with symlinked directories
+- Updated `.dockerignore` to include report/assets (was previously excluded)
+- Added configurable ports and HF cache path to `.env`
+
+**Decisions Made**:
+| Decision | Rationale |
+|----------|-----------|
+| Use Python http.server for reports | Simple static file serving, no additional dependencies |
+| Mount HF cache at same absolute path in container | Symlinks in data dir use absolute host paths; preserving path enables resolution |
+| Check `is_symlink()` before mkdir | `Path.exists()` follows symlinks but `mkdir` fails if symlink file exists |
+| +20000 port offset in .env | Avoids conflicts with local development services |
+
+**Discoveries**:
+- `.dockerignore` had excluded `n-link-analysis/report/assets/` causing reports service to fail
+- Docker volume mounts don't resolve symlinks that point to unmounted host paths
+- `Path.mkdir(exist_ok=True)` fails with FileExistsError when path is symlink to directory
+
+**Validation**:
+| Service | Status | Data |
+|---------|--------|------|
+| API (28000) | Healthy | - |
+| Basin Viewer (28055) | Running | Resolved |
+| Multiplex (28056) | Running | 2.1M assignments, 58 flows, 41K tunnels |
+| Tunneling (28060) | Running | 2.1M assignments, semantic model |
+| Reports (28070) | Running | 168MB static assets |
+
+**Files Modified**:
+- `.dockerignore`, `.env`, `Dockerfile`, `docker-compose.yml`
+- `docker/entrypoint.sh`, `docker/README.md`
+- `n-link-analysis/viz/dash-basin-geometry-viewer.py`
+
+**Files Created**:
+- `n-link-analysis/report/assets/index.html`
+
+---
+
 ### Session: 2026-01-02 - New Machine Initialization & Test Fix
 
 **Completed**:

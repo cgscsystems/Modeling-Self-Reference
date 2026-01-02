@@ -55,7 +55,8 @@ RUN chmod +x /entrypoint.sh
 # 8055 - Basin Geometry Viewer
 # 8056 - Multiplex Analyzer
 # 8060 - Tunneling Explorer
-EXPOSE 8000 8055 8056 8060
+# 8070 - Reports Gallery
+EXPOSE 8000 8055 8056 8060 8070
 
 # Default command runs the API
 ENTRYPOINT ["/entrypoint.sh"]

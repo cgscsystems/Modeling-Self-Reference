@@ -15,8 +15,15 @@
 #   - NLINK_BASIN_PORT (default: 8055)
 #   - NLINK_MULTIPLEX_PORT (default: 8056)
 #   - NLINK_TUNNELING_PORT (default: 8060)
+#   - NLINK_REPORTS_PORT (default: 8070)
 #
 #   Example: NLINK_API_PORT=28000 docker-compose up
+#
+# Data Configuration:
+#   If using symlinks to HuggingFace cache, set NLINK_HF_CACHE to the cache path:
+#   - NLINK_HF_CACHE (default: ~/.cache/wikipedia-nlink-basins)
+#
+#   Example: NLINK_HF_CACHE=/custom/cache/path docker-compose up
 
 services:
   # ============================================
@@ -33,6 +40,8 @@ services:
       - "${NLINK_API_PORT:-8000}:8000"
     volumes:
       - ./data:/app/data:ro
+      # Mount HF cache so symlinks resolve inside container
+      - ${NLINK_HF_CACHE:-~/.cache/wikipedia-nlink-basins}:${NLINK_HF_CACHE:-/home/mgm/.cache/wikipedia-nlink-basins}:ro
     environment:
       - DATA_SOURCE=local
       - LOCAL_DATA_DIR=/app/data/wikipedia/processed
@@ -61,6 +70,7 @@ services:
       - "${NLINK_BASIN_PORT:-8055}:8055"
     volumes:
       - ./data:/app/data:ro
+      - ${NLINK_HF_CACHE:-~/.cache/wikipedia-nlink-basins}:${NLINK_HF_CACHE:-/home/mgm/.cache/wikipedia-nlink-basins}:ro
     depends_on:
       - api
     restart: unless-stopped
@@ -79,6 +89,7 @@ services:
       - "${NLINK_MULTIPLEX_PORT:-8056}:8056"
     volumes:
       - ./data:/app/data:ro
+      - ${NLINK_HF_CACHE:-~/.cache/wikipedia-nlink-basins}:${NLINK_HF_CACHE:-/home/mgm/.cache/wikipedia-nlink-basins}:ro
     depends_on:
       - api
     restart: unless-stopped
@@ -97,12 +108,28 @@ services:
       - "${NLINK_TUNNELING_PORT:-8060}:8060"
     volumes:
       - ./data:/app/data:ro
+      - ${NLINK_HF_CACHE:-~/.cache/wikipedia-nlink-basins}:${NLINK_HF_CACHE:-/home/mgm/.cache/wikipedia-nlink-basins}:ro
     environment:
       # Connect to API for live path tracing
       - API_URL=http://api:8000
     depends_on:
       api:
         condition: service_healthy
+    restart: unless-stopped
+
+  # ============================================
+  # Reports Gallery (Port 8070)
+  # Static HTML reports and interactive visualizations
+  # ============================================
+  reports:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: nlink-analysis:latest
+    container_name: nlink-reports
+    command: ["reports"]
+    ports:
+      - "${NLINK_REPORTS_PORT:-8070}:8070"
     restart: unless-stopped
 
 # ============================================

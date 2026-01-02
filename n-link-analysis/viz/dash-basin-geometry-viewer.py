@@ -767,7 +767,9 @@ def main() -> int:
     parser.add_argument("--port", type=int, default=8050)
     args = parser.parse_args()
 
-    ANALYSIS_DIR.mkdir(parents=True, exist_ok=True)
+    # Check if path exists (including as symlink) before attempting mkdir
+    if not (ANALYSIS_DIR.exists() or ANALYSIS_DIR.is_symlink()):
+        ANALYSIS_DIR.mkdir(parents=True, exist_ok=True)
 
     app = dash.Dash(__name__)
 
