@@ -28,6 +28,7 @@ class ReportConfig(NamedTuple):
 
 
 REPORTS = [
+    # Core findings
     ReportConfig(
         source="overview.md",
         output="overview.html",
@@ -47,6 +48,28 @@ REPORTS = [
         source="EDIT-HISTORY-ANALYSIS.md",
         output="edit-history.html",
         title="Wikipedia Edit History Analysis",
+    ),
+    # Reference material
+    ReportConfig(
+        source="annotated-bibliography.md",
+        output="annotated-bibliography.html",
+        title="Annotated Bibliography",
+    ),
+    # Dataset documentation
+    ReportConfig(
+        source="DATASET_CARD.md",
+        output="dataset-card.html",
+        title="Dataset Card (HuggingFace)",
+    ),
+    ReportConfig(
+        source="HUGGINGFACE-DATASET-README.md",
+        output="huggingface-readme.html",
+        title="HuggingFace Dataset Documentation",
+    ),
+    ReportConfig(
+        source="HUGGINGFACE-UPLOAD-MANIFEST.md",
+        output="huggingface-manifest.html",
+        title="HuggingFace Upload Manifest",
     ),
 ]
 

@@ -8,6 +8,31 @@
 
 ---
 
+### 2026-01-02 - HTML Report Generation for Docker Gallery
+
+**What was tried**:
+- Make markdown reports available in Docker reports gallery (port 8070)
+
+**What worked**:
+- Created `scripts/render-reports-to-html.py` - converts markdown to styled HTML
+- Generated 8 HTML reports with gallery-matching CSS styling
+- Updated `report/assets/gallery.html` with "Written Reports" section (3 categories)
+
+**Files created**:
+- `scripts/render-reports-to-html.py`
+- `report/assets/overview.html`, `multi-n-analysis.html`, `tunneling-findings.html`, `edit-history.html`
+- `report/assets/annotated-bibliography.html`, `dataset-card.html`, `huggingface-readme.html`, `huggingface-manifest.html`
+
+**Files modified**:
+- `report/assets/gallery.html`
+
+**Usage**:
+```bash
+python n-link-analysis/scripts/render-reports-to-html.py
+```
+
+---
+
 ### 2026-01-02 - Test Suite Fix (Pytest Compatibility)
 
 **What was tried**:

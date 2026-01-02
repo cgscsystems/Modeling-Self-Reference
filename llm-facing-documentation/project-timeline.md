@@ -18,6 +18,36 @@
 
 ## Timeline Entries
 
+### Session: 2026-01-02 - HTML Report Generation for Docker Gallery
+
+**Completed**:
+- Created `n-link-analysis/scripts/render-reports-to-html.py` - markdown-to-HTML converter
+- Generated 8 HTML reports from markdown sources for Docker gallery
+- Updated `gallery.html` with "Written Reports" section organized into 3 categories
+
+**Reports Generated**:
+| Category | Reports |
+|----------|---------|
+| Core Findings | `overview.html`, `multi-n-analysis.html`, `tunneling-findings.html`, `edit-history.html` |
+| Reference | `annotated-bibliography.html` |
+| Dataset Docs | `dataset-card.html`, `huggingface-readme.html`, `huggingface-manifest.html` |
+
+**Decisions Made**:
+| Decision | Rationale |
+|----------|-----------|
+| Pre-render markdown to HTML | Cleaner presentation, no JS dependency, works in any browser |
+| Use regex-based conversion | `markdown` library not in requirements; simple markdown structure doesn't need full parser |
+| Organize into 3 categories | Clear separation of research findings vs reference vs dataset documentation |
+
+**Files Created**:
+- `n-link-analysis/scripts/render-reports-to-html.py`
+- 8 HTML reports in `n-link-analysis/report/assets/`
+
+**Files Modified**:
+- `n-link-analysis/report/assets/gallery.html`
+
+---
+
 ### Session: 2026-01-02 - Docker Reports Gallery & Data Mount Fixes
 
 **Completed**:
