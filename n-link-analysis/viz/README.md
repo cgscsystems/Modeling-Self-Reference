@@ -327,6 +327,35 @@ python n-link-analysis/viz/dash-basin-geometry-viewer.py --port 8055
 
 **Slow rendering**: Use `--max-depth 10` for quick previews, full depth for final renders
 
+## Future Work
+
+### API Integration
+
+1. **Integrate Multiplex Explorer** (`dash-multiplex-explorer.py`, port 8056)
+   - Add API for page lookups in tunnel node table
+   - Lower priority since it mostly displays precomputed data
+
+2. **Add report generation buttons to dashboards**
+   - Dashboards could trigger report generation via API
+   - Show progress via task polling
+   - Example: "Generate Report" button → `POST /api/v1/reports/human/async`
+
+3. **Add API endpoint for collapse dashboard**
+   - `batch-chase-collapse-metrics.py` currently runs as subprocess
+   - Extract to `_core/collapse_engine.py`
+   - Add `/api/v1/reports/collapse` endpoint
+
+### Consolidation (Planned)
+
+The current visualization tools are spread across multiple scripts and ports. A future consolidation effort should:
+
+- Unify dashboards into a single multi-tab application
+- Provide a single deployment unit (one port, one process)
+- Share common components (search, page lookup, basin selectors)
+- Reduce code duplication across visualization scripts
+
+See `NEXT-SESSION-VIZ-CONSOLIDATION.md` for assessment plan.
+
 ---
 
-**Last Updated**: 2026-01-01
+**Last Updated**: 2026-01-02
