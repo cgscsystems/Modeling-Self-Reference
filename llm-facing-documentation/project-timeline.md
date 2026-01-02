@@ -18,6 +18,73 @@
 
 ## Timeline Entries
 
+### Session: 2026-01-01 (Evening) - Multi-N Visualization Suite & Unified Report
+
+**Completed**:
+- Created `n-link-analysis/viz/generate-multi-n-figures.py` (~350 lines)
+  - Phase transition chart (basin size vs N, log scale)
+  - Basin collapse chart (N=5 vs N=10 comparison with collapse factors)
+  - Tunnel node distribution chart
+  - Depth distribution by N chart
+  - Summary statistics HTML table
+- Created `n-link-analysis/report/MULTI-N-ANALYSIS-REPORT.md` (~400 lines)
+  - Comprehensive 10-section publication-ready report
+  - Covers phase transitions, tunneling, depth, stability, semantic structure
+  - Updated statistics: 41,732 tunnel nodes, 58 flows, 15 basins
+- Updated `n-link-analysis/report/TUNNELING-FINDINGS.md`
+  - Corrected stats from N=3-7 (9,018 nodes) to N=3-10 (41,732 nodes)
+- Updated `n-link-analysis/viz/create-visualization-gallery.py`
+  - Added Multi-N Analysis section with 4 figure cards
+  - Added Interactive Tools section (Sankey, Explorer, Summary)
+  - Renamed to "N-Link Basin Analysis Gallery"
+- Created `n-link-analysis/viz/dash-cross-n-comparison.py` (~500 lines)
+  - 4-tab interactive dashboard on port 8062
+  - Basin Size tab: Compare sizes across N with cycle selection
+  - Depth Analysis tab: Violin plots and statistics per cycle
+  - Phase Transition tab: N slider with size charts
+  - Tunneling Flows tab: Sankey diagram of cross-basin movements
+- Updated `n-link-analysis/viz/README.md`
+  - Added dashboard quick-start table
+  - Documented new tools
+
+**Decisions Made**:
+| Decision | Rationale |
+|----------|-----------|
+| Create new unified report | Existing `overview.md` focused on N=5 only |
+| Use `_tunneling` suffix for N=10 mapping | Data structure separates N=8-10 as tunneling subsets |
+| Port 8062 for new dashboard | Avoids conflicts (8055, 8056, 8060, 8061 in use) |
+
+**Discoveries**:
+- Multiplex data uses `cycle_key + "_tunneling"` for N=8-10 entries of same basins
+- Gallery needed restructuring to prioritize cross-N analysis over N=5 specifics
+
+**Files Created**:
+| File | Lines | Purpose |
+|------|-------|---------|
+| `viz/generate-multi-n-figures.py` | ~350 | Static figure generation |
+| `viz/dash-cross-n-comparison.py` | ~500 | Interactive comparison dashboard |
+| `report/MULTI-N-ANALYSIS-REPORT.md` | ~400 | Unified publication report |
+
+**Static Outputs Generated**:
+- `phase_transition_n3_n10.png` + `.html`
+- `basin_collapse_n5_vs_n10.png`
+- `tunnel_node_distribution.png`
+- `depth_distribution_by_n.png`
+- `multi_n_summary_table.html`
+- `gallery.html` (regenerated)
+
+**Architecture Impact**:
+- 6 total Dash dashboards now available (was 5)
+- Report assets include multi-N comparison figures
+- Gallery reorganized: multi-N first, N=5 basins second
+
+**Validation**:
+- `generate-multi-n-figures.py --all` runs successfully, generates 5 figures
+- `dash-cross-n-comparison.py` starts on port 8062, loads 2.1M assignments
+- Gallery HTML includes new sections
+
+---
+
 ### Session: 2026-01-01 (Morning) - Viz & Reporting N=3-10 Full Support
 
 **Completed**:

@@ -8,6 +8,39 @@
 
 ---
 
+### 2026-01-01 (Evening) - Multi-N Visualization Suite & Unified Report
+
+**What was tried**:
+- Create static figure generation script for multi-N analysis
+- Build unified publication-ready report covering N=3-10
+- Update gallery to include multi-N figures
+- Create new cross-N comparison dashboard
+
+**What worked**:
+- `generate-multi-n-figures.py --all` generates 5 figures (phase transition, collapse, tunnel distribution, depth, summary table)
+- `MULTI-N-ANALYSIS-REPORT.md` consolidates all findings in 10 sections
+- Gallery restructured: multi-N first, interactive tools second, N=5 basins third
+- `dash-cross-n-comparison.py` runs on port 8062 with 4 tabs
+
+**Key findings**:
+- Data uses `_tunneling` suffix for N=8-10 cycle keys (same basins, different N)
+- Collapse chart needed special logic to map tunneling keys back to base cycles
+- Gallery needed CSS additions for analysis-card and tool-card styles
+
+**Files created**:
+- `viz/generate-multi-n-figures.py` (~350 lines)
+- `viz/dash-cross-n-comparison.py` (~500 lines)
+- `report/MULTI-N-ANALYSIS-REPORT.md` (~400 lines)
+
+**Files updated**:
+- `viz/create-visualization-gallery.py` - added multi-N sections
+- `viz/README.md` - added dashboard table and new tool docs
+- `report/TUNNELING-FINDINGS.md` - corrected stats for N=3-10
+
+Commit: pending
+
+---
+
 ### 2026-01-01 (Morning) - Viz & Reporting N=3-10 Full Support
 
 **What was tried**:
