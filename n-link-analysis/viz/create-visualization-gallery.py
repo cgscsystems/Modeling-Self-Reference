@@ -80,6 +80,40 @@ BASIN_METADATA = {
     },
 }
 
+# Extended cross-N analysis figures (beyond the core 4)
+CROSS_N_EXTENDED = [
+    ("cross_n_basin_sizes.png", "Basin Sizes Across N", "Total basin sizes at each N value"),
+    ("cross_n_collapse.png", "Basin Collapse", "Collapse patterns across N values"),
+    ("cross_n_comprehensive.png", "Comprehensive View", "Full multi-panel cross-N analysis"),
+    ("cross_n_sampling.png", "Sampling Analysis", "Sampling methodology and coverage"),
+    ("cross_n_trunkiness.png", "Trunkiness Analysis", "Trunk structure patterns across N"),
+    ("cross_n_universal_cycles.png", "Universal Cycles", "Cycles appearing across multiple N values"),
+    ("universal_cycles_heatmap_n3_to_n10.png", "Universal Cycles Heatmap", "Heatmap of cycle persistence across N=3-10"),
+    ("bottleneck_analysis_n3_to_n7.png", "Bottleneck Analysis", "Bottleneck identification N=3-7"),
+    ("mechanism_comparison_n3_to_n7.png", "Mechanism Comparison", "Traversal mechanism comparison N=3-7"),
+    ("phase_transition_n3_to_n7.png", "Phase Transition (N=3-7)", "Phase transition curve for N=3-7 range"),
+    ("phase_transition_n3_to_n10_comprehensive.png", "Comprehensive Phase Transition", "Full phase transition with all metrics"),
+]
+
+# Coverage and evolution analysis
+COVERAGE_EVOLUTION = [
+    ("coverage_vs_basin_mass.png", "Coverage vs Basin Mass", "Relationship between coverage and basin size"),
+    ("coverage_zones_analysis.png", "Coverage Zones", "Analysis of coverage zone boundaries"),
+    ("cycle_dominance_evolution.png", "Cycle Dominance Evolution", "How cycle dominance changes across N"),
+    ("cycle_evolution_basin_sizes.png", "Basin Size Evolution", "Evolution of basin sizes across N values"),
+    ("massachusetts_deep_dive.png", "Massachusetts Deep Dive", "Detailed analysis of the largest basin"),
+    ("massachusetts_evolution_n3_to_n10.png", "Massachusetts Evolution", "Massachusetts basin across N=3-10"),
+]
+
+# Additional analysis figures
+ADDITIONAL_ANALYSIS = [
+    ("dominance_collapse_first_below_hop.png", "Dominance Collapse", "First-hop dominance collapse analysis"),
+    ("multiplex_layer_connectivity.png", "Multiplex Connectivity", "Layer connectivity in the multiplex structure"),
+    ("trunkiness_scatter_size_vs_top1.png", "Trunkiness Scatter", "Scatter plot: basin size vs top-1 share"),
+    ("trunkiness_top1_share.png", "Top-1 Share Distribution", "Distribution of top-1 contributor shares"),
+    ("tunnel_summary_chart.png", "Tunnel Summary", "Summary chart of tunneling statistics"),
+]
+
 
 def generate_gallery_html() -> str:
     """Generate responsive HTML gallery with thumbnails and metadata."""
@@ -206,6 +240,7 @@ def generate_gallery_html() -> str:
         ("tunneling_sankey.html", "Tunneling Sankey", "Interactive flow diagram of cross-basin page transitions"),
         ("tunnel_node_explorer.html", "Tunnel Explorer", "Searchable table of 41,732 tunnel nodes"),
         ("multi_n_summary_table.html", "Summary Table", "Key statistics across all N values"),
+        ("multiplex_visualization.html", "Multiplex Visualization", "Interactive multiplex layer visualization"),
     ]
     tunneling_items = []
     for filename, title, description in tunneling_htmls:
@@ -227,6 +262,201 @@ def generate_gallery_html() -> str:
             <h2>Interactive Tools</h2>
             <div class="tools-grid">
                 {''.join(tunneling_items)}
+            </div>
+        </section>
+        """
+
+    # Build extended cross-N analysis section
+    cross_n_extended_items = []
+    for filename, title, description in CROSS_N_EXTENDED:
+        png_path = ASSETS_DIR / filename
+        if png_path.exists():
+            size_kb = png_path.stat().st_size / 1024
+            cross_n_extended_items.append(f"""
+            <div class="analysis-card">
+                <img src="{filename}" alt="{title}" loading="lazy">
+                <div class="card-info">
+                    <h4>{title}</h4>
+                    <p>{description}</p>
+                    <div class="links">
+                        <a href="{filename}" class="btn" download>PNG ({size_kb:.0f} KB)</a>
+                    </div>
+                </div>
+            </div>
+            """)
+
+    cross_n_extended_section = ""
+    if cross_n_extended_items:
+        cross_n_extended_section = f"""
+        <section class="analysis-section">
+            <h2>Cross-N Analysis Extended</h2>
+            <p class="section-intro">Additional cross-N analysis figures showing phase transitions, trunkiness patterns, and universal cycles.</p>
+            <div class="analysis-grid">
+                {''.join(cross_n_extended_items)}
+            </div>
+        </section>
+        """
+
+    # Build upstream dominance analysis section
+    upstream_items = []
+    # Find all chase_dominant files and group by basin
+    chase_files = sorted(ASSETS_DIR.glob("chase_dominant_upstream_chain_*.png"))
+    basins_seen: dict[str, dict[str, Path]] = {}
+    overlay_path = None
+
+    for f in chase_files:
+        if "overlay" in f.name:
+            overlay_path = f
+            continue
+        # Extract basin name: chase_dominant_upstream_chain_n=5_from=Massachusetts_basin.png
+        match = re.search(r"from=(.+)_(basin|share)\.png$", f.name)
+        if match:
+            basin_name = match.group(1)
+            file_type = match.group(2)
+            if basin_name not in basins_seen:
+                basins_seen[basin_name] = {}
+            basins_seen[basin_name][file_type] = f
+
+    for basin_name in sorted(basins_seen.keys()):
+        files = basins_seen[basin_name]
+        display_name = basin_name.replace("_", " ")
+        links_html = []
+        for ftype, fpath in sorted(files.items()):
+            size_kb = fpath.stat().st_size / 1024
+            links_html.append(f'<a href="{fpath.name}" class="btn" download>{ftype.title()} ({size_kb:.0f} KB)</a>')
+
+        upstream_items.append(f"""
+        <div class="analysis-card">
+            <img src="{files.get('basin', files.get('share', list(files.values())[0])).name}" alt="{display_name}" loading="lazy">
+            <div class="card-info">
+                <h4>{display_name}</h4>
+                <p>Dominant upstream chain analysis</p>
+                <div class="links">
+                    {''.join(links_html)}
+                </div>
+            </div>
+        </div>
+        """)
+
+    # Add overlay if exists
+    if overlay_path and overlay_path.exists():
+        size_kb = overlay_path.stat().st_size / 1024
+        upstream_items.insert(0, f"""
+        <div class="analysis-card" style="grid-column: span 2;">
+            <img src="{overlay_path.name}" alt="Dominant Share Overlay" loading="lazy">
+            <div class="card-info">
+                <h4>Dominant Share Overlay</h4>
+                <p>Composite view of dominant upstream shares across all basins</p>
+                <div class="links">
+                    <a href="{overlay_path.name}" class="btn" download>PNG ({size_kb:.0f} KB)</a>
+                </div>
+            </div>
+        </div>
+        """)
+
+    upstream_section = ""
+    if upstream_items:
+        upstream_section = f"""
+        <section class="analysis-section">
+            <h2>Upstream Dominance Analysis</h2>
+            <p class="section-intro">Analysis of dominant upstream chains showing how pages flow toward basin attractors at N=5.</p>
+            <div class="analysis-grid">
+                {''.join(upstream_items)}
+            </div>
+        </section>
+        """
+
+    # Build coverage & evolution section
+    coverage_items = []
+    for filename, title, description in COVERAGE_EVOLUTION:
+        png_path = ASSETS_DIR / filename
+        if png_path.exists():
+            size_kb = png_path.stat().st_size / 1024
+            coverage_items.append(f"""
+            <div class="analysis-card">
+                <img src="{filename}" alt="{title}" loading="lazy">
+                <div class="card-info">
+                    <h4>{title}</h4>
+                    <p>{description}</p>
+                    <div class="links">
+                        <a href="{filename}" class="btn" download>PNG ({size_kb:.0f} KB)</a>
+                    </div>
+                </div>
+            </div>
+            """)
+
+    coverage_section = ""
+    if coverage_items:
+        coverage_section = f"""
+        <section class="analysis-section">
+            <h2>Coverage & Evolution</h2>
+            <p class="section-intro">Analysis of coverage patterns and how basin structures evolve across N values.</p>
+            <div class="analysis-grid">
+                {''.join(coverage_items)}
+            </div>
+        </section>
+        """
+
+    # Build additional analysis section
+    additional_items = []
+    for filename, title, description in ADDITIONAL_ANALYSIS:
+        png_path = ASSETS_DIR / filename
+        if png_path.exists():
+            size_kb = png_path.stat().st_size / 1024
+            additional_items.append(f"""
+            <div class="analysis-card">
+                <img src="{filename}" alt="{title}" loading="lazy">
+                <div class="card-info">
+                    <h4>{title}</h4>
+                    <p>{description}</p>
+                    <div class="links">
+                        <a href="{filename}" class="btn" download>PNG ({size_kb:.0f} KB)</a>
+                    </div>
+                </div>
+            </div>
+            """)
+
+    additional_section = ""
+    if additional_items:
+        additional_section = f"""
+        <section class="analysis-section">
+            <h2>Additional Analysis</h2>
+            <p class="section-intro">Supplementary analysis figures covering trunkiness, tunneling, and multiplex connectivity.</p>
+            <div class="analysis-grid">
+                {''.join(additional_items)}
+            </div>
+        </section>
+        """
+
+    # Build variants section (color scale alternatives)
+    variants_dir = ASSETS_DIR / "variants"
+    variants_items = []
+    if variants_dir.exists():
+        for variant_png in sorted(variants_dir.glob("*.png")):
+            size_mb = variant_png.stat().st_size / (1024 * 1024)
+            # Extract basin and variant type from filename
+            display_name = variant_png.stem.replace("_", " ").replace("basin 3d n=5 cycle=", "").title()
+            variants_items.append(f"""
+            <div class="analysis-card">
+                <img src="variants/{variant_png.name}" alt="{display_name}" loading="lazy">
+                <div class="card-info">
+                    <h4>{display_name}</h4>
+                    <p>Alternative color scale rendering</p>
+                    <div class="links">
+                        <a href="variants/{variant_png.name}" class="btn" download>PNG ({size_mb:.1f} MB)</a>
+                    </div>
+                </div>
+            </div>
+            """)
+
+    variants_section = ""
+    if variants_items:
+        variants_section = f"""
+        <section class="analysis-section">
+            <h2>Basin Visualization Variants</h2>
+            <p class="section-intro">Alternative color scale renderings of selected basins (plasma, standard colorscales).</p>
+            <div class="analysis-grid">
+                {''.join(variants_items)}
             </div>
         </section>
         """
@@ -631,6 +861,8 @@ def generate_gallery_html() -> str:
 
         {multi_n_section}
 
+        {cross_n_extended_section}
+
         {tunneling_section}
 
         {tributary_section}
@@ -641,6 +873,14 @@ def generate_gallery_html() -> str:
         </div>
 
         {grid_section}
+
+        {variants_section}
+
+        {upstream_section}
+
+        {coverage_section}
+
+        {additional_section}
 
         {written_reports_section}
     </div>

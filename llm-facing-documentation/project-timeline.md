@@ -18,6 +18,38 @@
 
 ## Timeline Entries
 
+### Session: 2026-01-02 - Gallery Consolidation & Multi-N Basin Geometry Support
+
+**Completed**:
+- Extended gallery from ~60 to 68 items across 11 sections (was 6)
+- Added 5 new gallery sections: Cross-N Analysis Extended, Upstream Dominance Analysis, Coverage & Evolution, Additional Analysis, Basin Visualization Variants
+- Added `multiplex_visualization.html` to Interactive Tools
+- Created `n-link-analysis/scripts/batch-render-basin-pointclouds.py` for batch generation
+- Generated 22 new basin pointcloud parquets for N=3,4,6,7,8,9,10
+- Basin Geometry Viewer now supports 31 datasets across all N values (was 9 for N=5 only)
+
+**Decisions Made**:
+| Decision | Rationale |
+|----------|-----------|
+| Comprehensive gallery inclusion | User requested all existing visualizations be accessible |
+| Generate all pointclouds upfront | Faster user experience, total generation time ~30s |
+| Group upstream analysis by basin | Better visual organization with overlay composite first |
+
+**Files Created**:
+- `n-link-analysis/scripts/batch-render-basin-pointclouds.py`
+- 22 parquet files in `data/wikipedia/processed/analysis/basin_pointcloud_n=*_cycle=*.parquet`
+
+**Files Modified**:
+- `n-link-analysis/viz/create-visualization-gallery.py` (added 5 section generators)
+- `n-link-analysis/report/assets/gallery.html` (regenerated with 11 sections)
+
+**Validation**:
+- Gallery served correctly via Docker at port 28070
+- All 31 pointcloud datasets detected by Basin Geometry Viewer
+- Gallery file size increased from 32KB to 54KB (confirming new content)
+
+---
+
 ### Session: 2026-01-02 - Gallery Tributary Trees & Written Reports Integration
 
 **Completed**:
