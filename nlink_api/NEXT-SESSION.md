@@ -2,7 +2,7 @@
 
 **Created**: 2026-01-02
 **Updated**: 2026-01-02
-**Status**: Phases 1-4 complete, Phases 5-6 pending
+**Status**: Phases 1-5 complete, Phase 6 pending
 
 ---
 
@@ -42,55 +42,30 @@
 | POST | `/api/v1/basins/branches` | Analyze branch structure (sync/background) |
 | GET | `/api/v1/basins/branches/{task_id}` | Get analysis status |
 
----
-
-## Remaining Phases
-
 ### Phase 5: Reports & Figures
-
-**Goal**: Generate reports and figures via API
-
-**Scripts to Refactor**:
-1. `render-human-report.py` → `_core/report_engine.py`
-2. `compute-trunkiness-dashboard.py` → `_core/dashboard_engine.py`
-
-**Key Functions to Extract**:
-```python
-# From render-human-report.py
-def generate_report(
-    analysis_dir: Path,
-    output_dir: Path,
-    tag: str,
-    progress_callback: ProgressCallback = None,
-) -> ReportResult:
-    """Generate Markdown report + PNG figures."""
-
-# From compute-trunkiness-dashboard.py
-def compute_trunkiness_dashboard(
-    analysis_dir: Path,
-    tag: str,
-    n: int = 5,
-) -> TrunkinessDashboardResult:
-    """Aggregate branch metrics into dashboard TSV."""
-```
-
-**Files to Create**:
-- `n-link-analysis/scripts/_core/report_engine.py`
-- `n-link-analysis/scripts/_core/dashboard_engine.py`
-- `nlink_api/schemas/reports.py`
-- `nlink_api/services/report_service.py`
-- `nlink_api/routers/reports.py`
+- `n-link-analysis/scripts/_core/dashboard_engine.py` - Trunkiness dashboard computation
+- `n-link-analysis/scripts/_core/report_engine.py` - Report and figure generation
+- Updated `compute-trunkiness-dashboard.py` and `render-human-report.py` to use `_core` modules
+- Updated `_core/__init__.py` to export new engines
+- `schemas/reports.py` - Pydantic models for report operations
+- `services/report_service.py` - Service layer for report generation
+- `routers/reports.py` - API endpoints
+- Updated `main.py` to include reports router
 
 **Endpoints**:
 | Method | Endpoint | Description |
 |--------|----------|-------------|
-| POST | `/api/v1/reports/trunkiness` | Generate trunkiness dashboard |
-| POST | `/api/v1/reports/human` | Generate human-facing report |
+| POST | `/api/v1/reports/trunkiness` | Generate trunkiness dashboard (sync) |
+| POST | `/api/v1/reports/trunkiness/async` | Generate trunkiness dashboard (background) |
+| POST | `/api/v1/reports/human` | Generate human-facing report (sync) |
+| POST | `/api/v1/reports/human/async` | Generate human-facing report (background) |
 | GET | `/api/v1/reports/{task_id}` | Get generation status |
 | GET | `/api/v1/reports/list` | List available reports |
 | GET | `/api/v1/reports/figures/{filename}` | Serve figure file |
 
 ---
+
+## Remaining Phases
 
 ### Phase 6: Pipeline Integration
 
@@ -166,18 +141,20 @@ Before marking a phase complete:
 ## Key Files Reference
 
 **Source Scripts** (to refactor):
-- `/home/mgm/development/code/Modeling-Self-Reference-actual/n-link-analysis/scripts/render-human-report.py`
-- `/home/mgm/development/code/Modeling-Self-Reference-actual/n-link-analysis/scripts/compute-trunkiness-dashboard.py`
 - `/home/mgm/development/code/Modeling-Self-Reference-actual/n-link-analysis/scripts/reproduce-main-findings.py`
 
 **Pattern Reference** (completed):
 - `/home/mgm/development/code/Modeling-Self-Reference-actual/n-link-analysis/scripts/_core/trace_engine.py`
 - `/home/mgm/development/code/Modeling-Self-Reference-actual/n-link-analysis/scripts/_core/basin_engine.py`
 - `/home/mgm/development/code/Modeling-Self-Reference-actual/n-link-analysis/scripts/_core/branch_engine.py`
+- `/home/mgm/development/code/Modeling-Self-Reference-actual/n-link-analysis/scripts/_core/dashboard_engine.py`
+- `/home/mgm/development/code/Modeling-Self-Reference-actual/n-link-analysis/scripts/_core/report_engine.py`
 - `/home/mgm/development/code/Modeling-Self-Reference-actual/nlink_api/services/trace_service.py`
 - `/home/mgm/development/code/Modeling-Self-Reference-actual/nlink_api/services/basin_service.py`
+- `/home/mgm/development/code/Modeling-Self-Reference-actual/nlink_api/services/report_service.py`
 - `/home/mgm/development/code/Modeling-Self-Reference-actual/nlink_api/routers/traces.py`
 - `/home/mgm/development/code/Modeling-Self-Reference-actual/nlink_api/routers/basins.py`
+- `/home/mgm/development/code/Modeling-Self-Reference-actual/nlink_api/routers/reports.py`
 
 ---
 
@@ -185,7 +162,7 @@ Before marking a phase complete:
 
 ```bash
 # 1. Read this file
-# 2. Pick up where we left off (Phase 5)
-# 3. Start by reading render-human-report.py
-# 4. Follow the implementation pattern above
+# 2. Pick up where we left off (Phase 6)
+# 3. Start by reading reproduce-main-findings.py
+# 4. Add --use-api flag and API integration
 ```

@@ -18,6 +18,45 @@
 
 ## Timeline Entries
 
+### Session: 2026-01-02 (Night 7) - Phase 5: Reports & Figures API
+
+**Completed**:
+- Created `n-link-analysis/scripts/_core/dashboard_engine.py` - Trunkiness dashboard computation
+- Created `n-link-analysis/scripts/_core/report_engine.py` - Report and figure generation
+- Updated `compute-trunkiness-dashboard.py` and `render-human-report.py` to use `_core` modules
+- Updated `_core/__init__.py` to export new engines
+- Created `nlink_api/schemas/reports.py` - Pydantic request/response models
+- Created `nlink_api/services/report_service.py` - Service layer for report generation
+- Created `nlink_api/routers/reports.py` - API endpoints
+- Updated `nlink_api/main.py` to register reports router
+- Updated `nlink_api/NEXT-SESSION.md` to reflect Phase 5 completion
+
+**New Endpoints**:
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/api/v1/reports/trunkiness` | POST | Generate trunkiness dashboard (sync) |
+| `/api/v1/reports/trunkiness/async` | POST | Generate trunkiness dashboard (background) |
+| `/api/v1/reports/human` | POST | Generate human-facing report (sync) |
+| `/api/v1/reports/human/async` | POST | Generate human-facing report (background) |
+| `/api/v1/reports/{task_id}` | GET | Get generation task status |
+| `/api/v1/reports/list` | GET | List available reports |
+| `/api/v1/reports/figures/{filename}` | GET | Serve figure file |
+
+**Architecture**:
+- Followed established `_core` extraction pattern from Phases 2-4
+- Explicit sync/async endpoint split (vs auto-detection in basins router)
+- Added FileResponse for serving generated PNG figures
+
+**Validation**:
+- CLI scripts verified via `--help` (both work correctly)
+- All Python files pass syntax check via `py_compile`
+- Module imports verified
+
+**Next Steps**:
+- Phase 6: Pipeline Integration (`reproduce-main-findings.py` with `--use-api` flag)
+
+---
+
 ### Session: 2026-01-02 (Night 6) - Phase 4: Basin Operations API
 
 **Completed**:
