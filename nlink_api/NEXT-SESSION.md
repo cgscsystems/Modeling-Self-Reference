@@ -189,6 +189,65 @@ pytest nlink_api/tests/ -m "not integration" --cov=nlink_api
 
 ---
 
+## Next Steps: Visualization Tool API Integration
+
+The Path Tracer tool has been integrated with the API as a proof-of-concept. Other visualization tools can follow the same pattern.
+
+### Completed
+
+- **Path Tracer** (`n-link-analysis/viz/tunneling/path-tracer-tool.py`)
+  - Added `--use-api` flag for API mode
+  - `NLinkAPIClient` class for API communication
+  - Live tracing via `trace_page_live()` for any page (not just tunnel nodes)
+  - Search all 17.9M pages in API mode (vs 41K tunnel nodes in local mode)
+
+- **Shared API Client** (`n-link-analysis/viz/api_client.py`) ✅
+  - Extracted `NLinkAPIClient` to shared module
+  - Added comprehensive docstrings and type hints
+  - Added `check_api_available()` helper function
+  - Added `wait_for_task()` for polling background tasks
+  - Added `map_basin()` and `generate_report()` methods
+  - Path Tracer updated to import from shared module
+
+### Recommended Next Steps
+
+1. **Integrate Multiplex Explorer** (`n-link-analysis/viz/dash-multiplex-explorer.py`, port 8056)
+   - Could use API for page lookups in tunnel node table
+   - Lower priority since it mostly displays precomputed data
+
+2. **Add report generation buttons to dashboards**
+   - Dashboards could trigger report generation via API
+   - Show progress via task polling
+   - Example: "Generate Report" button → `POST /api/v1/reports/human/async`
+
+3. **Add API endpoint for collapse dashboard**
+   - `batch-chase-collapse-metrics.py` currently runs as subprocess
+   - Extract to `_core/collapse_engine.py`
+   - Add `/api/v1/reports/collapse` endpoint
+
+### Integration Pattern
+
+For each visualization tool:
+
+```python
+# 1. Add CLI flag
+parser.add_argument("--use-api", action="store_true")
+parser.add_argument("--api-url", default="http://localhost:8000")
+
+# 2. Initialize client
+if args.use_api:
+    from viz.api_client import NLinkAPIClient
+    api_client = NLinkAPIClient(args.api_url)
+
+# 3. Use API in data functions
+def search_pages(query):
+    if USE_API:
+        return api_client.search_pages(query)
+    return local_search(query)  # fallback
+```
+
+---
+
 ## Potential Future Enhancements
 
 1. **Add API endpoint for collapse dashboard** (`batch-chase-collapse-metrics.py`)
@@ -197,6 +256,21 @@ pytest nlink_api/tests/ -m "not integration" --cov=nlink_api
 4. **Add OpenAPI client generation** for other languages
 5. **Add rate limiting** for public deployment
 6. **Expand integration tests** to run with real data in CI
+7. **Integrate remaining viz tools** (Multiplex Explorer, Cross-N Comparison, Basin Geometry Viewer)
+
+---
+
+## Known Issues
+
+### ~~Test Suite Schema Mismatch~~ (RESOLVED 2026-01-02)
+
+**Problem**: 25 of 90 API tests failed due to schema mismatch between mock data and actual data format.
+
+**Resolution**: Fixed in `tests/conftest.py`:
+1. Changed `TEST_NLINK_SEQUENCES` to use `link_sequence` array column (matching real parquet format)
+2. Fixed `MockDataLoader.validate()` return signature to match `DataService` expectations
+
+**Status**: ✅ All 90/90 tests now pass
 
 ---
 

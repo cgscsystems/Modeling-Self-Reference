@@ -18,6 +18,286 @@
 
 ## Timeline Entries
 
+### Session: 2026-01-02 - Fix API Test Suite (Mock Data Format)
+
+**Completed**:
+- Fixed 25 failing API tests in `nlink_api/tests/conftest.py`
+- Fixed 2 additional test failures related to `validate()` return signature
+- All 90 API tests now pass
+- All 6 viz dashboard smoke tests confirmed passing
+
+**Root Causes Fixed**:
+| Issue | Failing Tests | Fix |
+|-------|---------------|-----|
+| Mock data format mismatch | 25 tests | Changed `TEST_NLINK_SEQUENCES` from individual `link_n1..link_n7` columns to `link_sequence` array column (matching real parquet format) |
+| `validate()` return signature | 2 tests | Changed `MockDataLoader.validate()` to return `(bool, list)` instead of `(bool, list, list)` |
+
+**Discoveries**:
+- Real `nlink_sequences.parquet` uses `link_sequence: BIGINT[]` array column
+- `trace_engine.py` uses DuckDB `list_extract(link_sequence, n)` to get nth link
+- Previous test failures were schema mismatch, not logic errors
+
+**Validation**:
+- Ran `pytest` in `nlink_api/`: 90/90 passed
+- Ran `test_dashboards.py`: 6/6 passed
+
+**Files Modified**:
+- `nlink_api/tests/conftest.py`
+
+---
+
+### Session: 2026-01-02 - Visualization Consolidation Phase 6 (E2E Testing)
+
+**Completed**:
+- Created automated test script `viz/tests/test_dashboards.py`
+- All 6 automated smoke tests pass:
+  - Shared module imports (colors, loaders, components)
+  - Data loaders (2.1M basin assignments, 58 flows, 41K tunnel nodes)
+  - API client integration (health check, search, trace)
+  - Basin Geometry Viewer HTTP 200 response
+  - Multiplex Analyzer HTTP 200 response
+  - Tunneling Explorer HTTP 200 response
+
+**Test Results**:
+| Test | Status |
+|------|--------|
+| Shared imports | ✓ Pass |
+| Data loaders | ✓ Pass |
+| API client | ✓ Pass |
+| Basin Geometry Viewer | ✓ Pass |
+| Multiplex Analyzer | ✓ Pass |
+| Tunneling Explorer | ✓ Pass |
+
+**Remaining Manual Tests**:
+- Basin Geometry Viewer: 4 view modes (pointcloud, recursive2d, fan2d, fan3d)
+- Tunneling Explorer: API mode UI interaction
+- Callback regression tests for all dashboards
+
+**Status**: Phase 6 automated testing complete. Consolidation verified working end-to-end.
+
+**API Server Tests**:
+- Ran `nlink_api/tests/` test suite: 65/90 tests pass
+- 25 failures due to schema mismatch (`link_sequence` vs `link_n1..link_n5` columns)
+- **RESOLVED**: Fixed in subsequent session (see "Fix API Test Suite" entry above)
+
+---
+
+### Session: 2026-01-02 - Visualization Consolidation Complete (Phases 4-5)
+
+**Completed**:
+- **Phase 4**: Updated Basin Geometry Viewer to use shared `REPO_ROOT` import
+  - Assessed integration needs: viewer uses Viridis colorscale (not basin colors), so `shared/colors.py` not needed
+  - Minimal change: standardized path handling via shared module
+- **Phase 5**: Cleanup and documentation
+  - Archived 4 superseded files to `viz/_archive/`:
+    - `dash-multiplex-explorer.py.bak`
+    - `dash-cross-n-comparison.py.bak`
+    - `tunneling-dashboard.py.bak`
+    - `path-tracer-tool.py.bak`
+  - Updated `viz/README.md` with consolidated dashboard structure
+  - Updated `VIZ-CONSOLIDATION-PLAN.md` with completion status
+
+**Final Consolidation Results**:
+| Metric | Before | After | Change |
+|--------|--------|-------|--------|
+| Dashboards | 5 | 3 | -40% |
+| Ports | 5 (8055-8062) | 3 (8055, 8056, 8060) | -40% |
+| Shared modules | 0 | 4 (colors, loaders, components, __init__) | +4 |
+| Archived files | 0 | 4 | +4 |
+
+**Dashboard Mapping**:
+- Basin Geometry Viewer (8055) - standalone, uses shared `REPO_ROOT`
+- Multiplex Analyzer (8056) - merged from Multiplex Explorer + Cross-N Comparison
+- Tunneling Explorer (8060) - merged from Tunneling Dashboard + Path Tracer
+
+**Decisions Made**:
+- Basin Geometry Viewer kept minimal integration (only `REPO_ROOT`) since it uses continuous colorscale, not categorical basin colors
+- Deferred launcher script updates as low priority
+
+**Next Steps**:
+- Phase 6: Comprehensive E2E testing (added to plan with detailed checklists)
+
+---
+
+### Session: 2026-01-02 - Visualization Consolidation Phase 3 Complete
+
+**Completed**:
+- Created `n-link-analysis/viz/multiplex-analyzer.py` (1,062 LOC)
+- Merged two dashboards into unified 6-tab application:
+  - `dash-multiplex-explorer.py` (769 LOC, 4 callbacks)
+  - `dash-cross-n-comparison.py` (670 LOC, 7 callbacks)
+- Tab structure: Basin Size, Depth Analysis, Phase Transition, Layer Connectivity, Tunnel Browser, Basin Pairs
+- Uses shared modules: colors.py, loaders.py, components.py
+- LOC reduced by 26% (1,439 -> 1,062) through shared module usage
+
+**Validation**:
+- New merged dashboard loads and renders all 6 tabs successfully
+- All original dashboards still work (no regressions)
+- Data loading verified: 2.1M basin assignments, 41K tunnel nodes, 58 flows
+
+**Architecture Impact**:
+- Port consolidation: 8056 + 8062 -> 8056 (Multiplex Analyzer)
+- Second dashboard merge complete, consolidation pattern proven
+- Now at 3 dashboards (down from 5): Basin Geometry Viewer, Multiplex Analyzer, Tunneling Explorer
+
+**Next Steps**:
+- Phase 4: Update Basin Geometry Viewer with shared imports (optional)
+- Phase 5: Cleanup and archive old files
+
+---
+
+### Session: 2026-01-02 - Visualization Consolidation Phase 2 Complete
+
+**Completed**:
+- Created `n-link-analysis/viz/tunneling/tunneling-explorer.py` (1,499 LOC)
+- Merged two dashboards into unified 6-tab application:
+  - `tunneling-dashboard.py` (726 LOC, 5 callbacks)
+  - `path-tracer-tool.py` (751 LOC, 2 callbacks)
+- Tab structure: Overview, Basin Flows, Tunnel Nodes, Path Tracer, Stability, Validation
+- Preserved dual-mode operation (local files / API mode for live tracing)
+- Updated shared module exports: added `hex_to_rgba`, `info_card`
+
+**Validation**:
+- New merged dashboard loads and creates layout successfully
+- All 5 original dashboards still work (no regressions)
+- Data loading verified: 41K tunnel nodes, 58 flows, 2.1M multiplex assignments
+
+**Architecture Impact**:
+- Port consolidation: 8060 + 8061 → 8060 (Tunneling Explorer)
+- First dashboard merge complete, pattern established for Phase 3
+- Shared modules now actively consumed by new dashboard
+
+**Next Steps**:
+- Phase 3: Merge Multiplex Explorer + Cross-N Comparison → `multiplex-analyzer.py`
+- Phase 4: Update Basin Geometry Viewer with shared imports
+- Phase 5: Cleanup and archive old files
+
+---
+
+### Session: 2026-01-02 - Visualization Consolidation Phase 1 Complete
+
+**Completed**:
+- Created `n-link-analysis/viz/shared/` directory structure
+- Extracted `colors.py`: `BASIN_COLORS`, `BASIN_SHORT_NAMES`, `get_basin_color()`, `get_short_name()`, `hex_to_rgba()`
+- Extracted `loaders.py`: 9 cached data loading functions with `lru_cache` for performance
+- Extracted `components.py`: `metric_card()`, `badge()`, `filter_row()`, `info_card()`, `stability_indicator()`, `tunnel_type_badge()`
+- Created `__init__.py` with re-exports for convenient `from shared import ...` usage
+
+**Validation**:
+- All shared modules pass import tests
+- No circular dependencies
+- All 5 existing dashboards still import and run unchanged (verified via importlib)
+- Data loaders successfully load: 2.1M basin assignments, 58 flows, 41K tunnel nodes
+
+**Architecture Impact**:
+- Established `viz/shared/` as canonical location for shared visualization components
+- Deduplication ready: colors (3 → 1), loaders (5 → 1), components (3 → 1)
+- Foundation laid for Phase 2-5 dashboard merging
+
+**Next Steps**:
+- Phase 2: Merge Tunneling Dashboard + Path Tracer → `tunneling-explorer.py`
+- Phase 3: Merge Multiplex Explorer + Cross-N Comparison → `multiplex-analyzer.py`
+
+---
+
+### Session: 2026-01-02 - Visualization Consolidation Assessment & Planning
+
+**Completed**:
+- Conducted comprehensive inventory of 5 Dash dashboard applications
+- Analyzed 4,046 LOC across 19 callbacks and ~15 data files
+- Identified duplicate patterns: basin colors (3x), short names (2x), data loaders (5x)
+- Evaluated 4 architecture options (mega-dashboard, micro-frontends, selective consolidation, unified launcher)
+- Created detailed implementation plan: `n-link-analysis/viz/VIZ-CONSOLIDATION-PLAN.md`
+
+**Inventory Results**:
+| Dashboard | Port | LOC | Callbacks |
+|-----------|------|-----|-----------|
+| Basin Geometry Viewer | 8055 | 1,130 | 1 |
+| Multiplex Explorer | 8056 | 769 | 4 |
+| Tunneling Dashboard | 8060 | 726 | 5 |
+| Path Tracer | 8061 | 751 | 2 |
+| Cross-N Comparison | 8062 | 670 | 7 |
+
+**Decisions Made**:
+- Selected Option C: Selective Consolidation (merge related tools, keep specialized ones separate)
+- Consolidation map: 5 dashboards → 3 dashboards
+  - Basin Geometry Viewer (8055) - standalone (specialized 3D visualization)
+  - Multiplex Analyzer (8056) - merge Multiplex Explorer + Cross-N Comparison
+  - Tunneling Explorer (8060) - merge Tunneling Dashboard + Path Tracer
+- Create `viz/shared/` module with: colors.py, loaders.py, components.py
+
+**Architecture Impact**:
+- Reduces port sprawl from 5 to 3
+- Establishes shared component library pattern
+- Preserves all functionality while reducing duplication
+
+**Next Steps** (5 phases in plan):
+1. Extract shared components to `viz/shared/`
+2. Merge Tunneling Dashboard + Path Tracer → Tunneling Explorer
+3. Merge Multiplex Explorer + Cross-N Comparison → Multiplex Analyzer
+4. Update Basin Geometry Viewer with shared imports
+5. Cleanup and documentation
+
+---
+
+### Session: 2026-01-02 - Shared API Client & Viz Consolidation Planning
+
+**Completed**:
+- Extracted `NLinkAPIClient` to shared module `n-link-analysis/viz/api_client.py`
+- Updated `path-tracer-tool.py` to import from shared module
+- Added comprehensive methods: `wait_for_task()`, `map_basin()`, `generate_report()`, `check_api_available()`
+- Documented shared API client in `n-link-analysis/viz/README.md`
+- Documented 3 future API integration tasks in README
+- Created `NEXT-SESSION-VIZ-CONSOLIDATION.md` with assessment plan for unifying 5 dashboard tools
+
+**Decisions Made**:
+- Shared API client located at `viz/api_client.py` (co-located with visualization tools)
+- Added methods beyond current needs to support future tool integration
+
+**Architecture Impact**:
+- Established reusable API client pattern for viz tools
+- Next session will assess consolidating 5 separate dashboards (ports 8055-8062) into unified interface
+
+**Next Steps**:
+- Visualization consolidation assessment (see `NEXT-SESSION-VIZ-CONSOLIDATION.md`)
+- Evaluate 4 architecture options: mega-dashboard, micro-frontends, selective consolidation, unified launcher
+
+---
+
+### Session: 2026-01-02 - Visualization Tool API Integration
+
+**Completed**:
+- Integrated Path Tracer Tool (`n-link-analysis/viz/tunneling/path-tracer-tool.py`) with N-Link API
+- Added `--use-api` flag for API mode with live tracing capability
+- Added `NLinkAPIClient` class for API communication
+- Implemented `trace_page_live()` for real-time N-link tracing across all N values (3-10)
+- Fixed API route ordering bug: `/pages/search` now correctly precedes `/pages/{page_id}` to avoid route collision
+
+**New Features**:
+- **API Mode**: Search all 17.9M Wikipedia pages (vs 41K tunnel nodes in local mode)
+- **Live Tracing**: Trace any page in real-time, not just known tunnel nodes
+- **Mode Indicator**: UI badge shows current mode (API vs Local Files)
+
+**Usage**:
+```bash
+# Local file mode (default) - searches tunnel nodes only
+python n-link-analysis/viz/tunneling/path-tracer-tool.py
+
+# API mode - full search and live tracing
+python n-link-analysis/viz/tunneling/path-tracer-tool.py --use-api --api-url http://localhost:8000
+```
+
+**Decisions Made**:
+- Path Tracer chosen as first API integration target due to clear benefits (expanded search, live tracing)
+- Hybrid approach: local data for known tunnel nodes, API fallback for live tracing
+- Non-breaking change: tool works both with and without API
+
+**Architecture Impact**:
+- Established pattern for API integration in visualization tools
+- `NLinkAPIClient` can be extracted to shared module for other viz tools
+
+---
+
 ### Session: 2026-01-02 - Human-Facing API Documentation
 
 **Completed**:
