@@ -8,6 +8,29 @@
 
 ---
 
+### 2026-01-02 - Gallery Tributary Trees & Written Reports Integration
+
+**What was tried**:
+- Add Tributary Trees section to gallery (37 visualizations)
+- Add Written Reports section to gallery (8 HTML reports)
+- Enable live gallery updates in Docker without image rebuild
+
+**What worked**:
+- Updated `viz/create-visualization-gallery.py` with both sections
+- Fixed regex to handle multi-word cycle names (`Gulf_of_Maine`)
+- Added volume mount to Docker reports service
+- Gallery now shows all 8 N values with tributary tree links
+
+**Discoveries**:
+- Reports service had no volume mount (served stale files from image)
+- Regex `([^_]+)__([^_]+)` fails on cycle names with underscores
+
+**Files modified**:
+- `viz/create-visualization-gallery.py`
+- `report/assets/gallery.html` (regenerated)
+
+---
+
 ### 2026-01-02 - Tributary Tree Batch Generation & Git Hygiene
 
 **What was tried**:

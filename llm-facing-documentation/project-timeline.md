@@ -18,6 +18,44 @@
 
 ## Timeline Entries
 
+### Session: 2026-01-02 - Gallery Tributary Trees & Written Reports Integration
+
+**Completed**:
+- Updated `create-visualization-gallery.py` with Tributary Trees section (37 visualizations across N=3-10)
+- Added Written Reports section to gallery generator (8 reports in 3 categories)
+- Fixed regex to handle multi-word cycle names (e.g., `Gulf_of_Maine`)
+- Added volume mount to reports Docker service for live updates during development
+
+**Decisions Made**:
+| Decision | Rationale |
+|----------|-----------|
+| Group tributary trees by N value | Cleaner organization than flat list of 37 links |
+| Mount assets directory in Docker | Enables live gallery updates without image rebuild |
+| Preserve gallery generator script | Better than manual HTML edits; reproducible and maintainable |
+
+**Gallery Structure**:
+| Section | Content |
+|---------|---------|
+| Multi-N Analysis | Phase transition plots, basin collapse charts |
+| Interactive Tools | Tunneling Sankey, Explorer, Summary Table |
+| Tributary Trees (3D) | 37 visualizations grouped by N value |
+| N=5 Basin Geometries | 9 basin 3D renders with metadata |
+| Comparison Grid | Side-by-side basin comparison |
+| Written Reports | Core findings, reference, dataset docs (8 reports) |
+
+**Files Modified**:
+- `n-link-analysis/viz/create-visualization-gallery.py`
+- `docker-compose.yml` (added volume mount for reports service)
+- `n-link-analysis/report/assets/gallery.html` (regenerated)
+
+**Validation**:
+| Service | Status | Content |
+|---------|--------|---------|
+| Reports (28070) | Running | Gallery with all sections, 37 tributary trees accessible |
+| Tributary links | Working | 4.9MB HTML files served correctly |
+
+---
+
 ### Session: 2026-01-02 - Tributary Tree Batch Generation & Git Hygiene
 
 **Completed**:

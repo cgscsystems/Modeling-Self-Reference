@@ -231,6 +231,120 @@ def generate_gallery_html() -> str:
         </section>
         """
 
+    # Build tributary trees section
+    tributary_htmls = sorted(ASSETS_DIR.glob("tributary_tree_3d_*.html"))
+    tributary_items = []
+
+    # Group by N value
+    tributary_by_n: dict[int, list[tuple[str, str, Path]]] = {}
+    for html_path in tributary_htmls:
+        # Parse: tributary_tree_3d_n=5_cycle=Massachusetts__Gulf_of_Maine_k=4_levels=4_depth=10.html
+        # Cycle names can contain underscores, so use __ as the separator between cycle pair
+        match = re.search(r"n=(\d+)_cycle=(.+)__(.+)_k=(\d+)", html_path.name)
+        if match:
+            n_val = int(match.group(1))
+            cycle_a = match.group(2).replace("_", " ")
+            cycle_b = match.group(3).replace("_", " ")
+            cycle_name = f"{cycle_a} ↔ {cycle_b}"
+            if n_val not in tributary_by_n:
+                tributary_by_n[n_val] = []
+            tributary_by_n[n_val].append((html_path.name, cycle_name, html_path))
+
+    # Build cards grouped by N
+    tributary_section = ""
+    if tributary_by_n:
+        tributary_cards = []
+        for n_val in sorted(tributary_by_n.keys()):
+            items = tributary_by_n[n_val]
+            # Create a sub-section for this N value
+            links_html = []
+            for filename, cycle_name, path in sorted(items, key=lambda x: x[1]):
+                size_mb = path.stat().st_size / (1024 * 1024)
+                links_html.append(
+                    f'<a href="{filename}" class="btn interactive" target="_blank" title="{cycle_name}">'
+                    f'{cycle_name} ({size_mb:.1f}MB)</a>'
+                )
+
+            cycle_word = "cycle" if len(items) == 1 else "cycles"
+            tributary_cards.append(f"""
+            <div class="tool-card" style="grid-column: span 1;">
+                <h4>N={n_val} Trees ({len(items)} {cycle_word})</h4>
+                <p>3D tributary tree visualizations showing page flow toward attractors</p>
+                <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.5rem;">
+                    {''.join(links_html)}
+                </div>
+            </div>
+            """)
+
+        tributary_section = f"""
+        <section class="tools-section">
+            <h2>Tributary Trees (3D)</h2>
+            <p class="section-intro">Interactive 3D visualizations showing how pages flow toward basin attractors. Each tree shows k nearest predecessors at multiple depth levels.</p>
+            <div class="tools-grid" style="grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));">
+                {''.join(tributary_cards)}
+            </div>
+        </section>
+        """
+
+    # Build written reports section
+    reports_data = [
+        # Core Findings
+        ("overview.html", "Basin Overview", "N=5 basin structure summary with trunkiness and dominance analysis", "core"),
+        ("multi-n-analysis.html", "Multi-N Analysis", "Cross-N comparative analysis (N=3-10) with phase transition findings", "core"),
+        ("tunneling-findings.html", "Tunneling Findings", "Analysis of cross-basin tunneling mechanisms and theory validation", "core"),
+        ("edit-history.html", "Edit History", "Wikipedia edit activity analysis for cycle page stability assessment", "core"),
+        # Reference
+        ("annotated-bibliography.html", "Annotated Bibliography", "Academic literature on multiplex networks, schema theory, and functional graphs", "reference"),
+        # Dataset Docs
+        ("dataset-card.html", "Dataset Card", "HuggingFace dataset metadata and usage information", "dataset"),
+        ("huggingface-readme.html", "Dataset README", "Comprehensive HuggingFace dataset documentation with examples", "dataset"),
+        ("huggingface-manifest.html", "Upload Manifest", "HuggingFace upload configurations and file manifest", "dataset"),
+    ]
+
+    reports_by_category: dict[str, list[tuple[str, str, str]]] = {"core": [], "reference": [], "dataset": []}
+    for filename, title, desc, category in reports_data:
+        if (ASSETS_DIR / filename).exists():
+            reports_by_category[category].append((filename, title, desc))
+
+    written_reports_section = ""
+    if any(reports_by_category.values()):
+        def make_report_cards(items: list[tuple[str, str, str]]) -> str:
+            cards = []
+            for filename, title, desc in items:
+                cards.append(f"""
+                <div class="tool-card">
+                    <h4>{title}</h4>
+                    <p>{desc}</p>
+                    <a href="{filename}" class="btn" target="_blank">Read Report</a>
+                </div>
+                """)
+            return ''.join(cards)
+
+        sections = []
+        if reports_by_category["core"]:
+            sections.append(f"""
+            <h3 style="margin-top: 1.5rem; color: #2c3e50;">Core Findings</h3>
+            <div class="tools-grid">{make_report_cards(reports_by_category["core"])}</div>
+            """)
+        if reports_by_category["reference"]:
+            sections.append(f"""
+            <h3 style="margin-top: 1.5rem; color: #2c3e50;">Reference</h3>
+            <div class="tools-grid">{make_report_cards(reports_by_category["reference"])}</div>
+            """)
+        if reports_by_category["dataset"]:
+            sections.append(f"""
+            <h3 style="margin-top: 1.5rem; color: #2c3e50;">Dataset Documentation</h3>
+            <div class="tools-grid">{make_report_cards(reports_by_category["dataset"])}</div>
+            """)
+
+        written_reports_section = f"""
+        <section class="tools-section">
+            <h2>Written Reports</h2>
+            <p class="section-intro">Detailed analysis documents with findings, methodology, and conclusions.</p>
+            {''.join(sections)}
+        </section>
+        """
+
     # Full HTML document
     html = f"""<!DOCTYPE html>
 <html lang="en">
@@ -519,12 +633,16 @@ def generate_gallery_html() -> str:
 
         {tunneling_section}
 
+        {tributary_section}
+
         <h2 style="font-size: 1.8rem; margin: 2rem 0 1rem; color: #2c3e50;">N=5 Basin Geometries</h2>
         <div class="gallery">
             {''.join(items_html)}
         </div>
 
         {grid_section}
+
+        {written_reports_section}
     </div>
 
     <footer>

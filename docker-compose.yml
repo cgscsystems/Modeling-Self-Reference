@@ -130,6 +130,9 @@ services:
     command: ["reports"]
     ports:
       - "${NLINK_REPORTS_PORT:-8070}:8070"
+    volumes:
+      # Mount report assets for live updates during development
+      - ./n-link-analysis/report/assets:/app/n-link-analysis/report/assets:ro
     restart: unless-stopped
 
 # ============================================
