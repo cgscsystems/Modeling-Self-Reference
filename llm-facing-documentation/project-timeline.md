@@ -18,6 +18,39 @@
 
 ## Timeline Entries
 
+### Session: 2026-01-02 (Evening) - Related Work & Literature References
+
+**Completed**:
+- Added "Related Work & Known Mathematical Frameworks" sections to theory docs per WH's recommendation
+- Web searched for seminal papers to cite (Flajolet & Odlyzko, Kivelä et al., Newman & Ziff, Broder et al., Armstrong)
+- Added ~400 word section to `n-link-rule-theory.md` covering:
+  - Functional graphs and random mappings
+  - Phase transitions on networks (percolation theory)
+  - Web graph and Wikipedia structure (bow-tie model)
+  - What's novel in this work
+- Added ~350 word section to `database-inference-graph-theory.md` covering:
+  - Multiplex and multilayer networks
+  - Database functional dependencies
+  - Schema reverse engineering
+  - What's novel in this work
+
+**Key References Added**:
+| Topic | Reference |
+|-------|-----------|
+| Functional graphs | Flajolet & Odlyzko (1990), EUROCRYPT '89 |
+| Percolation | Newman & Ziff (2000), Phys Rev Letters |
+| Bow-tie structure | Broder et al. (2000), Computer Networks |
+| Multilayer networks | Kivelä et al. (2014), J Complex Networks |
+| Functional dependencies | Armstrong (1974), IFIP Congress |
+
+**Files Modified**:
+| File | Change |
+|------|--------|
+| `theories-proofs-conjectures/n-link-rule-theory.md` | Added Related Work section after Abstract |
+| `theories-proofs-conjectures/database-inference-graph-theory.md` | Added Related Work section after Motivation |
+
+---
+
 ### Session: 2026-01-02 (Afternoon) - Hyperstructure Size Analysis
 
 **Completed**:

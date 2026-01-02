@@ -134,10 +134,14 @@ This is the *primary index* for contract objects, and should be treated as appen
   - [TUNNELING-FINDINGS.md](../../n-link-analysis/report/TUNNELING-FINDINGS.md) (Phase 5 publication-ready summary)
   - [SEMANTIC-TUNNEL-ANALYSIS.md](../../n-link-analysis/empirical-investigations/SEMANTIC-TUNNEL-ANALYSIS.md) (Phase 6: semantic content analysis)
   - [TEMPORAL-STABILITY-ANALYSIS.md](../../n-link-analysis/empirical-investigations/TEMPORAL-STABILITY-ANALYSIS.md) (temporal basin stability via edit history)
+  - [HYPERSTRUCTURE-ANALYSIS.md](../../n-link-analysis/empirical-investigations/HYPERSTRUCTURE-ANALYSIS.md) (hyperstructure size analysis)
   - Data outputs: `data/wikipedia/processed/multiplex/` (15+ files)
   - Semantic data: `data/wikipedia/processed/semantic/tunnel_node_categories.json`
   - Temporal data: `data/wikipedia/processed/temporal/edit_history_*.json`
+  - Hyperstructure data: `data/wikipedia/processed/analysis/hyperstructure_analysis.tsv`, `massachusetts_hyperstructure_analysis.tsv`
 - **Key Findings**:
+  - **Massachusetts hyperstructure size**: 1,062,344 pages (5.91% of Wikipedia) across N=3-10
+  - **N=5 dominates hyperstructure**: 94.7% contribution; multi-N adds only 5.3% marginal pages
   - **41,732 tunnel nodes identified** (2.1% of pages in hyperstructure, N=3-10)
   - **Progressive switching dominates** (98.7%) - basins change monotonically with N
   - **degree_shift is primary mechanism** (99.3%) - different Nth link causes tunneling

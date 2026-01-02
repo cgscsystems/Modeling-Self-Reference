@@ -8,6 +8,37 @@
 
 ---
 
+### 2026-01-02 (Evening) - Hyperstructure Analysis & Related Work
+
+**What was tried**:
+- Compute Massachusetts hyperstructure size (union across N=3-10)
+- Test WH's hypothesis that "2/3 of Wikipedia" is in the Massachusetts hyperstructure
+- Add Related Work sections to theory docs per WH's recommendation
+
+**What worked**:
+- Successfully computed hyperstructure by unioning parquet assignment files across N values
+- Web search verified seminal papers for citations (Flajolet & Odlyzko, Kivelä et al., Newman & Ziff, Broder et al.)
+- Added ~400 word Related Work section to n-link-rule-theory.md
+- Added ~350 word Related Work section to database-inference-graph-theory.md
+
+**Key discoveries**:
+- Massachusetts hyperstructure = 1,062,344 pages (5.91% of Wikipedia)
+- WH's guess of 2/3 was ~4.5× optimistic
+- N=5 contributes 94.7% of hyperstructure; multi-N adds only 5.3% marginal coverage
+- Hyperstructure size ≈ 1.05× peak N basin size (hyperstructures are "flat" in N dimension)
+
+**Files created/modified**:
+- `scripts/compute-hyperstructure-size.py` - Hyperstructure computation script
+- `empirical-investigations/HYPERSTRUCTURE-ANALYSIS.md` - Full analysis documentation
+- `data/wikipedia/processed/analysis/hyperstructure_analysis.tsv`
+- `data/wikipedia/processed/analysis/massachusetts_hyperstructure_analysis.tsv`
+- `llm-facing-documentation/theories-proofs-conjectures/n-link-rule-theory.md` (Related Work section)
+- `llm-facing-documentation/theories-proofs-conjectures/database-inference-graph-theory.md` (Related Work section)
+
+**Contract**: NLR-C-0004 extended with hyperstructure evidence
+
+---
+
 ### 2026-01-02 - Semantic Tunnel Analysis & Temporal Stability
 
 **What was tried**:
