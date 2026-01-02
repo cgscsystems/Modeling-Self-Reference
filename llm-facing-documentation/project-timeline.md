@@ -18,6 +18,34 @@
 
 ## Timeline Entries
 
+### Session: 2026-01-02 - Visualization Consolidation Phase 2 Complete
+
+**Completed**:
+- Created `n-link-analysis/viz/tunneling/tunneling-explorer.py` (1,499 LOC)
+- Merged two dashboards into unified 6-tab application:
+  - `tunneling-dashboard.py` (726 LOC, 5 callbacks)
+  - `path-tracer-tool.py` (751 LOC, 2 callbacks)
+- Tab structure: Overview, Basin Flows, Tunnel Nodes, Path Tracer, Stability, Validation
+- Preserved dual-mode operation (local files / API mode for live tracing)
+- Updated shared module exports: added `hex_to_rgba`, `info_card`
+
+**Validation**:
+- New merged dashboard loads and creates layout successfully
+- All 5 original dashboards still work (no regressions)
+- Data loading verified: 41K tunnel nodes, 58 flows, 2.1M multiplex assignments
+
+**Architecture Impact**:
+- Port consolidation: 8060 + 8061 → 8060 (Tunneling Explorer)
+- First dashboard merge complete, pattern established for Phase 3
+- Shared modules now actively consumed by new dashboard
+
+**Next Steps**:
+- Phase 3: Merge Multiplex Explorer + Cross-N Comparison → `multiplex-analyzer.py`
+- Phase 4: Update Basin Geometry Viewer with shared imports
+- Phase 5: Cleanup and archive old files
+
+---
+
 ### Session: 2026-01-02 - Visualization Consolidation Phase 1 Complete
 
 **Completed**:

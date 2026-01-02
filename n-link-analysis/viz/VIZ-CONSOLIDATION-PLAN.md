@@ -289,6 +289,27 @@ def trace_page(n_clicks, ...): ...
 | Callbacks | 7 | 7 |
 | Ports | 2 | 1 |
 
+#### 2.5 Validation Checkpoint
+
+Before proceeding to Phase 3:
+- [x] `tunneling-explorer.py` created with 6 tabs (2026-01-02)
+- [x] All original functionality preserved (2026-01-02)
+- [x] Uses shared modules (colors, loaders, components) (2026-01-02)
+- [x] API mode preserved for live tracing (2026-01-02)
+- [x] Original dashboards still work (no regressions) (2026-01-02)
+
+**Phase 2 Complete**: 2026-01-02
+
+**Actual Metrics**:
+| Metric | Before | After |
+|--------|--------|-------|
+| Files | 2 | 1 |
+| LOC | 1,477 | 1,499 |
+| Callbacks | 7 | 7 |
+| Ports | 2 | 1 |
+
+Note: LOC slightly higher due to better formatting and docstrings. Net benefit is the unified tool and shared module usage.
+
 ---
 
 ### Phase 3: Merge Cross-N Tools (8056 + 8062)
@@ -462,6 +483,17 @@ python n-link-analysis/viz/launch-all.py
 ---
 
 ## Changelog
+
+### 2026-01-02 (Phase 2 Complete)
+- Created `viz/tunneling/tunneling-explorer.py` (1,499 LOC) merging:
+  - `tunneling-dashboard.py` (726 LOC) - 5 tabs
+  - `path-tracer-tool.py` (751 LOC) - search + trace functionality
+- New 6-tab structure: Overview, Basin Flows, Tunnel Nodes, Path Tracer, Stability, Validation
+- Uses shared modules: colors.py, loaders.py, components.py
+- Preserves dual-mode operation (local files / API mode)
+- Added `hex_to_rgba` and `info_card` to shared module exports
+- All 5 original dashboards still work (no regressions)
+- Port consolidation: 8060 + 8061 → 8060
 
 ### 2026-01-02 (Phase 1 Complete)
 - Created `viz/shared/` directory with `__init__.py`, `colors.py`, `loaders.py`, `components.py`

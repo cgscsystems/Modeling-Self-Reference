@@ -14,6 +14,7 @@ from .colors import (
     BASIN_SHORT_NAMES,
     get_basin_color,
     get_short_name,
+    hex_to_rgba,
 )
 
 from .loaders import (
@@ -29,6 +30,7 @@ from .components import (
     metric_card,
     filter_row,
     badge,
+    info_card,
 )
 
 __all__ = [
@@ -37,6 +39,7 @@ __all__ = [
     "BASIN_SHORT_NAMES",
     "get_basin_color",
     "get_short_name",
+    "hex_to_rgba",
     # loaders
     "load_basin_assignments",
     "load_basin_flows",
@@ -48,4 +51,5 @@ __all__ = [
     "metric_card",
     "filter_row",
     "badge",
+    "info_card",
 ]
