@@ -2,6 +2,16 @@
 
 This directory contains tools for visualizing Wikipedia N-link basin structures.
 
+## Dashboard Quick Start
+
+| Dashboard | Port | Command |
+|-----------|------|---------|
+| Basin Geometry Viewer | 8055 | `python n-link-analysis/viz/dash-basin-geometry-viewer.py` |
+| Multiplex Explorer | 8056 | `python n-link-analysis/viz/dash-multiplex-explorer.py` |
+| Tunneling Dashboard | 8060 | `python n-link-analysis/viz/tunneling/tunneling-dashboard.py` |
+| Path Tracer | 8061 | `python n-link-analysis/viz/tunneling/path-tracer-tool.py` |
+| **Cross-N Comparison** | 8062 | `python n-link-analysis/viz/dash-cross-n-comparison.py` |
+
 ## Quick Start
 
 ### Generate Static Images (PNG)
@@ -136,6 +146,49 @@ python n-link-analysis/viz/dash-multiplex-explorer.py --port 8080
 ```
 
 **See**: [MULTIPLEX-EXPLORER-GUIDE.md](MULTIPLEX-EXPLORER-GUIDE.md) for detailed usage
+
+### `dash-cross-n-comparison.py`
+**Purpose**: Side-by-side comparison of basin properties across N values (N=3-10)
+
+**Key Features**:
+- Basin size comparison with log/linear scale toggle
+- Depth distribution analysis (violin plots, statistics)
+- Phase transition explorer with N slider
+- Tunneling flow Sankey diagram
+
+**Tabs**:
+1. **Basin Size**: Compare sizes across N for selected cycles
+2. **Depth Analysis**: Violin plots and depth statistics per cycle
+3. **Phase Transition**: Slider-based N selection with size charts
+4. **Tunneling Flows**: Sankey diagram of cross-basin page movements
+
+**Common Usage**:
+```bash
+# Launch on default port
+python n-link-analysis/viz/dash-cross-n-comparison.py
+
+# Custom port
+python n-link-analysis/viz/dash-cross-n-comparison.py --port 8062
+```
+
+### `generate-multi-n-figures.py`
+**Purpose**: Generate static multi-N analysis figures for reports
+
+**Key Features**:
+- Phase transition chart (basin size vs N)
+- Basin collapse comparison (N=5 vs N=10)
+- Tunnel node distribution chart
+- Depth distribution by N
+- Summary statistics HTML table
+
+**Common Usage**:
+```bash
+# Generate all figures
+python n-link-analysis/viz/generate-multi-n-figures.py --all
+
+# Generate specific figures
+python n-link-analysis/viz/generate-multi-n-figures.py --phase-transition --collapse-chart
+```
 
 ## Output Locations
 
