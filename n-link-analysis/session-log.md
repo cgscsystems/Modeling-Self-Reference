@@ -3,8 +3,40 @@
 **Document Type**: Cumulative
 **Target Audience**: LLMs + Developers
 **Purpose**: Append-only record of analysis decisions, experiments, and outcomes
-**Last Updated**: 2026-01-01
+**Last Updated**: 2026-01-02
 **Status**: Active
+
+---
+
+### 2026-01-02 - Semantic Tunnel Analysis & Temporal Stability
+
+**What was tried**:
+- Assess human collaboration feedback against recent work
+- Build lightweight temporal analysis using Wikipedia API (vs downloading multiple dumps)
+- Semantic analysis of tunnel nodes using Wikipedia categories
+
+**What worked**:
+- Edit history API fetcher successfully retrieves revision data for cycle pages
+- Confirmed basin cycles are temporally stable (59 edits to Autumn/Summer, N=5 links unchanged)
+- Gulf of Maine: 0 edits in 90 days (anchor for 1M-page basin)
+- Semantic analysis reveals tunnel nodes cluster at domain boundaries (22.5% New England)
+- Multi-basin nodes are semantic gateways bridging distinct knowledge domains
+
+**Key discoveries**:
+- Tunnel nodes are 3× less likely to be biographical articles than non-tunnel nodes
+- Places tunnel more than people (rivers, mountains, historical sites)
+- Example gateway: USS Washington (1775) bridges Revolutionary War ↔ Gulf of Maine geography
+
+**Files created**:
+- `scripts/temporal/fetch-edit-history.py` - Wikipedia API edit history fetcher
+- `scripts/semantic/fetch-page-categories.py` - Wikipedia category fetcher
+- `empirical-investigations/TEMPORAL-STABILITY-ANALYSIS.md`
+- `empirical-investigations/SEMANTIC-TUNNEL-ANALYSIS.md`
+- `report/EDIT-HISTORY-ANALYSIS.md`
+- `data/wikipedia/processed/temporal/edit_history_2026-01-02.json`
+- `data/wikipedia/processed/semantic/tunnel_node_categories.json`
+
+**Contract**: NLR-C-0004 extended with Phase 6 (semantic) and temporal findings
 
 ---
 

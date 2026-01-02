@@ -3,7 +3,7 @@
 **Document Type**: Cumulative history
 **Target Audience**: LLMs
 **Purpose**: Chronological record of project evolution, decisions, and discoveries
-**Last Updated**: 2026-01-01
+**Last Updated**: 2026-01-02
 **Status**: Active (append-only)
 
 ---
@@ -17,6 +17,54 @@
 ---
 
 ## Timeline Entries
+
+### Session: 2026-01-02 - Semantic Tunnel Analysis & Temporal Stability
+
+**Completed**:
+- Reviewed human collaboration feedback (wh-mm_on-pr.md, wh-mm_post-pr.md) against recent work
+- Created temporal evolution analysis infrastructure:
+  - `scripts/temporal/fetch-edit-history.py` - Wikipedia API edit history fetcher
+  - `data/wikipedia/processed/temporal/edit_history_2026-01-02.json` - Raw API results
+  - `report/EDIT-HISTORY-ANALYSIS.md` - Generated stability report
+  - `empirical-investigations/TEMPORAL-STABILITY-ANALYSIS.md` - Analysis documentation
+- Created semantic tunnel node analysis:
+  - `scripts/semantic/fetch-page-categories.py` - Wikipedia category fetcher
+  - `data/wikipedia/processed/semantic/tunnel_node_categories.json` - Category data (200 nodes)
+  - `empirical-investigations/SEMANTIC-TUNNEL-ANALYSIS.md` - Full semantic analysis
+- Updated NLR-C-0004 contract with new evidence and findings
+
+**Decisions Made**:
+| Decision | Rationale |
+|----------|-----------|
+| Use Wikipedia API for temporal analysis | Lighter-weight than downloading multiple dumps |
+| Focus on prose-only link extraction | Confirmed our pipeline correctly filters non-prose links |
+| Create new `scripts/temporal/` and `scripts/semantic/` directories | Separate concerns from core N-link analysis |
+
+**Discoveries**:
+| Finding | Implication |
+|---------|-------------|
+| Basin cycles are temporally stable | 59 edits to Autumn/Summer pages, yet N=5 links unchanged |
+| Tunnel nodes cluster at semantic boundaries | 22.5% New England categories vs ~1% expected by chance |
+| Tunnel nodes are 3× less likely to be biographies | Places tunnel more than people |
+| Multi-basin nodes are semantic gateways | USS Washington bridges Revolutionary War ↔ Gulf of Maine geography |
+| Gulf of Maine: 0 edits in 90 days | Anchor for 1M-page basin is rock-solid |
+
+**Validation**:
+- Confirmed Autumn→Summer→Autumn cycle intact in current Wikipedia
+- Verified prose-only extraction matches API wikitext parsing
+- Compared tunnel vs non-tunnel category distributions (200 samples each)
+
+**Architecture Impact**:
+- New directory structure: `scripts/temporal/`, `scripts/semantic/`
+- New data directories: `data/wikipedia/processed/temporal/`, `data/wikipedia/processed/semantic/`
+- Extended NLR-C-0004 to include Phase 6 (semantic analysis) and temporal stability
+
+**Next Steps**:
+- Larger semantic sample (all 41K tunnel nodes)
+- Cross-language validation (German/French Wikipedia)
+- Related Work section for theory docs (reference buckets from WH feedback)
+
+---
 
 ### Session: 2026-01-01 (Late Night) - HALT Probability Conjectures Validated
 

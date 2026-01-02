@@ -4,7 +4,7 @@
 
 This is the *primary index* for contract objects, and should be treated as append-only (you can add new entries; avoid rewriting old ones except to mark them deprecated).
 
-**Last Updated**: 2026-01-01 (Session: Multi-N Phase Transition Complete N=3-10)
+**Last Updated**: 2026-01-02 (Session: Semantic tunnel analysis & temporal stability)
 
 ---
 
@@ -132,15 +132,23 @@ This is the *primary index* for contract objects, and should be treated as appen
   - [MULTIPLEX-CONNECTIVITY.md](../../n-link-analysis/empirical-investigations/MULTIPLEX-CONNECTIVITY.md) (Phase 3 results)
   - [TUNNEL-MECHANISM-DEEP-DIVE.md](../../n-link-analysis/empirical-investigations/TUNNEL-MECHANISM-DEEP-DIVE.md) (Phase 4 results)
   - [TUNNELING-FINDINGS.md](../../n-link-analysis/report/TUNNELING-FINDINGS.md) (Phase 5 publication-ready summary)
+  - [SEMANTIC-TUNNEL-ANALYSIS.md](../../n-link-analysis/empirical-investigations/SEMANTIC-TUNNEL-ANALYSIS.md) (Phase 6: semantic content analysis)
+  - [TEMPORAL-STABILITY-ANALYSIS.md](../../n-link-analysis/empirical-investigations/TEMPORAL-STABILITY-ANALYSIS.md) (temporal basin stability via edit history)
   - Data outputs: `data/wikipedia/processed/multiplex/` (15+ files)
+  - Semantic data: `data/wikipedia/processed/semantic/tunnel_node_categories.json`
+  - Temporal data: `data/wikipedia/processed/temporal/edit_history_*.json`
 - **Key Findings**:
-  - **9,018 tunnel nodes identified** (0.45% of pages in hyperstructure)
+  - **41,732 tunnel nodes identified** (2.1% of pages in hyperstructure, N=3-10)
   - **Progressive switching dominates** (98.7%) - basins change monotonically with N
   - **degree_shift is primary mechanism** (99.3%) - different Nth link causes tunneling
   - **N=5 is critical**: 100% of tunnel transitions involve N=5
   - **Depth predicts tunneling**: Strong negative correlation (r=-0.83, p<0.001)
   - **Gulf_of_Maine is sink basin**: Absorbs pages from all other basins at N=6
   - **Semantic model extracted**: 100 central entities, 9 subsystems, 36 hidden relationships
+  - **Semantic clustering**: Tunnel nodes concentrate at domain boundaries (22.5% New England vs ~1% expected)
+  - **Tunnel nodes are gateways**: Multi-basin nodes bridge distinct knowledge domains (e.g., Revolutionary War ↔ Geography)
+  - **Fewer biographies**: Tunnel nodes 3× less likely to be "Living people" articles
+  - **Basin temporal stability**: Cycle-defining pages stable despite high edit activity (59 edits, no N=5 link changes)
 - **Theory Claims Evaluated**:
   - **Validated**: "Tunnel nodes exist at basin boundaries" → 9,018 pages switch basins across N
   - **Validated**: "Fixed-N basins are 1D slices of multiplex" → Multiplex graph structure confirmed (9.7M edges)
