@@ -1439,6 +1439,7 @@ def main():
     global USE_API, API_URL, api_client
 
     parser = argparse.ArgumentParser(description="Run Tunneling Explorer dashboard")
+    parser.add_argument("--host", type=str, default="127.0.0.1", help="Host to bind to")
     parser.add_argument("--port", type=int, default=8060, help="Port to run on")
     parser.add_argument("--debug", action="store_true", help="Run in debug mode")
     parser.add_argument(
@@ -1484,14 +1485,14 @@ def main():
         print(f"  Multiplex assignments: {len(multiplex_df):,}")
 
     print()
-    print(f"Starting server on http://localhost:{args.port}")
+    print(f"Starting server on http://{args.host}:{args.port}")
     print("Press Ctrl+C to stop")
     print()
 
     # Set layout after globals are configured
     app.layout = create_layout()
 
-    app.run(debug=args.debug, port=args.port)
+    app.run(host=args.host, debug=args.debug, port=args.port)
     return 0
 
 

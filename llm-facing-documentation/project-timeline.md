@@ -18,6 +18,45 @@
 
 ## Timeline Entries
 
+### Session: 2026-01-02 - Docker-Based Deployment Infrastructure
+
+**Completed**:
+- Created Docker deployment for API + 3 visualization dashboards
+- `Dockerfile`: Multi-service container (Python 3.11-slim, ~1.4GB)
+- `docker-compose.yml`: 4-service orchestration (api:8000, basin-viewer:8055, multiplex:8056, tunneling:8060)
+- `docker/entrypoint.sh`: Flexible startup (7 modes: api, basin-viewer, multiplex, tunneling, all, shell, test)
+- `docker/README.md`: Comprehensive deployment documentation
+- `.dockerignore`: Build optimization (excludes data, venv, docs)
+- Fixed `tunneling-explorer.py`: Added missing `--host` argument
+
+**Decisions Made**:
+| Decision | Rationale |
+|----------|-----------|
+| Single image, multi-service | Simpler deployment, shared dependencies |
+| External data mount | Data is 8+ GB; must be downloaded separately |
+| Tunneling → API via Docker network | Enables live path tracing in containerized environment |
+
+**Architecture Impact**:
+- New deployment path: `docker-compose up` starts full system
+- Services auto-restart and have health checks
+- Data volume: `./data:/app/data:ro` (read-only mount)
+
+**Validation**:
+| Test | Result |
+|------|--------|
+| Docker build | ✓ 1.4GB image |
+| Unit tests in container | ✓ 62/62 passed |
+| Entrypoint modes | ✓ All 7 modes working |
+
+**Files Created**:
+- `Dockerfile`
+- `docker-compose.yml`
+- `docker/entrypoint.sh`
+- `docker/README.md`
+- `.dockerignore`
+
+---
+
 ### Session: 2026-01-02 - Fix API Test Suite (Mock Data Format)
 
 **Completed**:

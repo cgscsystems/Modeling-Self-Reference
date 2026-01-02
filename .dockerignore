@@ -1,0 +1,76 @@
+# N-Link Analysis - Docker Ignore
+# Exclude files not needed in container build
+
+# Git
+.git
+.gitignore
+.gitattributes
+
+# Development environments
+.venv/
+venv/
+env/
+.env
+*.env.local
+
+# IDE and editors
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+.eggs/
+dist/
+build/
+*.egg
+
+# Testing and coverage
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.nox/
+
+# Documentation (not needed at runtime)
+*.md
+!docker/README.md
+docs/
+llm-facing-documentation/
+meta-maintenance/
+
+# Data - mounted at runtime, not built into image
+data/
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb
+
+# Logs and temp files
+*.log
+*.tmp
+*.bak
+temp/
+tmp/
+
+# DevContainer (not needed in production image)
+.devcontainer/
+
+# Archive directories
+*/_archive/
+*/deprecated/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Large analysis outputs (mounted separately)
+n-link-analysis/report/assets/
+n-link-analysis/scripts/output/

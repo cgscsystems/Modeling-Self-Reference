@@ -1,0 +1,112 @@
+# N-Link Analysis - Docker Compose Configuration
+#
+# Usage:
+#   docker-compose up              # Start all services
+#   docker-compose up api          # Start only API
+#   docker-compose up dashboards   # Start all dashboards
+#
+# Prerequisites:
+#   - Data must be downloaded to ./data/wikipedia/processed/
+#   - See docker/README.md for data setup instructions
+
+services:
+  # ============================================
+  # N-Link REST API
+  # ============================================
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: nlink-analysis:latest
+    container_name: nlink-api
+    command: ["api"]
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./data:/app/data:ro
+    environment:
+      - DATA_SOURCE=local
+      - LOCAL_DATA_DIR=/app/data/wikipedia/processed
+      - ANALYSIS_OUTPUT_DIR=/app/data/wikipedia/processed/analysis
+      - MAX_WORKERS=4
+      - DEBUG=false
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/v1/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    restart: unless-stopped
+
+  # ============================================
+  # Basin Geometry Viewer (Port 8055)
+  # ============================================
+  basin-viewer:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: nlink-analysis:latest
+    container_name: nlink-basin-viewer
+    command: ["basin-viewer"]
+    ports:
+      - "8055:8055"
+    volumes:
+      - ./data:/app/data:ro
+    depends_on:
+      - api
+    restart: unless-stopped
+
+  # ============================================
+  # Multiplex Analyzer (Port 8056)
+  # ============================================
+  multiplex:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: nlink-analysis:latest
+    container_name: nlink-multiplex
+    command: ["multiplex"]
+    ports:
+      - "8056:8056"
+    volumes:
+      - ./data:/app/data:ro
+    depends_on:
+      - api
+    restart: unless-stopped
+
+  # ============================================
+  # Tunneling Explorer (Port 8060)
+  # ============================================
+  tunneling:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: nlink-analysis:latest
+    container_name: nlink-tunneling
+    command: ["tunneling"]
+    ports:
+      - "8060:8060"
+    volumes:
+      - ./data:/app/data:ro
+    environment:
+      # Connect to API for live path tracing
+      - API_URL=http://api:8000
+    depends_on:
+      api:
+        condition: service_healthy
+    restart: unless-stopped
+
+# ============================================
+# Service Profiles for Selective Startup
+# ============================================
+# docker-compose --profile dashboards up
+# docker-compose --profile minimal up
+
+  # Dashboard-only profile services are defined above with depends_on
+
+# ============================================
+# Networks
+# ============================================
+networks:
+  default:
+    name: nlink-network
