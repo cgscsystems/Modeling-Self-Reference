@@ -18,6 +18,46 @@
 
 ## Timeline Entries
 
+### Session: 2026-01-02 - Visualization Consolidation Assessment & Planning
+
+**Completed**:
+- Conducted comprehensive inventory of 5 Dash dashboard applications
+- Analyzed 4,046 LOC across 19 callbacks and ~15 data files
+- Identified duplicate patterns: basin colors (3x), short names (2x), data loaders (5x)
+- Evaluated 4 architecture options (mega-dashboard, micro-frontends, selective consolidation, unified launcher)
+- Created detailed implementation plan: `n-link-analysis/viz/VIZ-CONSOLIDATION-PLAN.md`
+
+**Inventory Results**:
+| Dashboard | Port | LOC | Callbacks |
+|-----------|------|-----|-----------|
+| Basin Geometry Viewer | 8055 | 1,130 | 1 |
+| Multiplex Explorer | 8056 | 769 | 4 |
+| Tunneling Dashboard | 8060 | 726 | 5 |
+| Path Tracer | 8061 | 751 | 2 |
+| Cross-N Comparison | 8062 | 670 | 7 |
+
+**Decisions Made**:
+- Selected Option C: Selective Consolidation (merge related tools, keep specialized ones separate)
+- Consolidation map: 5 dashboards → 3 dashboards
+  - Basin Geometry Viewer (8055) - standalone (specialized 3D visualization)
+  - Multiplex Analyzer (8056) - merge Multiplex Explorer + Cross-N Comparison
+  - Tunneling Explorer (8060) - merge Tunneling Dashboard + Path Tracer
+- Create `viz/shared/` module with: colors.py, loaders.py, components.py
+
+**Architecture Impact**:
+- Reduces port sprawl from 5 to 3
+- Establishes shared component library pattern
+- Preserves all functionality while reducing duplication
+
+**Next Steps** (5 phases in plan):
+1. Extract shared components to `viz/shared/`
+2. Merge Tunneling Dashboard + Path Tracer → Tunneling Explorer
+3. Merge Multiplex Explorer + Cross-N Comparison → Multiplex Analyzer
+4. Update Basin Geometry Viewer with shared imports
+5. Cleanup and documentation
+
+---
+
 ### Session: 2026-01-02 - Shared API Client & Viz Consolidation Planning
 
 **Completed**:
