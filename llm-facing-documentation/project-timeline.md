@@ -18,6 +18,37 @@
 
 ## Timeline Entries
 
+### Session: 2026-01-02 - Human-Facing API Documentation
+
+**Completed**:
+- Rewrote `nlink_api/README.md` with comprehensive human-facing documentation
+- Added Usage Guide with curl examples for all operations:
+  - Tracing N-link paths (single page)
+  - Sampling traces (sync/async patterns)
+  - Mapping basins from cycles
+  - Branch analysis
+  - Report generation (trunkiness, human reports)
+  - Background task workflow
+- Added complete API Reference tables (23 endpoints across 6 categories)
+- Added Configuration section with all environment variables
+- Added Implementation Details:
+  - Architecture diagram and file descriptions
+  - Layered design explanation (router → service → engine)
+  - Core engines table mapping to source scripts
+  - Background task system with sync/async thresholds
+  - Data flow example
+- Added Testing section with test suite overview
+
+**Decisions Made**:
+- Dual-audience structure: Users get quick start + examples, developers get implementation details
+- curl examples throughout for practical copy-paste usage
+
+**Validation**:
+- Documentation reviewed against actual schemas and routers
+- All endpoint tables verified against router files
+
+---
+
 ### Session: 2026-01-02 - API Automated Testing Infrastructure
 
 **Completed**:
