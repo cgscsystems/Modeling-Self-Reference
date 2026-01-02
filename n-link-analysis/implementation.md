@@ -3,7 +3,7 @@
 **Document Type**: Implementation  
 **Target Audience**: LLMs + Developers  
 **Purpose**: Define how to compute basin partitions and validation metrics from Wikipedia N-Link sequences  
-**Last Updated**: 2025-12-31  
+**Last Updated**: 2026-01-02  
 **Dependencies**: [../data-pipeline/wikipedia-decomposition/INDEX.md](../data-pipeline/wikipedia-decomposition/INDEX.md), [../llm-facing-documentation/theories-proofs-conjectures/n-link-rule-theory.md](../llm-facing-documentation/theories-proofs-conjectures/n-link-rule-theory.md)  
 **Status**: Draft
 
@@ -159,6 +159,37 @@ Implement and evaluate non-fixed rules (mod-K, adaptive depth, cycle-avoiding), 
 
 Scripts live in `scripts/` and are intended to be runnable from repo root with the configured venv.
 
-- `scripts/compute-basin-stats.py` (placeholder)
-- `scripts/compute-universal-attractors.py` (placeholder)
-- `scripts/quick-queries.py` (placeholder)
+See [scripts-reference.md](scripts-reference.md) for complete documentation.
+
+### Core Engines (`scripts/_core/`)
+
+Reusable logic extracted from CLI scripts for use by both CLI and API:
+
+- `_core/trace_engine.py` - Trace sampling logic (from `sample-nlink-traces.py`)
+- `_core/basin_engine.py` - Basin mapping logic (planned)
+- `_core/report_engine.py` - Report generation logic (planned)
+
+Pattern: CLI scripts import from `_core/` and add argument parsing + output writing.
+
+---
+
+## API Service Layer
+
+A FastAPI-based REST API is available in `nlink_api/` (top-level package):
+
+```bash
+# Start the server
+uvicorn nlink_api.main:app --reload --port 8000
+
+# API docs at http://127.0.0.1:8000/docs
+```
+
+**Endpoints**:
+- `/api/v1/health`, `/api/v1/status` - Health checks
+- `/api/v1/data/*` - Data source info, validation, page lookup
+- `/api/v1/traces/*` - Trace sampling (sync or background)
+- `/api/v1/tasks/*` - Background task management
+
+**Background Tasks**: Long-running operations use ThreadPoolExecutor with progress tracking.
+
+See [../nlink_api/README.md](../nlink_api/README.md) for details.

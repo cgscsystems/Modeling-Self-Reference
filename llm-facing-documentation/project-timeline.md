@@ -18,6 +18,58 @@
 
 ## Timeline Entries
 
+### Session: 2026-01-02 (Night 5) - FastAPI Service Layer Foundation
+
+**Completed**:
+- Created `nlink_api/` FastAPI package with full structure
+- Implemented ThreadPoolExecutor-based background task system
+- Created routers: health, tasks, data, traces
+- Extracted trace sampling logic to `n-link-analysis/scripts/_core/trace_engine.py`
+- Refactored `sample-nlink-traces.py` to use `_core` module
+- Added FastAPI dependencies to `requirements.txt`
+
+**Architecture**:
+- New `nlink_api/` top-level package (separate from `n-link-analysis/`)
+- `_core/` pattern: Extract reusable logic from CLI scripts for API reuse
+- Background tasks via `ThreadPoolExecutor` (lightweight, no Redis/Celery)
+- Requests with `num_samples > 100` run as background tasks with progress tracking
+
+**Key Endpoints**:
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/api/v1/health` | GET | Liveness check |
+| `/api/v1/status` | GET | Detailed status |
+| `/api/v1/data/source` | GET | Data source info |
+| `/api/v1/data/validate` | POST | Validate data files |
+| `/api/v1/traces/single` | GET | Trace single path |
+| `/api/v1/traces/sample` | POST | Sample traces (sync/background) |
+| `/api/v1/tasks/{id}` | GET | Task status |
+
+**Files Created**:
+| File | Purpose |
+|------|---------|
+| `nlink_api/__init__.py` | Package init |
+| `nlink_api/main.py` | FastAPI app factory |
+| `nlink_api/config.py` | Configuration |
+| `nlink_api/dependencies.py` | Dependency injection |
+| `nlink_api/tasks/manager.py` | Background task system |
+| `nlink_api/routers/*.py` | API endpoints |
+| `nlink_api/schemas/*.py` | Pydantic models |
+| `nlink_api/services/*.py` | Business logic |
+| `n-link-analysis/scripts/_core/trace_engine.py` | Extracted trace logic |
+
+**Validation**:
+- API server starts: `uvicorn nlink_api.main:app`
+- CLI script still works: `python sample-nlink-traces.py --n 5 --num 5`
+- Import successful: `from nlink_api.main import app`
+
+**Next Steps** (documented in `nlink_api/NEXT-SESSION.md`):
+- Phase 4: Extract basin engines, create `/basins/*` endpoints
+- Phase 5: Extract report engine, create `/reports/*` endpoints
+- Phase 6: Add `--use-api` option to `reproduce-main-findings.py`
+
+---
+
 ### Session: 2026-01-02 (Night 4) - HuggingFace Data Pipeline Integration
 
 **Completed**:
