@@ -8,6 +8,31 @@
 
 ---
 
+### 2026-01-01 (Morning) - Viz & Reporting N=3-10 Full Support
+
+**What was tried**:
+- Regenerate `tunnel_nodes.parquet` with N8-N10 columns
+- Update 3 visualization scripts with hardcoded N=3-7 ranges
+- Regenerate all tunneling pipeline TSV outputs
+
+**What worked**:
+- `find-tunnel-nodes.py --n-max 10` added basin_at_N8/N9/N10 columns
+- All 3 scripts updated: path-tracer-tool.py, dash-multiplex-explorer.py, generate-tunneling-report.py
+- Pipeline scripts (classify-tunnel-types, compute-tunnel-frequency, quantify-basin-stability) regenerated data
+
+**Key findings**:
+- Tunnel nodes increased 4.6× from 9,018 → 41,732 with N=3-10
+- 32,714 new tunnel nodes appear only when analyzing N>7
+- Basin flows increased from 16 → 58, basins tracked from 9 → 15
+- `analyze-tunnel-mechanisms.py` too slow (10+ min) - skipped regeneration
+
+**Files updated**:
+- Data: tunnel_nodes.parquet, tunnel_classification.tsv, tunnel_frequency_ranking.tsv, basin_stability_scores.tsv, basin_flows.tsv
+- Scripts: path-tracer-tool.py (5 locations), dash-multiplex-explorer.py (1), generate-tunneling-report.py (1)
+- Docs: VIZ-DATA-GAP-ANALYSIS.md (marked RESOLVED)
+
+---
+
 ### 2026-01-01 (Post-Midnight) - HF Dataset Documentation + Viz Gap Analysis
 
 **What was tried**:
