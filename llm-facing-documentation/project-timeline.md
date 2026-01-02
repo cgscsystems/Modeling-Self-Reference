@@ -18,6 +18,32 @@
 
 ## Timeline Entries
 
+### Session: 2026-01-02 (Night 3) - HuggingFace Dataset Validation Script
+
+**Completed**:
+- Created `n-link-analysis/scripts/validate-hf-dataset.py` - comprehensive dataset validation
+- Downloads dataset from HuggingFace and runs 30 validation checks
+- Validates: file existence, parquet schemas, row counts, data integrity, cross-file consistency
+- Includes reproduction test that confirms N=5 phase transition finding
+
+**Discoveries**:
+| Finding | Documented | Actual | Note |
+|---------|------------|--------|------|
+| Tunnel nodes count | 9,018 (0.45%) | 41,732 (2.01%) | DATASET_CARD.md needs correction |
+| multiplex_edges schema | `page_id, N, target_page_id` | `src_page_id, src_N, dst_page_id, dst_N, edge_type` | More complete than documented |
+
+**Validation**:
+- All 30 checks pass
+- N=5 confirmed as phase transition peak (1,006,218 pages in Massachusetts basin)
+- Dataset fully supports result reproduction
+
+**Files Created**:
+| File | Description |
+|------|-------------|
+| `n-link-analysis/scripts/validate-hf-dataset.py` | HF dataset download and validation script |
+
+---
+
 ### Session: 2026-01-02 (Night 2) - HuggingFace Dataset Upload Complete
 
 **Completed**:

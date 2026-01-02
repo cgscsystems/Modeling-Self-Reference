@@ -8,6 +8,26 @@
 
 ---
 
+### 2026-01-02 (Night 3) - HuggingFace Dataset Validation Script
+
+**What was tried**:
+- Create script to download HF dataset and validate it provides everything for reproduction
+
+**What worked**:
+- `validate-hf-dataset.py` created with 30 validation checks
+- Downloads from HuggingFace, validates schemas, row counts, data integrity
+- Reproduction test confirms N=5 phase transition finding
+
+**Key discoveries**:
+- Tunnel nodes: 41,732 (2.01%), not 9,018 (0.45%) as in DATASET_CARD.md
+- multiplex_edges schema: `src_page_id, src_N, dst_page_id, dst_N, edge_type` (not as documented)
+- pyarrow cleanup crash requires `os._exit()` workaround
+
+**Files created**:
+- `n-link-analysis/scripts/validate-hf-dataset.py`
+
+---
+
 ### 2026-01-02 (Night 2) - HuggingFace Dataset Upload Complete
 
 **What was tried**:
