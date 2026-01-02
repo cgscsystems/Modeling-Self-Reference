@@ -8,6 +8,30 @@
 
 ---
 
+### 2026-01-01 (Night) - Visualization Suite Validation
+
+**What was tried**:
+- Test all new visualization and reporting code from previous session
+- Validate figure generation, dashboard startup, gallery, and report references
+
+**What worked**:
+- `generate-multi-n-figures.py --all`: 5 figures generated, 2.1M assignments loaded
+- `dash-cross-n-comparison.py`: starts on port 8062, loads 58 flows
+- Gallery HTML includes Multi-N Analysis section correctly
+- All 4 figure references in MULTI-N-ANALYSIS-REPORT.md resolve
+
+**What needed fixing**:
+- `requirements.txt` missing kaleido dependency
+- Initial attempt with kaleido 0.2.1 worked but showed deprecation warnings
+- Updated to `kaleido>=1.0.0` for plotly 6.x compatibility
+
+**Files updated**:
+- `requirements.txt` - added `kaleido>=1.0.0`
+
+Commit: pending
+
+---
+
 ### 2026-01-01 (Evening) - Multi-N Visualization Suite & Unified Report
 
 **What was tried**:

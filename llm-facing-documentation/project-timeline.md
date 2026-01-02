@@ -18,6 +18,28 @@
 
 ## Timeline Entries
 
+### Session: 2026-01-01 (Night) - Visualization Suite Validation
+
+**Completed**:
+- Validated all new visualization and reporting code from previous session
+- Tested `generate-multi-n-figures.py --all`: 5 figures generated, 2.1M basin assignments loaded
+- Tested `dash-cross-n-comparison.py`: dashboard starts on port 8062, loads 58 cross-basin flows
+- Verified gallery HTML includes Multi-N Analysis section
+- Verified `MULTI-N-ANALYSIS-REPORT.md` figure references resolve correctly
+- Fixed kaleido dependency: `requirements.txt` updated to `kaleido>=1.0.0`
+
+**Decisions Made**:
+| Decision | Rationale |
+|----------|-----------|
+| Use `kaleido>=1.0.0` | Compatible with plotly 6.x in .venv, avoids deprecation warnings |
+
+**Validation**:
+- All 5 generated figures have valid file sizes (86KB-4.8MB)
+- Dashboard loads and serves correctly
+- All 4 figure references in report resolve to existing files
+
+---
+
 ### Session: 2026-01-01 (Evening) - Multi-N Visualization Suite & Unified Report
 
 **Completed**:
