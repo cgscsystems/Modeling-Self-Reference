@@ -8,6 +8,34 @@
 
 ---
 
+### 2026-01-02 (Night) - Hugging Face Dataset Validation & Upload Script
+
+**What was tried**:
+- Validate all dataset files before Hugging Face upload
+- Update documentation to match actual file schemas and sizes
+- Create automated upload script
+
+**What worked**:
+- All parquet files validated (readable, correct row counts, no PII)
+- DATASET_CARD.md fixed: added `cycle_key`, `entry_id`, `n_distinct_basins` fields; corrected N range
+- HUGGINGFACE-UPLOAD-MANIFEST.md updated with accurate sizes and validation checkmarks
+- `upload-to-huggingface.py` script created with dry-run, config options (minimal/full/complete)
+- Dry run successful: 71 files, 1.74 GB staged correctly
+
+**Key discoveries**:
+- tunnel_nodes.parquet has basin columns for N3-N10 (not N3-N7 as documented)
+- multiplex_basin_assignments.parquet has 2 undocumented columns: `cycle_key`, `entry_id`
+- Analysis folder: 49 parquet files (40 branch assignments + 9 pointclouds) = 36 MB
+
+**Files created/modified**:
+- `scripts/upload-to-huggingface.py` - New HF upload automation
+- `report/DATASET_CARD.md` - Schema corrections
+- `report/HUGGINGFACE-UPLOAD-MANIFEST.md` - Sizes/recommendations updated
+
+**Next**: Run upload with real HF credentials
+
+---
+
 ### 2026-01-02 (Evening) - Hyperstructure Analysis & Related Work
 
 **What was tried**:

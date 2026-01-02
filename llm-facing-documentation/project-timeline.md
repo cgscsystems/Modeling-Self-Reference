@@ -18,6 +18,55 @@
 
 ## Timeline Entries
 
+### Session: 2026-01-02 (Night) - Hugging Face Dataset Validation & Upload Script
+
+**Completed**:
+- Validated all dataset files for Hugging Face upload:
+  - All parquet files readable (5 core files + 49 analysis files)
+  - Row counts match documentation
+  - No PII or sensitive data
+  - Schema matches documentation (after corrections)
+- Fixed DATASET_CARD.md schema documentation:
+  - Added undocumented fields: `cycle_key`, `entry_id` in basin assignments
+  - Fixed tunnel_nodes basin columns: N3-N10 (was documented as N3-N7)
+  - Added `n_distinct_basins` field
+- Updated HUGGINGFACE-UPLOAD-MANIFEST.md:
+  - Accurate file sizes from validation
+  - Changed recommendation from Option A (minimal) to Option B (full reproducibility)
+  - Marked all data validation checklist items complete
+- Created `scripts/upload-to-huggingface.py`:
+  - Supports minimal/full/complete configurations
+  - Dry-run mode for preview
+  - Stages files to correct HF directory structure
+  - Handles README.md from DATASET_CARD.md
+
+**Decisions Made**:
+- **Full Reproducibility as Default**: Option B (1.74 GB) recommended over minimal (125 MB)
+  - Rationale: User wants dataset to support regenerating all reports/figures
+  - Includes: source/ (1.6 GB) + multiplex/ (125 MB) + analysis/ (36 MB)
+
+**Discoveries**:
+- Analysis folder contains 49 parquet files for per-N data (40 branch assignments + 9 pointclouds)
+- Schema documentation was incomplete - actual files have more columns than documented
+- TSV files in multiplex/ are larger than originally estimated (4.7 MB vs 972 KB for tunnel_frequency_ranking)
+
+**Validation**:
+- Dry-run of upload script successful: 71 files, 1.74 GB total
+- All parquet files verified with pandas.read_parquet()
+
+**Files Created/Modified**:
+| File | Change |
+|------|--------|
+| `n-link-analysis/scripts/upload-to-huggingface.py` | New upload script |
+| `n-link-analysis/report/DATASET_CARD.md` | Fixed schema documentation |
+| `n-link-analysis/report/HUGGINGFACE-UPLOAD-MANIFEST.md` | Updated sizes, changed recommendation |
+
+**Next Steps**:
+- Install huggingface_hub: `pip install huggingface_hub`
+- Run upload: `python upload-to-huggingface.py --repo-id USERNAME/wikipedia-nlink-basins --config full`
+
+---
+
 ### Session: 2026-01-02 (Evening) - Related Work & Literature References
 
 **Completed**:
