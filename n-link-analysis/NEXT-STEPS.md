@@ -8,20 +8,18 @@
 
 ## Breadcrumb (Matt next session)
 
-There is a known narrative inconsistency in the investigation writeups:
+~~**Narrative inconsistency fix**~~ ✓ **COMPLETED (2026-01-01)**
 
-- [empirical-investigations/MECHANISM-ANALYSIS.md](empirical-investigations/MECHANISM-ANALYSIS.md) (around the N=4→5 “amplification” discussion) frames **entry breadth** as the dominant driver.
-- [empirical-investigations/ENTRY-BREADTH-RESULTS.md](empirical-investigations/ENTRY-BREADTH-RESULTS.md) refutes that: entry breadth decreases from N=4→5 while basin mass increases.
-- [empirical-investigations/DEPTH-SCALING-ANALYSIS.md](empirical-investigations/DEPTH-SCALING-ANALYSIS.md) and [empirical-investigations/DEPTH-DISTRIBUTION-ANALYSIS.md](empirical-investigations/DEPTH-DISTRIBUTION-ANALYSIS.md) support “depth / long-tail” as the dominant mechanism.
+The MECHANISM-ANALYSIS.md narrative inconsistency has been fixed:
+- Added update notice at top explaining entry breadth hypothesis was refuted
+- Changed all "entry breadth dominates" language to "depth dominates"
+- Updated formula to `Basin_Mass = Entry_Breadth × Depth^2.5`
+- Added cross-references to ENTRY-BREADTH-RESULTS.md and DEPTH-SCALING-ANALYSIS.md
+- Updated Next Steps section to mark entry breadth investigation as completed/refuted
 
-Proposed next-session doc-only fix (no new analysis, no changing empirical numbers):
+Keep an eye on tag consistency when comparing cross-N outputs (e.g., `test_*` vs `multi_n_jan_2026`).
 
-- Update MECHANISM-ANALYSIS to reflect: basin mass amplification is explained primarily by **depth amplification + variance/tail**, and treat entry breadth as secondary / not the main term.
-- Add a short cross-link note pointing readers to ENTRY-BREADTH-RESULTS + DEPTH-SCALING.
-
-Also: keep an eye on tag consistency when comparing cross-N outputs (e.g., `test_*` vs `multi_n_jan_2026`).
-
-Additional tunneling breadcrumb:
+**Tunneling breadcrumb**:
 
 - See [llm-facing-documentation/theories-proofs-conjectures/database-inference-graph-theory.md](../llm-facing-documentation/theories-proofs-conjectures/database-inference-graph-theory.md) (Corollary 3.2) for the “exhaustive labeling shrinks search space” note and the framing that fixed-$N$ basins are 1D slices of a multiplex over $(\text{page}, N)$ connected by tunneling at shared nodes.
 
@@ -46,31 +44,27 @@ Additional tunneling breadcrumb:
 
 ### Tier 1: High-Impact Extensions (1-3 sessions)
 
-#### 1.1 Multi-N Systematic Comparison
-**Goal**: Map the complete phase transition curve N=3 through N=10+
+#### 1.1 Multi-N Systematic Comparison ✅ COMPLETED (2026-01-01)
 
-**Why**: Current findings show N=5 is an isolated peak. Need finer resolution to:
-- Identify if there are other peaks (N=8? N=10?)
-- Understand alternating high-low pattern (N=3,5,7 high vs N=4,6 low)
-- Test percolation hypothesis (coverage threshold ~32%)
+**Status**: DONE - Extended analysis to N=8-10
 
-**Approach**:
-```bash
-# Run harness for each N
-for N in 3 4 5 6 7 8 9 10; do
-  python run-analysis-harness.py --quick --n $N --tag multi_n_2026_01_01
-done
+**Findings**:
+- N=5 confirmed as unique peak (no other peaks at N=8-10)
+- Basin collapse beyond N=5: 10-1000× smaller basins
+- N=10 basins: 148-7,867 pages (vs N=5: 60K-1M pages)
 
-# Compare results
-python scripts/compare-across-n.py --n-values 3 4 5 6 7 8 9 10
-```
+**Key Results**:
+| Cycle | N=5 Size | N=10 Size | Collapse |
+|-------|----------|-----------|----------|
+| Massachusetts | 1,009,471 | 5,226 | 193× |
+| Autumn__Summer | 162,689 | 148 | 1,100× |
+| Sea_salt__Seawater | 265,896 | 4,391 | 61× |
 
-**Outputs**:
-- Basin mass curves across N (identify all peaks)
-- Coverage-basin correlation (test 32% hypothesis)
-- Universality classes (group N by behavior)
+**Data Generated**:
+- `branches_n={8,9,10}_*_assignments.parquet` (18 files)
+- `multiplex_basin_assignments.parquet` updated for N=3-10
 
-**Investigation doc**: Create `empirical-investigations/MULTI-N-PHASE-MAP.md`
+**Investigation doc**: See timeline entry 2026-01-01 (Late Night)
 
 ---
 
@@ -163,34 +157,27 @@ python scripts/fit-power-law-across-n.py \
 
 ---
 
-#### 2.2 Tunneling Hypothesis Test
-**Goal**: Test multi-rule tunneling (do some pages act as attractors across multiple N?)
+#### 2.2 Tunneling/Multiplex Analysis (ROADMAP AVAILABLE)
 
-**Why**: Theory predicts switching between N-link rules reveals semantic relationships:
-- Universal attractors (cycles that appear at many N)
-- Tunneling paths (changing N creates shortcuts)
-- Need empirical validation
+**Status**: Full implementation roadmap created - see [TUNNELING-ROADMAP.md](TUNNELING-ROADMAP.md)
 
-**Approach**:
-```python
-# Identify universal cycles
-python scripts/compute-universal-attractors.py \
-  --n-range 3 10 \
-  --min-n-count 5 \
-  --output universal_attractors.tsv
+**Goal**: Implement cross-N tunneling and multiplex analysis per Definition 4.1
 
-# Analyze tunneling paths
-python scripts/analyze-tunneling-paths.py \
-  --start-title "Massachusetts" \
-  --n-sequence "3,4,5,6,7" \
-  --output tunneling_paths_massachusetts.tsv
-```
+**Summary**: 5-phase roadmap with 15 new scripts (~3,750 lines):
+1. **Phase 1**: Multiplex Data Layer (unified cross-N tables)
+2. **Phase 2**: Tunnel Node Identification (core theory validation)
+3. **Phase 3**: Multiplex Connectivity (graph + reachability analysis)
+4. **Phase 4**: Mechanism Classification (understand WHY structure changes)
+5. **Phase 5**: Applications & Validation (semantic model, validation, report)
 
-**New scripts needed**:
-- `compute-universal-attractors.py` (currently placeholder)
-- `analyze-tunneling-paths.py` (new, ~350 lines)
+**Key Decisions Made**:
+- Tunneling rule: Reverse identification (Definition 4.1)
+- Connectivity: Directed reachability
+- Scale: Full N=3-10 coverage
 
-**Investigation doc**: Create `empirical-investigations/MULTI-RULE-TUNNELING.md`
+**Effort**: 7-11 sessions total
+
+**To start**: Begin with Phase 1 scripts in [TUNNELING-ROADMAP.md](TUNNELING-ROADMAP.md)
 
 ---
 

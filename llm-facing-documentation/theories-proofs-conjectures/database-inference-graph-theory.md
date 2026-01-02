@@ -63,6 +63,39 @@ This document extends N-Link Basin Partition Theory to relational databases. We 
 
 ---
 
+## Related Work & Known Mathematical Frameworks
+
+This section connects the multi-rule tunneling framework to established literature.
+
+### Multiplex and Multilayer Networks
+
+The formalism of viewing the same node set under different edge types is well-developed in **multilayer network theory**. Kivelä et al. (2014) provide a comprehensive review unifying terminology across disciplines: multiplex networks, interdependent networks, networks of networks. Our "multi-rule tunneling" maps directly to inter-layer transitions in this framework—a node that belongs to different basins under different inference rules is transitioning between layers of a multiplex.
+
+**Key reference**: Kivelä, M. et al. (2014). "Multilayer Networks." *Journal of Complex Networks* 2(3), pp. 203–271.
+
+### Database Functional Dependencies
+
+Classical database theory uses **functional dependencies** (FDs) to characterize schema structure. Armstrong's axioms (1974) formalize how FDs compose and propagate. Our inference rules generalize FDs: where FDs describe deterministic column→column mappings within a table, our framework handles table→table and cross-schema traversals under multiple competing inference strategies.
+
+**Key reference**: Armstrong, W.W. (1974). "Dependency Structures of Data Base Relationships." *IFIP Congress*, pp. 580–583.
+
+### Schema Reverse Engineering
+
+The problem of discovering undocumented database structure has a literature in **schema reverse engineering** and **database reengineering**. Petit et al. (1996) survey techniques for extracting implicit relationships from legacy systems. Our tunneling approach differs by treating schema discovery as a graph partitioning problem rather than pattern matching on metadata.
+
+**Key reference**: Petit, J.-M. et al. (1996). "A Practical Approach to Mining Association Rules in Databases." *Proceedings of the Second International Conference on Knowledge Discovery and Data Mining*.
+
+### What's Novel Here
+
+While multilayer network theory provides the mathematical scaffolding, this work contributes:
+
+1. **Inference rule as layer selector**: Each rule (FK-based, semantic, cardinality, implicit) defines a distinct layer in the multiplex
+2. **Tunnel topology as semantic model**: The inter-layer transition structure directly encodes undocumented relationships
+3. **Basin partition for schema discovery**: Applying N-Link basin theory to extract database structure without documentation
+4. **Cross-rule tunneling algorithm**: Practical method for automated legacy schema reverse engineering
+
+---
+
 ## 2. Database Graph Formalization
 
 ### 2.1 Database as Multi-Typed Graph

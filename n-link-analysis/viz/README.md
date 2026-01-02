@@ -2,6 +2,16 @@
 
 This directory contains tools for visualizing Wikipedia N-link basin structures.
 
+## Dashboard Quick Start
+
+| Dashboard | Port | Command |
+|-----------|------|---------|
+| Basin Geometry Viewer | 8055 | `python n-link-analysis/viz/dash-basin-geometry-viewer.py` |
+| Multiplex Explorer | 8056 | `python n-link-analysis/viz/dash-multiplex-explorer.py` |
+| Tunneling Dashboard | 8060 | `python n-link-analysis/viz/tunneling/tunneling-dashboard.py` |
+| Path Tracer | 8061 | `python n-link-analysis/viz/tunneling/path-tracer-tool.py` |
+| **Cross-N Comparison** | 8062 | `python n-link-analysis/viz/dash-cross-n-comparison.py` |
+
 ## Quick Start
 
 ### Generate Static Images (PNG)
@@ -29,11 +39,14 @@ python n-link-analysis/viz/render-full-basin-geometry.py \
   --max-plot-points 120000
 ```
 
-### Launch Interactive Dashboard
+### Launch Interactive Dashboards
 
 ```bash
-# Start Dash viewer for exploring basin geometries
+# Basin geometry viewer (3D point clouds, interval layouts)
 python n-link-analysis/viz/dash-basin-geometry-viewer.py --port 8055
+
+# Multiplex tunnel explorer (cross-N connectivity, tunnel nodes)
+python n-link-analysis/viz/dash-multiplex-explorer.py --port 8056
 ```
 
 ## Scripts
@@ -106,6 +119,75 @@ python n-link-analysis/viz/dash-basin-geometry-viewer.py
 
 # Custom port
 python n-link-analysis/viz/dash-basin-geometry-viewer.py --port 8060
+```
+
+### `dash-multiplex-explorer.py`
+**Purpose**: Interactive exploration of cross-N basin connectivity and tunnel nodes
+
+**Key Features**:
+- Layer connectivity matrix (N×N heatmap)
+- Tunnel node browser with filtering and scoring
+- Basin pair network visualization
+- Cycle reachability analysis
+
+**Tabs**:
+1. **Layer Connectivity**: Heatmap of within-N vs cross-N edges
+2. **Tunnel Nodes**: Searchable table with 9,018 tunnel nodes
+3. **Basin Pairs**: Network showing which basins connect via tunneling
+4. **Reachability**: Per-cycle BFS reach across N layers
+
+**Common Usage**:
+```bash
+# Launch on default port
+python n-link-analysis/viz/dash-multiplex-explorer.py
+
+# Custom port
+python n-link-analysis/viz/dash-multiplex-explorer.py --port 8080
+```
+
+**See**: [MULTIPLEX-EXPLORER-GUIDE.md](MULTIPLEX-EXPLORER-GUIDE.md) for detailed usage
+
+### `dash-cross-n-comparison.py`
+**Purpose**: Side-by-side comparison of basin properties across N values (N=3-10)
+
+**Key Features**:
+- Basin size comparison with log/linear scale toggle
+- Depth distribution analysis (violin plots, statistics)
+- Phase transition explorer with N slider
+- Tunneling flow Sankey diagram
+
+**Tabs**:
+1. **Basin Size**: Compare sizes across N for selected cycles
+2. **Depth Analysis**: Violin plots and depth statistics per cycle
+3. **Phase Transition**: Slider-based N selection with size charts
+4. **Tunneling Flows**: Sankey diagram of cross-basin page movements
+
+**Common Usage**:
+```bash
+# Launch on default port
+python n-link-analysis/viz/dash-cross-n-comparison.py
+
+# Custom port
+python n-link-analysis/viz/dash-cross-n-comparison.py --port 8062
+```
+
+### `generate-multi-n-figures.py`
+**Purpose**: Generate static multi-N analysis figures for reports
+
+**Key Features**:
+- Phase transition chart (basin size vs N)
+- Basin collapse comparison (N=5 vs N=10)
+- Tunnel node distribution chart
+- Depth distribution by N
+- Summary statistics HTML table
+
+**Common Usage**:
+```bash
+# Generate all figures
+python n-link-analysis/viz/generate-multi-n-figures.py --all
+
+# Generate specific figures
+python n-link-analysis/viz/generate-multi-n-figures.py --phase-transition --collapse-chart
 ```
 
 ## Output Locations

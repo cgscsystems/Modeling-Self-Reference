@@ -17,6 +17,39 @@ This document formalizes the mathematical theory of **N-link rules** applied to 
 
 ---
 
+## Related Work & Known Mathematical Frameworks
+
+This section situates the N-Link Rule Theory within established mathematics, distinguishing known results from novel contributions.
+
+### Functional Graphs and Random Mappings
+
+The decomposition of a finite set under a deterministic map into cycles and in-trees is classical. A **functional graph** (or functional digraph) is a directed graph where each node has exactly one outgoing edge; iterating such a map necessarily produces cycles with trees feeding into them. Flajolet & Odlyzko (1990) provide the foundational analysis of random mapping statistics, deriving expected cycle lengths, tree heights, and component sizes when the map is chosen uniformly at random. Our N-link rule is a *non-random* functional graph where the map is determined by Wikipedia's prose structure.
+
+**Key reference**: Flajolet, P. & Odlyzko, A.M. (1990). "Random Mapping Statistics." *Advances in Cryptology — EUROCRYPT '89*, LNCS 434, pp. 329–354.
+
+### Phase Transitions on Networks
+
+The sharp N=5 phase transition discovered empirically (62× basin amplification from N=4 to N=5) connects to **percolation theory** on networks. In classical percolation, a critical threshold exists where a giant connected component suddenly emerges. Newman & Ziff (2000) provide efficient algorithms for computing percolation thresholds. Our finding that basin mass peaks at ~33% coverage suggests an analogous critical phenomenon, though the mechanism (depth-driven exploration vs. bond/site occupation) differs from standard percolation.
+
+**Key reference**: Newman, M.E.J. & Ziff, R.M. (2000). "Efficient Monte Carlo algorithm and high-precision results for percolation." *Physical Review Letters* 85(19), pp. 4104–4107.
+
+### Web Graph and Wikipedia Structure
+
+The **bow-tie structure** of the web, discovered by Broder et al. (2000), shows that web graphs have a strongly connected core (SCC) with in-components and out-components. Wikipedia differs: ~70-80% of articles are in the SCC (vs. ~28% for the general web), reflecting its encyclopedic interconnectedness. Our ordered prose link extraction creates a novel directed graph not previously analyzed—prior Wikipedia studies use unordered link sets.
+
+**Key reference**: Broder, A. et al. (2000). "Graph Structure in the Web." *Computer Networks* 33(1-6), pp. 309–320.
+
+### What's Novel Here
+
+While the structural theorems (basin partitioning, cycle detection, termination guarantees) follow from classical functional graph theory, this work contributes:
+
+1. **The N-th prose link rule**: A specific, data-dependent traversal rule on ordered links extracted from Wikipedia article prose (not infoboxes, navboxes, or tables)
+2. **Empirical phase transition discovery**: The N=5 peak (21.5% of Wikipedia in basin structures) and 62×–112× amplification/collapse curves
+3. **Depth-driven scaling law**: Basin mass ∝ Depth^α where α ≈ 2.5, explaining the phase transition mechanism
+4. **Coverage threshold hypothesis**: Basin mass peaks at ~33% page coverage, potentially generalizable to other scale-free networks
+
+---
+
 ## 1. Foundational Definitions
 
 ### 1.1 Self-Referential Link Graph
