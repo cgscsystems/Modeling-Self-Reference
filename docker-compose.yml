@@ -1,0 +1,153 @@
+# N-Link Analysis - Docker Compose Configuration
+#
+# Usage:
+#   docker-compose up              # Start all services
+#   docker-compose up api          # Start only API
+#   docker-compose up dashboards   # Start all dashboards
+#
+# Prerequisites:
+#   - Data must be downloaded to ./data/wikipedia/processed/
+#   - See docker/README.md for data setup instructions
+#
+# Port Configuration:
+#   Set these environment variables to customize host ports:
+#   - NLINK_API_PORT (default: 8000)
+#   - NLINK_BASIN_PORT (default: 8055)
+#   - NLINK_MULTIPLEX_PORT (default: 8056)
+#   - NLINK_TUNNELING_PORT (default: 8060)
+#   - NLINK_REPORTS_PORT (default: 8070)
+#
+#   Example: NLINK_API_PORT=28000 docker-compose up
+#
+# Data Configuration:
+#   If using symlinks to HuggingFace cache, set NLINK_HF_CACHE to the cache path:
+#   - NLINK_HF_CACHE (default: ~/.cache/wikipedia-nlink-basins)
+#
+#   Example: NLINK_HF_CACHE=/custom/cache/path docker-compose up
+
+services:
+  # ============================================
+  # N-Link REST API
+  # ============================================
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: nlink-analysis:latest
+    container_name: nlink-api
+    command: ["api"]
+    ports:
+      - "${NLINK_API_PORT:-8000}:8000"
+    volumes:
+      - ./data:/app/data:ro
+      # Mount HF cache so symlinks resolve inside container
+      - ${NLINK_HF_CACHE:-~/.cache/wikipedia-nlink-basins}:${NLINK_HF_CACHE:-/home/mgm/.cache/wikipedia-nlink-basins}:ro
+      # Mount report assets for render endpoint output persistence
+      - ./n-link-analysis/report/assets:/app/n-link-analysis/report/assets:rw
+    environment:
+      - DATA_SOURCE=local
+      - LOCAL_DATA_DIR=/app/data/wikipedia/processed
+      - ANALYSIS_OUTPUT_DIR=/app/data/wikipedia/processed/analysis
+      - MAX_WORKERS=4
+      - DEBUG=false
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/v1/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    restart: unless-stopped
+
+  # ============================================
+  # Basin Geometry Viewer (Port 8055)
+  # ============================================
+  basin-viewer:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: nlink-analysis:latest
+    container_name: nlink-basin-viewer
+    command: ["basin-viewer"]
+    ports:
+      - "${NLINK_BASIN_PORT:-8055}:8055"
+    volumes:
+      - ./data:/app/data:ro
+      - ${NLINK_HF_CACHE:-~/.cache/wikipedia-nlink-basins}:${NLINK_HF_CACHE:-/home/mgm/.cache/wikipedia-nlink-basins}:ro
+    depends_on:
+      - api
+    restart: unless-stopped
+
+  # ============================================
+  # Multiplex Analyzer (Port 8056)
+  # ============================================
+  multiplex:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: nlink-analysis:latest
+    container_name: nlink-multiplex
+    command: ["multiplex"]
+    ports:
+      - "${NLINK_MULTIPLEX_PORT:-8056}:8056"
+    volumes:
+      - ./data:/app/data:ro
+      - ${NLINK_HF_CACHE:-~/.cache/wikipedia-nlink-basins}:${NLINK_HF_CACHE:-/home/mgm/.cache/wikipedia-nlink-basins}:ro
+    depends_on:
+      - api
+    restart: unless-stopped
+
+  # ============================================
+  # Tunneling Explorer (Port 8060)
+  # ============================================
+  tunneling:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: nlink-analysis:latest
+    container_name: nlink-tunneling
+    command: ["tunneling"]
+    ports:
+      - "${NLINK_TUNNELING_PORT:-8060}:8060"
+    volumes:
+      - ./data:/app/data:ro
+      - ${NLINK_HF_CACHE:-~/.cache/wikipedia-nlink-basins}:${NLINK_HF_CACHE:-/home/mgm/.cache/wikipedia-nlink-basins}:ro
+    environment:
+      # Connect to API for live path tracing
+      - API_URL=http://api:8000
+    depends_on:
+      api:
+        condition: service_healthy
+    restart: unless-stopped
+
+  # ============================================
+  # Reports Gallery (Port 8070)
+  # Static HTML reports and interactive visualizations
+  # ============================================
+  reports:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: nlink-analysis:latest
+    container_name: nlink-reports
+    command: ["reports"]
+    ports:
+      - "${NLINK_REPORTS_PORT:-8070}:8070"
+    volumes:
+      # Mount report assets for live updates during development
+      - ./n-link-analysis/report/assets:/app/n-link-analysis/report/assets:ro
+    restart: unless-stopped
+
+# ============================================
+# Service Profiles for Selective Startup
+# ============================================
+# docker-compose --profile dashboards up
+# docker-compose --profile minimal up
+
+  # Dashboard-only profile services are defined above with depends_on
+
+# ============================================
+# Networks
+# ============================================
+networks:
+  default:
+    name: nlink-network

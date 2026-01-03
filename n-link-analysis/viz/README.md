@@ -2,6 +2,16 @@
 
 This directory contains tools for visualizing Wikipedia N-link basin structures.
 
+## Dashboard Quick Start
+
+| Dashboard | Port | Command | Description |
+|-----------|------|---------|-------------|
+| Basin Geometry Viewer | 8055 | `python n-link-analysis/viz/dash-basin-geometry-viewer.py` | 3D point clouds, interval layouts |
+| Multiplex Analyzer | 8056 | `python n-link-analysis/viz/multiplex-analyzer.py` | Cross-N analysis, tunnel browser |
+| Tunneling Explorer | 8060 | `python n-link-analysis/viz/tunneling/tunneling-explorer.py` | Flows, tracing, validation |
+
+**Note**: Consolidation complete (2026-01-02). Original 5 dashboards merged into 3. Archived files in `_archive/`.
+
 ## Quick Start
 
 ### Generate Static Images (PNG)
@@ -29,11 +39,17 @@ python n-link-analysis/viz/render-full-basin-geometry.py \
   --max-plot-points 120000
 ```
 
-### Launch Interactive Dashboard
+### Launch Interactive Dashboards
 
 ```bash
-# Start Dash viewer for exploring basin geometries
+# Basin geometry viewer (3D point clouds, interval layouts)
 python n-link-analysis/viz/dash-basin-geometry-viewer.py --port 8055
+
+# Multiplex analyzer (cross-N connectivity, phase transitions, tunnel nodes)
+python n-link-analysis/viz/multiplex-analyzer.py --port 8056
+
+# Tunneling explorer (basin flows, path tracing, validation)
+python n-link-analysis/viz/tunneling/tunneling-explorer.py --port 8060
 ```
 
 ## Scripts
@@ -108,6 +124,80 @@ python n-link-analysis/viz/dash-basin-geometry-viewer.py
 python n-link-analysis/viz/dash-basin-geometry-viewer.py --port 8060
 ```
 
+### `multiplex-analyzer.py`
+**Purpose**: Unified dashboard for cross-N basin analysis (merged from `dash-multiplex-explorer.py` + `dash-cross-n-comparison.py`)
+
+**Key Features**:
+- Basin size comparison across N values (log/linear scale)
+- Depth distribution analysis (violin plots, statistics)
+- Phase transition explorer with N slider
+- Layer connectivity matrix (N×N heatmap)
+- Tunnel node browser with filtering and scoring
+- Basin pair network visualization
+
+**Tabs** (6 total):
+1. **Basin Size**: Compare sizes across N for selected cycles
+2. **Depth Analysis**: Violin plots and depth statistics per cycle
+3. **Phase Transition**: Slider-based N selection with size charts
+4. **Layer Connectivity**: Heatmap of within-N vs cross-N edges
+5. **Tunnel Browser**: Searchable table with 41K+ tunnel nodes
+6. **Basin Pairs**: Network showing which basins connect via tunneling
+
+**Common Usage**:
+```bash
+# Launch on default port
+python n-link-analysis/viz/multiplex-analyzer.py
+
+# Custom port
+python n-link-analysis/viz/multiplex-analyzer.py --port 8080
+```
+
+### `tunneling/tunneling-explorer.py`
+**Purpose**: Unified dashboard for tunneling analysis (merged from `tunneling-dashboard.py` + `path-tracer-tool.py`)
+
+**Key Features**:
+- Basin flow visualization (Sankey diagrams)
+- Tunnel node metrics and mechanism breakdown
+- Path tracer with search and live tracing
+- Hypothesis validation results
+- Dual-mode: local files or API mode for live tracing
+
+**Tabs** (6 total):
+1. **Overview**: Metrics, mechanism pie chart, scatter plots
+2. **Basin Flows**: Sankey diagram of cross-basin movements
+3. **Tunnel Nodes**: Filterable table of tunnel nodes
+4. **Path Tracer**: Search + trace any page's N-link path
+5. **Stability**: Basin stability analysis
+6. **Validation**: Hypothesis test results
+
+**Common Usage**:
+```bash
+# Launch on default port (local file mode)
+python n-link-analysis/viz/tunneling/tunneling-explorer.py
+
+# With API mode for live tracing
+python n-link-analysis/viz/tunneling/tunneling-explorer.py --use-api --api-url http://localhost:8000
+```
+
+### `generate-multi-n-figures.py`
+**Purpose**: Generate static multi-N analysis figures for reports
+
+**Key Features**:
+- Phase transition chart (basin size vs N)
+- Basin collapse comparison (N=5 vs N=10)
+- Tunnel node distribution chart
+- Depth distribution by N
+- Summary statistics HTML table
+
+**Common Usage**:
+```bash
+# Generate all figures
+python n-link-analysis/viz/generate-multi-n-figures.py --all
+
+# Generate specific figures
+python n-link-analysis/viz/generate-multi-n-figures.py --phase-transition --collapse-chart
+```
+
 ## Output Locations
 
 - **Static images (PNG/SVG/PDF)**: `n-link-analysis/report/assets/basin_3d_n={N}_cycle={CYCLE}.{format}`
@@ -115,6 +205,39 @@ python n-link-analysis/viz/dash-basin-geometry-viewer.py --port 8060
 - **Interactive HTML**: `n-link-analysis/report/assets/basin_pointcloud_3d_n={N}_cycle={CYCLE}.html`
 - **Parquet data**: `data/wikipedia/processed/analysis/basin_pointcloud_n={N}_cycle={CYCLE}.parquet`
 - **Edge databases**: `data/wikipedia/processed/analysis/edges_n={N}.duckdb`
+
+## Shared API Client
+
+The `api_client.py` module provides a reusable client for connecting visualization tools to the N-Link API server.
+
+```python
+from viz.api_client import NLinkAPIClient, check_api_available
+
+# Quick availability check
+if check_api_available("http://localhost:8000"):
+    client = NLinkAPIClient("http://localhost:8000")
+
+    # Search for pages
+    results = client.search_pages("Massachusetts", limit=10)
+
+    # Trace N-link path
+    trace = client.trace_single(n=5, start_title="Massachusetts")
+
+    # Get page info
+    page = client.get_page(12345)
+```
+
+**Key Methods**:
+| Method | Description |
+|--------|-------------|
+| `health_check()` | Check if API is available |
+| `search_pages(query, limit)` | Search pages by title |
+| `get_page(page_id)` | Get page by ID |
+| `get_page_by_title(title)` | Get page by title |
+| `trace_single(n, start_title=, start_page_id=)` | Trace N-link path |
+| `map_basin(n, cycle_titles, background=)` | Map basin from cycle |
+| `get_task_status(task_id)` | Get background task status |
+| `wait_for_task(task_id)` | Wait for task completion |
 
 ## Dependencies
 
@@ -212,6 +335,56 @@ python n-link-analysis/viz/dash-basin-geometry-viewer.py --port 8055
 
 **Slow rendering**: Use `--max-depth 10` for quick previews, full depth for final renders
 
+## Shared Modules
+
+The `shared/` directory contains reusable components for all dashboards:
+
+| Module | Contents |
+|--------|----------|
+| `colors.py` | `BASIN_COLORS`, `BASIN_SHORT_NAMES`, `get_basin_color()`, `get_short_name()`, `hex_to_rgba()` |
+| `loaders.py` | Cached data loaders: `load_basin_assignments()`, `load_basin_flows()`, `load_tunnel_ranking()` |
+| `components.py` | UI factories: `metric_card()`, `filter_row()`, `badge()`, `info_card()` |
+
+**Usage**:
+```python
+from shared import BASIN_COLORS, get_basin_color, load_basin_assignments, metric_card
+```
+
+## Archived Files
+
+Previous dashboard files (before consolidation) are preserved in `_archive/`:
+- `dash-multiplex-explorer.py.bak` → merged into `multiplex-analyzer.py`
+- `dash-cross-n-comparison.py.bak` → merged into `multiplex-analyzer.py`
+- `tunneling-dashboard.py.bak` → merged into `tunneling/tunneling-explorer.py`
+- `path-tracer-tool.py.bak` → merged into `tunneling/tunneling-explorer.py`
+
+## Future Work
+
+### API Integration
+
+1. **Add report generation buttons to dashboards**
+   - Dashboards could trigger report generation via API
+   - Show progress via task polling
+   - Example: "Generate Report" button → `POST /api/v1/reports/human/async`
+
+2. **Add API endpoint for collapse dashboard**
+   - `batch-chase-collapse-metrics.py` currently runs as subprocess
+   - Extract to `_core/collapse_engine.py`
+   - Add `/api/v1/reports/collapse` endpoint
+
+### ~~Consolidation~~ ✓ COMPLETE (2026-01-02)
+
+Dashboard consolidation completed in 5 phases:
+- **Phase 1**: Extracted shared modules (`shared/colors.py`, `loaders.py`, `components.py`)
+- **Phase 2**: Merged Tunneling Dashboard + Path Tracer → `tunneling-explorer.py`
+- **Phase 3**: Merged Multiplex Explorer + Cross-N Comparison → `multiplex-analyzer.py`
+- **Phase 4**: Updated Basin Geometry Viewer with shared imports
+- **Phase 5**: Archived old files, updated documentation
+
+**Results**: 5 dashboards → 3 dashboards, 5 ports → 3 ports, shared component library established.
+
+See `VIZ-CONSOLIDATION-PLAN.md` for full implementation details.
+
 ---
 
-**Last Updated**: 2026-01-01
+**Last Updated**: 2026-01-02

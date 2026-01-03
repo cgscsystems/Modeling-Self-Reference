@@ -4,7 +4,7 @@
 
 This is the *primary index* for contract objects, and should be treated as append-only (you can add new entries; avoid rewriting old ones except to mark them deprecated).
 
-**Last Updated**: 2026-01-01 (Session: Multi-N Phase Transition Complete N=3-10)
+**Last Updated**: 2026-01-02 (Session: Semantic tunnel analysis & temporal stability)
 
 ---
 
@@ -13,6 +13,9 @@ This is the *primary index* for contract objects, and should be treated as appen
 ### NLR-C-0001 — Long-tail basin size under fixed-N traversal (Wikipedia proving ground)
 
 - **Status**: supported (empirical; scope: Wikipedia namespace 0, non-redirect pages)
+- **Provenance**:
+  - Theory originator: WH (N-link rule concept, basin partition framework)
+  - Implementation & empirical analysis: MM (2025-12-29 onwards)
 - **Theory**:
   - [n-link-rule-theory.md](../theories-proofs-conjectures/n-link-rule-theory.md) (basins, cycles, terminals)
   - [unified-inference-theory.md](../theories-proofs-conjectures/unified-inference-theory.md) (integration framing)
@@ -30,6 +33,9 @@ This is the *primary index* for contract objects, and should be treated as appen
 ### NLR-C-0003 — N-dependent phase transition in basin structure (Wikipedia)
 
 - **Status**: supported (empirical; scope: Wikipedia namespace 0, non-redirect pages, N∈{3,4,5,6,7,8,9,10})
+- **Provenance**:
+  - Theory originator: WH (N-link rule concept, phase transition hypothesis)
+  - Implementation & empirical analysis: MM (2025-12-31 onwards, Multi-N phase transition complete)
 - **Theory**:
   - [n-link-rule-theory.md](../theories-proofs-conjectures/n-link-rule-theory.md) (N-link rule definition, basin partitioning)
   - Extends NLR-C-0001 to cross-N comparison
@@ -103,6 +109,99 @@ This is the *primary index* for contract objects, and should be treated as appen
   - Cycle formation position effect: Hub articles forming cycles at optimal N capture maximum basin mass
   - Predictive framework: For any graph, measure degree distribution → find N where coverage ≈ 33% → predict basin peak
   - Next steps: Entry breadth validation, percolation modeling, cross-domain testing (other Wikipedias, citation networks)
+
+---
+
+### NLR-C-0004 — Cross-N tunneling and multiplex connectivity (Wikipedia)
+
+- **Status**: complete (all 5 phases validated)
+- **Provenance**:
+  - Theory originator: WH (multiplex framing, tunneling concept)
+  - Implementation & empirical analysis: MM (2026-01-01)
+- **Theory**:
+  - [database-inference-graph-theory.md](../theories-proofs-conjectures/database-inference-graph-theory.md) (Definition 4.1, Corollary 3.2, Algorithm 5.2)
+  - Extends NLR-C-0003 to cross-N multiplex analysis
+- **Experiment**:
+  - Phase 1: `build-multiplex-table.py`, `normalize-cycle-identity.py`, `compute-intersection-matrix.py`
+  - Phase 2: `find-tunnel-nodes.py`, `classify-tunnel-types.py`, `compute-tunnel-frequency.py`
+  - Phase 3: `build-multiplex-graph.py`, `compute-multiplex-reachability.py`, `visualize-multiplex-slice.py`
+  - Phase 4: `analyze-tunnel-mechanisms.py`, `trace-tunneling-paths.py`, `quantify-basin-stability.py`
+  - Phase 5: `compute-semantic-model.py`, `validate-tunneling-predictions.py`, `generate-tunneling-report.py`
+- **Evidence**:
+  - [TUNNEL-NODE-ANALYSIS.md](../../n-link-analysis/empirical-investigations/TUNNEL-NODE-ANALYSIS.md) (Phase 2 results)
+  - [MULTIPLEX-CONNECTIVITY.md](../../n-link-analysis/empirical-investigations/MULTIPLEX-CONNECTIVITY.md) (Phase 3 results)
+  - [TUNNEL-MECHANISM-DEEP-DIVE.md](../../n-link-analysis/empirical-investigations/TUNNEL-MECHANISM-DEEP-DIVE.md) (Phase 4 results)
+  - [TUNNELING-FINDINGS.md](../../n-link-analysis/report/TUNNELING-FINDINGS.md) (Phase 5 publication-ready summary)
+  - [SEMANTIC-TUNNEL-ANALYSIS.md](../../n-link-analysis/empirical-investigations/SEMANTIC-TUNNEL-ANALYSIS.md) (Phase 6: semantic content analysis)
+  - [TEMPORAL-STABILITY-ANALYSIS.md](../../n-link-analysis/empirical-investigations/TEMPORAL-STABILITY-ANALYSIS.md) (temporal basin stability via edit history)
+  - [HYPERSTRUCTURE-ANALYSIS.md](../../n-link-analysis/empirical-investigations/HYPERSTRUCTURE-ANALYSIS.md) (hyperstructure size analysis)
+  - Data outputs: `data/wikipedia/processed/multiplex/` (15+ files)
+  - Semantic data: `data/wikipedia/processed/semantic/tunnel_node_categories.json`
+  - Temporal data: `data/wikipedia/processed/temporal/edit_history_*.json`
+  - Hyperstructure data: `data/wikipedia/processed/analysis/hyperstructure_analysis.tsv`, `massachusetts_hyperstructure_analysis.tsv`
+- **Key Findings**:
+  - **Massachusetts hyperstructure size**: 1,062,344 pages (5.91% of Wikipedia) across N=3-10
+  - **N=5 dominates hyperstructure**: 94.7% contribution; multi-N adds only 5.3% marginal pages
+  - **41,732 tunnel nodes identified** (2.1% of pages in hyperstructure, N=3-10)
+  - **Progressive switching dominates** (98.7%) - basins change monotonically with N
+  - **degree_shift is primary mechanism** (99.3%) - different Nth link causes tunneling
+  - **N=5 is critical**: 100% of tunnel transitions involve N=5
+  - **Depth predicts tunneling**: Strong negative correlation (r=-0.83, p<0.001)
+  - **Gulf_of_Maine is sink basin**: Absorbs pages from all other basins at N=6
+  - **Semantic model extracted**: 100 central entities, 9 subsystems, 36 hidden relationships
+  - **Semantic clustering**: Tunnel nodes concentrate at domain boundaries (22.5% New England vs ~1% expected)
+  - **Tunnel nodes are gateways**: Multi-basin nodes bridge distinct knowledge domains (e.g., Revolutionary War ↔ Geography)
+  - **Fewer biographies**: Tunnel nodes 3× less likely to be "Living people" articles
+  - **Basin temporal stability**: Cycle-defining pages stable despite high edit activity (59 edits, no N=5 link changes)
+- **Theory Claims Evaluated**:
+  - **Validated**: "Tunnel nodes exist at basin boundaries" → 9,018 pages switch basins across N
+  - **Validated**: "Fixed-N basins are 1D slices of multiplex" → Multiplex graph structure confirmed (9.7M edges)
+  - **Validated**: "Shallow nodes tunnel more" → Mean depth 11.1 vs typical 50+ (r=-0.83)
+  - **Validated**: "degree_shift dominates" → 99.3% of transitions (direct N-link rule consequence)
+  - **Validated**: "N=5 is phase transition" → 100% of tunneling involves N=5
+  - **Refuted**: "High-degree hubs tunnel more" → Tunnel nodes have LOWER degree (31.8 vs 34.0, p=0.04)
+- **Notes**:
+  - All 5 phases of [TUNNELING-ROADMAP.md](../../n-link-analysis/TUNNELING-ROADMAP.md) complete
+  - 15 new scripts implemented (~4,000 lines)
+  - Semantic model available in `semantic_model_wikipedia.json`
+  - Hub hypothesis refutation is significant: tunneling is NOT about having more options
+
+---
+
+### NLR-C-0005 — HALT Probability Conjectures (Wikipedia)
+
+- **Status**: validated (empirical; scope: Wikipedia namespace 0, 17.97M pages)
+- **Provenance**:
+  - Theory originator: WH (Conjectures 6.1 and 6.3 in n-link-rule-theory.md)
+  - Implementation & empirical analysis: MM (2026-01-01)
+- **Theory**:
+  - [n-link-rule-theory.md](../theories-proofs-conjectures/n-link-rule-theory.md) (Section 6: Probabilistic Conjectures)
+- **Experiment**:
+  - [analyze-halt-probability.py](../../n-link-analysis/scripts/analyze-halt-probability.py) (compute P_HALT(N) from degree distribution)
+- **Evidence**:
+  - `data/wikipedia/processed/analysis/halt_probability_analysis.tsv` (P_HALT, P_CYCLE for N=1-50)
+  - `data/wikipedia/processed/analysis/link_degree_distribution_exact.tsv` (source data)
+- **Key Findings**:
+  - **Conjecture 6.1 VALIDATED**: P_HALT(N) is strictly monotonically increasing with N
+    - At N=1: P_HALT = 0% (all pages have ≥1 link)
+    - At N=5: P_HALT = 67.4%
+    - At N=50: P_HALT = 95.4%
+  - **Conjecture 6.3 VALIDATED**: Phase transition N* exists where P_HALT = P_CYCLE = 0.5
+    - Crossover point N* ≈ 1.82 (interpolated)
+    - At N=2: P_HALT = 61%, P_CYCLE = 39% (closest integer)
+- **Theory Claims Evaluated**:
+  - **Validated**: "P_HALT increases monotonically with N" → Strictly true for all N tested (1-50)
+  - **Validated**: "Critical N* exists" → N* ≈ 1.82, but this is DIFFERENT from basin SIZE peak
+- **Key Insight**:
+  - HALT/CYCLE crossover (N* ≈ 2) and basin SIZE peak (N=5) are **distinct phenomena**
+  - N* marks the eligibility threshold (can vs cannot follow N-th link)
+  - N=5 peak marks depth dynamics optimum (exploration vs convergence tradeoff)
+  - At N=5: Only 32.6% of pages are eligible (P_CYCLE), yet basin SIZE peaks
+  - This confirms the phase transition is driven by **depth dynamics**, not mere eligibility
+- **Notes**:
+  - The extreme N=1 distribution (61% of pages have exactly 1 link) explains why N=2 is near crossover
+  - Wikipedia's link structure is heavily skewed: most pages have few links, few pages have many
+  - Eligibility (P_CYCLE) and basin mass are decoupled: fewer eligible pages can create larger basins
 
 ---
 

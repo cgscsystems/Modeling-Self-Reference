@@ -43,6 +43,9 @@ ENV/
 .DS_Store
 Thumbs.db
 
+# Environment secrets
+.env
+
 # Project-specific: Wikipedia data
 wikipedia_decomposition*/
 *.xml
@@ -120,5 +123,6 @@ analysis-artifacts/**/*.feather
 **/processed/analysis/**/*.csv
 **/processed/analysis/**/*.feather
 
-# Generated HTML previews from basin geometry exports
-n-link-analysis/report/assets/basin_pointcloud_3d_*.html
+# Generated visualizations and reports (all regenerable from scripts + data)
+# The entire assets directory contains only generated output
+n-link-analysis/report/assets/

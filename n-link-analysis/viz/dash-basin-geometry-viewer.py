@@ -44,8 +44,9 @@ import pandas as pd
 import plotly.graph_objects as go
 import pyarrow.parquet as pq
 
+from shared import REPO_ROOT
 
-REPO_ROOT = Path(__file__).resolve().parents[2]
+
 PROCESSED_DIR = REPO_ROOT / "data" / "wikipedia" / "processed"
 ANALYSIS_DIR = PROCESSED_DIR / "analysis"
 
@@ -766,7 +767,9 @@ def main() -> int:
     parser.add_argument("--port", type=int, default=8050)
     args = parser.parse_args()
 
-    ANALYSIS_DIR.mkdir(parents=True, exist_ok=True)
+    # Check if path exists (including as symlink) before attempting mkdir
+    if not (ANALYSIS_DIR.exists() or ANALYSIS_DIR.is_symlink()):
+        ANALYSIS_DIR.mkdir(parents=True, exist_ok=True)
 
     app = dash.Dash(__name__)
 

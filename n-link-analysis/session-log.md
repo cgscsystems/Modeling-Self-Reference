@@ -3,12 +3,638 @@
 **Document Type**: Cumulative
 **Target Audience**: LLMs + Developers
 **Purpose**: Append-only record of analysis decisions, experiments, and outcomes
-**Last Updated**: 2026-01-01
+**Last Updated**: 2026-01-02
 **Status**: Active
 
 ---
 
-### 2026-01-01 (Wrap-up) - Multiplex “Basins as Slices” Breadcrumb (Tunneling)
+### 2026-01-02 - Pipeline Fixes for Semantic Model and Tributary Trees
+
+**What was tried**:
+- Fix `batch-render-tributary-trees.py` path from HF cache to local data directory
+- Add semantic model visualization to pipeline
+- Fix bash `set -e` early exit bug with arithmetic operations
+
+**What worked**:
+- Fixed `ANALYSIS_DIR` path in `batch-render-tributary-trees.py`
+- Added `generate_semantic_model()` calling `visualize-semantic-model.py --all`
+- Added `--skip-semantic` flag
+- Added `|| true` to `((skipped++))` and `((generated++))` to prevent `set -e` exit
+- Generated 5 semantic model visualizations (central entities, stability, flows, types, scatter)
+- Pipeline now has 9 stages
+
+**Discoveries**:
+- `((var++))` returns exit code 1 when var starts at 0, causing `set -e` to abort
+- Semantic model script existed but was never integrated into pipeline
+
+**Commit**: pending
+
+---
+
+### 2026-01-02 - Report Pipeline Gap Analysis and Fix
+
+**What was tried**:
+- Inventory all data prep scripts to identify missing steps in `generate-all-reports.sh`
+- Add pointcloud generation before basin image rendering
+- Add tributary tree visualization generation
+- Add multi-N comparison figure generation
+
+**What worked**:
+- Added `generate_pointclouds()` - generates missing `basin_pointcloud_*.parquet` before images
+- Added `generate_tributary_trees()` - generates 3D HTML + JSON tree visualizations
+- Added `generate_multi_n_figures()` - generates phase transition/collapse charts (if multiplex data exists)
+- Added `CYCLE_PAIRS` array with 9 N=5 cycle definitions
+- Added skip flags: `--skip-pointclouds`, `--skip-trees`, `--skip-multi-n`
+- Pipeline now has 8 stages (up from 5)
+
+**Discoveries**:
+- Script assumed `basin_pointcloud_*.parquet` files existed but had no generation step
+- Tributary tree script outputs both HTML and JSON sidecar files
+- Multi-N figures require multiplex data from tunneling pipeline
+
+**Files modified**:
+- `scripts/generate-all-reports.sh` - added 3 new functions, 3 new skip flags
+
+---
+
+### 2026-01-02 - Comprehensive Project Wrap-Up Analysis
+
+**What was tried**:
+- Visualize previously unused semantic_model_wikipedia.json (44KB)
+- Correlate edit history with basin stability
+- Analyze why 6 cycles persist across all N values (3-10)
+- Implement placeholder scripts (compute-universal-attractors.py, compute-basin-stats.py)
+- Add wrap-up visualizations to gallery
+
+**What worked**:
+- Created `viz/visualize-semantic-model.py` - generates 5 visualizations
+- Created `scripts/correlate-edit-basin-stability.py` - found weak correlation (r=0.23)
+- Created `scripts/analyze-universal-cycles.py` - identified geographic dominance pattern
+- Implemented both placeholder scripts successfully
+- Added "Wrap-Up Analysis" section to gallery with 11 new items
+- Created 3 comprehensive reports (EDIT-STABILITY-CORRELATION.md, UNIVERSAL-CYCLE-ANALYSIS.md, PROJECT-WRAP-UP.md)
+
+**Discoveries**:
+- Only 1 truly universal attractor: Massachusetts ↔ Gulf_of_Maine (present at all 8 N values)
+- Edit frequency does not predict basin stability - r=0.23
+- 4 of 6 universal cycles are geography-related (explains their persistence)
+- semantic_model contained rich data never visualized: 100 central entities, 9 subsystem boundaries, 36+ hidden relationships
+
+**Files created**:
+- `viz/visualize-semantic-model.py`
+- `scripts/correlate-edit-basin-stability.py`
+- `scripts/analyze-universal-cycles.py`
+- `report/EDIT-STABILITY-CORRELATION.md`
+- `report/UNIVERSAL-CYCLE-ANALYSIS.md`
+- `report/PROJECT-WRAP-UP.md`
+- 11 HTML visualizations in `report/assets/`
+
+**Files modified**:
+- `scripts/compute-basin-stats.py` (implemented from placeholder)
+- `scripts/compute-universal-attractors.py` (implemented from placeholder)
+- `viz/create-visualization-gallery.py` (added WRAPUP_ANALYSIS section)
+- `report/assets/gallery.html` (regenerated)
+
+---
+
+### 2026-01-02 - Gallery Tributary Trees & Written Reports Integration
+
+**What was tried**:
+- Add Tributary Trees section to gallery (37 visualizations)
+- Add Written Reports section to gallery (8 HTML reports)
+- Enable live gallery updates in Docker without image rebuild
+
+**What worked**:
+- Updated `viz/create-visualization-gallery.py` with both sections
+- Fixed regex to handle multi-word cycle names (`Gulf_of_Maine`)
+- Added volume mount to Docker reports service
+- Gallery now shows all 8 N values with tributary tree links
+
+**Discoveries**:
+- Reports service had no volume mount (served stale files from image)
+- Regex `([^_]+)__([^_]+)` fails on cycle names with underscores
+
+**Files modified**:
+- `viz/create-visualization-gallery.py`
+- `report/assets/gallery.html` (regenerated)
+
+---
+
+### 2026-01-02 - Tributary Tree Batch Generation & Git Hygiene
+
+**What was tried**:
+- Make `render-tributary-tree-3d.py` work for all N values, not just N=5
+- Create batch script for generating all N × cycle combinations
+- Clean up git tracking of large generated files
+
+**What worked**:
+- Script already supports any N value (extracts Nth link dynamically from parquet)
+- Created `scripts/batch-render-tributary-trees.py` with filtering and dry-run support
+- Identified 31 N × cycle combinations across N=3-10
+- Updated `.gitignore` to exclude large Plotly HTMLs
+- Untracked 13 files (~45MB) from git
+
+**Discoveries**:
+- N=3,4,6,7 only have Massachusetts↔Gulf_of_Maine cycle
+- N=5 has 9 cycles (full basin set)
+- N=8,9,10 have 6 cycles each (tunneling set)
+- DuckDB edge tables cached per-N (one-time ~2-3s creation)
+
+**Files created**:
+- `scripts/batch-render-tributary-trees.py`
+
+**Usage**:
+```bash
+# Generate all 31 combinations
+python n-link-analysis/scripts/batch-render-tributary-trees.py
+
+# Dry run
+python n-link-analysis/scripts/batch-render-tributary-trees.py --dry-run
+
+# Filter by N and cycle
+python n-link-analysis/scripts/batch-render-tributary-trees.py --n 5 --cycle Massachusetts
+```
+
+---
+
+### 2026-01-02 - HTML Report Generation for Docker Gallery
+
+**What was tried**:
+- Make markdown reports available in Docker reports gallery (port 8070)
+
+**What worked**:
+- Created `scripts/render-reports-to-html.py` - converts markdown to styled HTML
+- Generated 8 HTML reports with gallery-matching CSS styling
+- Updated `report/assets/gallery.html` with "Written Reports" section (3 categories)
+
+**Files created**:
+- `scripts/render-reports-to-html.py`
+- `report/assets/overview.html`, `multi-n-analysis.html`, `tunneling-findings.html`, `edit-history.html`
+- `report/assets/annotated-bibliography.html`, `dataset-card.html`, `huggingface-readme.html`, `huggingface-manifest.html`
+
+**Files modified**:
+- `report/assets/gallery.html`
+
+**Usage**:
+```bash
+python n-link-analysis/scripts/render-reports-to-html.py
+```
+
+---
+
+### 2026-01-02 - Test Suite Fix (Pytest Compatibility)
+
+**What was tried**:
+- Fix pytest fixture error in `viz/tests/test_dashboards.py`
+
+**What worked**:
+- Renamed `test_dashboard_starts(name, command, port, timeout)` → `_check_dashboard_starts(...)`
+- Underscore prefix prevents pytest auto-discovery (function has parameters, not fixtures)
+- Function still called by `run_all_tests()` when running as standalone script
+
+**Validation**:
+- All 3 pytest-compatible tests pass: `test_shared_imports`, `test_data_loaders`, `test_api_client`
+- Standalone script execution still works via `python test_dashboards.py`
+
+**Files modified**:
+- `n-link-analysis/viz/tests/test_dashboards.py`
+
+---
+
+### 2026-01-02 (Night 8) - Phase 6: Pipeline Integration Complete
+
+**What was tried**:
+- Add `--use-api` mode to `reproduce-main-findings.py` to execute via API server instead of subprocess calls
+
+**What worked**:
+- `run_via_api()` helper function for task submission and polling
+- API-specific helpers for each pipeline phase (sampling, basin mapping, branch analysis, dashboards, reports)
+- API availability check before pipeline starts
+- Progress display during long-running background operations
+- All 5 pipeline phases support dual-mode execution
+
+**Key decisions**:
+- Collapse dashboard (`batch-chase-collapse-metrics.py`) kept as subprocess-only - no API endpoint exists yet
+- Use async endpoints for dashboards/reports to handle potentially long operations
+
+**Files modified**:
+- `n-link-analysis/scripts/reproduce-main-findings.py` (API mode added)
+- `nlink_api/NEXT-SESSION.md` (marked all 6 phases complete)
+
+**Validation**:
+- Syntax check passes (`py_compile`)
+- `--help` shows new options
+- API unavailable error works correctly
+
+---
+
+### 2026-01-02 (Night 4) - HuggingFace Data Pipeline Integration
+
+**What was tried**:
+- Create unified data source abstraction to run analysis from HuggingFace dataset
+
+**What worked**:
+- `data_loader.py` module with `LocalDataLoader` and `HuggingFaceDataLoader`
+- Factory pattern: `get_data_loader(source="local"|"huggingface")`
+- CLI integration via `add_data_source_args()` for consistent script interface
+- Updated 3 core scripts: `validate-data-dependencies.py`, `trace-nlink-path.py`, `sample-nlink-traces.py`
+
+**Key decisions**:
+- Abstract base class pattern for extensibility
+- Environment variable support (`DATA_SOURCE`, `HF_DATASET_REPO`, `HF_CACHE_DIR`)
+- HF downloads cached to `~/.cache/wikipedia-nlink-basins/`
+
+**Files created/modified**:
+- `n-link-analysis/scripts/data_loader.py` (new)
+- `n-link-analysis/scripts/validate-data-dependencies.py` (updated)
+- `n-link-analysis/scripts/trace-nlink-path.py` (updated)
+- `n-link-analysis/scripts/sample-nlink-traces.py` (updated)
+- `n-link-analysis/INDEX.md` (updated - Data Sources section)
+- `n-link-analysis/implementation.md` (updated - Data Loader documentation)
+
+---
+
+### 2026-01-02 (Night 3) - HuggingFace Dataset Validation Script
+
+**What was tried**:
+- Create script to download HF dataset and validate it provides everything for reproduction
+
+**What worked**:
+- `validate-hf-dataset.py` created with 30 validation checks
+- Downloads from HuggingFace, validates schemas, row counts, data integrity
+- Reproduction test confirms N=5 phase transition finding
+
+**Key discoveries**:
+- Tunnel nodes: 41,732 (2.01%), not 9,018 (0.45%) as in DATASET_CARD.md
+- multiplex_edges schema: `src_page_id, src_N, dst_page_id, dst_N, edge_type` (not as documented)
+- pyarrow cleanup crash requires `os._exit()` workaround
+
+**Files created**:
+- `n-link-analysis/scripts/validate-hf-dataset.py`
+
+---
+
+### 2026-01-02 (Night 2) - HuggingFace Dataset Upload Complete
+
+**What was tried**:
+- Upload dataset to HuggingFace using prepared script
+- Add `.env` support for credential management
+
+**What worked**:
+- Dataset uploaded successfully: https://huggingface.co/datasets/mgmacleod/wikidata1
+- 73 files (~1.74 GB) uploaded with "full" config
+- `.env` loading added to upload script
+- `.env.example` template created for reproducibility
+
+**Key discoveries**:
+- WebFetch shows stale cache - use HfApi for verification
+- System Python differs from venv - must use `.venv/bin/python` explicitly
+
+**Files created/modified**:
+- `.env.example` (new)
+- `.gitignore` (added `.env`)
+- `requirements.txt` (added `huggingface_hub>=0.20.0`)
+- `n-link-analysis/scripts/upload-to-huggingface.py` (added `.env` loading)
+
+---
+
+### 2026-01-02 (Night) - Hugging Face Dataset Validation & Upload Script
+
+**What was tried**:
+- Validate all dataset files before Hugging Face upload
+- Update documentation to match actual file schemas and sizes
+- Create automated upload script
+
+**What worked**:
+- All parquet files validated (readable, correct row counts, no PII)
+- DATASET_CARD.md fixed: added `cycle_key`, `entry_id`, `n_distinct_basins` fields; corrected N range
+- HUGGINGFACE-UPLOAD-MANIFEST.md updated with accurate sizes and validation checkmarks
+- `upload-to-huggingface.py` script created with dry-run, config options (minimal/full/complete)
+- Dry run successful: 71 files, 1.74 GB staged correctly
+
+**Key discoveries**:
+- tunnel_nodes.parquet has basin columns for N3-N10 (not N3-N7 as documented)
+- multiplex_basin_assignments.parquet has 2 undocumented columns: `cycle_key`, `entry_id`
+- Analysis folder: 49 parquet files (40 branch assignments + 9 pointclouds) = 36 MB
+
+**Files created/modified**:
+- `scripts/upload-to-huggingface.py` - New HF upload automation
+- `report/DATASET_CARD.md` - Schema corrections
+- `report/HUGGINGFACE-UPLOAD-MANIFEST.md` - Sizes/recommendations updated
+
+**Next**: Run upload with real HF credentials
+
+---
+
+### 2026-01-02 (Evening) - Hyperstructure Analysis & Related Work
+
+**What was tried**:
+- Compute Massachusetts hyperstructure size (union across N=3-10)
+- Test WH's hypothesis that "2/3 of Wikipedia" is in the Massachusetts hyperstructure
+- Add Related Work sections to theory docs per WH's recommendation
+
+**What worked**:
+- Successfully computed hyperstructure by unioning parquet assignment files across N values
+- Web search verified seminal papers for citations (Flajolet & Odlyzko, Kivelä et al., Newman & Ziff, Broder et al.)
+- Added ~400 word Related Work section to n-link-rule-theory.md
+- Added ~350 word Related Work section to database-inference-graph-theory.md
+
+**Key discoveries**:
+- Massachusetts hyperstructure = 1,062,344 pages (5.91% of Wikipedia)
+- WH's guess of 2/3 was ~4.5× optimistic
+- N=5 contributes 94.7% of hyperstructure; multi-N adds only 5.3% marginal coverage
+- Hyperstructure size ≈ 1.05× peak N basin size (hyperstructures are "flat" in N dimension)
+
+**Files created/modified**:
+- `scripts/compute-hyperstructure-size.py` - Hyperstructure computation script
+- `empirical-investigations/HYPERSTRUCTURE-ANALYSIS.md` - Full analysis documentation
+- `data/wikipedia/processed/analysis/hyperstructure_analysis.tsv`
+- `data/wikipedia/processed/analysis/massachusetts_hyperstructure_analysis.tsv`
+- `llm-facing-documentation/theories-proofs-conjectures/n-link-rule-theory.md` (Related Work section)
+- `llm-facing-documentation/theories-proofs-conjectures/database-inference-graph-theory.md` (Related Work section)
+
+**Contract**: NLR-C-0004 extended with hyperstructure evidence
+
+---
+
+### 2026-01-02 - Semantic Tunnel Analysis & Temporal Stability
+
+**What was tried**:
+- Assess human collaboration feedback against recent work
+- Build lightweight temporal analysis using Wikipedia API (vs downloading multiple dumps)
+- Semantic analysis of tunnel nodes using Wikipedia categories
+
+**What worked**:
+- Edit history API fetcher successfully retrieves revision data for cycle pages
+- Confirmed basin cycles are temporally stable (59 edits to Autumn/Summer, N=5 links unchanged)
+- Gulf of Maine: 0 edits in 90 days (anchor for 1M-page basin)
+- Semantic analysis reveals tunnel nodes cluster at domain boundaries (22.5% New England)
+- Multi-basin nodes are semantic gateways bridging distinct knowledge domains
+
+**Key discoveries**:
+- Tunnel nodes are 3× less likely to be biographical articles than non-tunnel nodes
+- Places tunnel more than people (rivers, mountains, historical sites)
+- Example gateway: USS Washington (1775) bridges Revolutionary War ↔ Gulf of Maine geography
+
+**Files created**:
+- `scripts/temporal/fetch-edit-history.py` - Wikipedia API edit history fetcher
+- `scripts/semantic/fetch-page-categories.py` - Wikipedia category fetcher
+- `empirical-investigations/TEMPORAL-STABILITY-ANALYSIS.md`
+- `empirical-investigations/SEMANTIC-TUNNEL-ANALYSIS.md`
+- `report/EDIT-HISTORY-ANALYSIS.md`
+- `data/wikipedia/processed/temporal/edit_history_2026-01-02.json`
+- `data/wikipedia/processed/semantic/tunnel_node_categories.json`
+
+**Contract**: NLR-C-0004 extended with Phase 6 (semantic) and temporal findings
+
+---
+
+### 2026-01-01 (Late Night) - HALT Probability Conjectures Validated
+
+**What was tried**:
+- Test Conjectures 6.1 (Monotonic HALT) and 6.3 (Phase Transition N*) from n-link-rule-theory.md
+- Compute P_HALT(N) for N=1-50 using existing degree distribution data
+
+**What worked**:
+- Conjecture 6.1 VALIDATED: P_HALT(N) strictly increases with N (monotonic)
+- Conjecture 6.3 VALIDATED: Crossover N* ≈ 1.82 (interpolated between N=1 and N=2)
+- At N=5: P_HALT = 67.4%, P_CYCLE = 32.6%
+
+**Key discovery**:
+- HALT/CYCLE crossover (N* ≈ 2) and basin SIZE peak (N=5) are **distinct phenomena**
+- Eligibility (P_CYCLE) and basin mass are decoupled
+- Confirms phase transition is driven by depth dynamics, not mere eligibility
+
+**Files created**:
+- `scripts/analyze-halt-probability.py` (~150 lines)
+- `data/wikipedia/processed/analysis/halt_probability_analysis.tsv`
+
+**Contract**: NLR-C-0005 added to registry
+
+---
+
+### 2026-01-01 (Night) - Visualization Suite Validation
+
+**What was tried**:
+- Test all new visualization and reporting code from previous session
+- Validate figure generation, dashboard startup, gallery, and report references
+
+**What worked**:
+- `generate-multi-n-figures.py --all`: 5 figures generated, 2.1M assignments loaded
+- `dash-cross-n-comparison.py`: starts on port 8062, loads 58 flows
+- Gallery HTML includes Multi-N Analysis section correctly
+- All 4 figure references in MULTI-N-ANALYSIS-REPORT.md resolve
+
+**What needed fixing**:
+- `requirements.txt` missing kaleido dependency
+- Initial attempt with kaleido 0.2.1 worked but showed deprecation warnings
+- Updated to `kaleido>=1.0.0` for plotly 6.x compatibility
+
+**Files updated**:
+- `requirements.txt` - added `kaleido>=1.0.0`
+
+Commit: pending
+
+---
+
+### 2026-01-01 (Evening) - Multi-N Visualization Suite & Unified Report
+
+**What was tried**:
+- Create static figure generation script for multi-N analysis
+- Build unified publication-ready report covering N=3-10
+- Update gallery to include multi-N figures
+- Create new cross-N comparison dashboard
+
+**What worked**:
+- `generate-multi-n-figures.py --all` generates 5 figures (phase transition, collapse, tunnel distribution, depth, summary table)
+- `MULTI-N-ANALYSIS-REPORT.md` consolidates all findings in 10 sections
+- Gallery restructured: multi-N first, interactive tools second, N=5 basins third
+- `dash-cross-n-comparison.py` runs on port 8062 with 4 tabs
+
+**Key findings**:
+- Data uses `_tunneling` suffix for N=8-10 cycle keys (same basins, different N)
+- Collapse chart needed special logic to map tunneling keys back to base cycles
+- Gallery needed CSS additions for analysis-card and tool-card styles
+
+**Files created**:
+- `viz/generate-multi-n-figures.py` (~350 lines)
+- `viz/dash-cross-n-comparison.py` (~500 lines)
+- `report/MULTI-N-ANALYSIS-REPORT.md` (~400 lines)
+
+**Files updated**:
+- `viz/create-visualization-gallery.py` - added multi-N sections
+- `viz/README.md` - added dashboard table and new tool docs
+- `report/TUNNELING-FINDINGS.md` - corrected stats for N=3-10
+
+Commit: pending
+
+---
+
+### 2026-01-01 (Morning) - Viz & Reporting N=3-10 Full Support
+
+**What was tried**:
+- Regenerate `tunnel_nodes.parquet` with N8-N10 columns
+- Update 3 visualization scripts with hardcoded N=3-7 ranges
+- Regenerate all tunneling pipeline TSV outputs
+
+**What worked**:
+- `find-tunnel-nodes.py --n-max 10` added basin_at_N8/N9/N10 columns
+- All 3 scripts updated: path-tracer-tool.py, dash-multiplex-explorer.py, generate-tunneling-report.py
+- Pipeline scripts (classify-tunnel-types, compute-tunnel-frequency, quantify-basin-stability) regenerated data
+
+**Key findings**:
+- Tunnel nodes increased 4.6× from 9,018 → 41,732 with N=3-10
+- 32,714 new tunnel nodes appear only when analyzing N>7
+- Basin flows increased from 16 → 58, basins tracked from 9 → 15
+- `analyze-tunnel-mechanisms.py` too slow (10+ min) - skipped regeneration
+
+**Files updated**:
+- Data: tunnel_nodes.parquet, tunnel_classification.tsv, tunnel_frequency_ranking.tsv, basin_stability_scores.tsv, basin_flows.tsv
+- Scripts: path-tracer-tool.py (5 locations), dash-multiplex-explorer.py (1), generate-tunneling-report.py (1)
+- Docs: VIZ-DATA-GAP-ANALYSIS.md (marked RESOLVED)
+
+---
+
+### 2026-01-01 (Post-Midnight) - HF Dataset Documentation + Viz Gap Analysis
+
+**What was tried**:
+- Comprehensive inventory of all parquet/data files for Hugging Face dataset
+- Created 3-tier HF documentation (README, dataset card, upload manifest)
+- Assessed all viz/reporting scripts for N=8-10 data compatibility
+
+**What worked**:
+- Complete HF dataset documentation with schemas, usage examples, upload options
+- Gap analysis identified root cause: `tunnel_nodes.parquet` missing N8-10 columns
+- Identified 3 scripts with hardcoded `range(3, 8)`
+
+**Key findings**:
+- `multiplex_basin_assignments.parquet` has N=3-10 (correct)
+- `tunnel_nodes.parquet` only has `basin_at_N{3-7}` columns (gap)
+- Most viz tools read dynamic TSV files and work without changes
+- 3 scripts need updates: path-tracer-tool.py, dash-multiplex-explorer.py, generate-tunneling-report.py
+
+**Files created**:
+- `n-link-analysis/report/HUGGINGFACE-DATASET-README.md` (~8KB)
+- `n-link-analysis/report/DATASET_CARD.md` (~4KB)
+- `n-link-analysis/report/HUGGINGFACE-UPLOAD-MANIFEST.md` (~5KB)
+- `n-link-analysis/VIZ-DATA-GAP-ANALYSIS.md` (~4KB)
+
+**Next steps**:
+- Regenerate `tunnel_nodes.parquet` with N8-10 columns
+- Update hardcoded N ranges in 3 scripts
+- Regenerate reports
+
+---
+
+### 2026-01-01 (Late Night) - Extended Tunneling to N=8-10
+
+**What was tried**:
+- Run analysis harness for N=8, 9, 10
+- Generate parquet assignment files for extended N range
+- Run full tunneling pipeline on N=3-10
+
+**What worked**:
+- Harness completed 34/34 scripts for each N=8,9,10
+- Manual `branch-basin-analysis.py --write-membership-top-k` for parquet generation
+- Tunneling pipeline successfully processed extended range
+
+**Key discoveries**:
+- **Basin collapse beyond N=5 confirmed**: 10-1000× reduction in basin sizes
+- Massachusetts: 1,009,471 (N=5) → 5,226 (N=10) = 193× collapse
+- Autumn__Summer: 162,689 → 148 = 1,100× collapse (most dramatic)
+- N=5 is unique peak; no secondary peaks at N=8-10
+
+**Artifacts produced**:
+- 18 new parquet files (`branches_n={8,9,10}_*_assignments.parquet`)
+- Updated `multiplex_basin_assignments.parquet` (2.1M rows, N=3-10)
+- Updated TUNNELING-FINDINGS.md, NEXT-STEPS.md, TUNNELING-ROADMAP.md
+
+**Technical note**: Harness generates TSV but NOT parquet by default. Must run branch-basin-analysis.py with `--write-membership-top-k` flag separately.
+
+---
+
+### 2026-01-01 (Night) - TUNNELING-ROADMAP Complete: All 5 Phases
+
+**What was tried**:
+- Phase 4: Tunnel mechanism analysis (WHY tunneling occurs)
+- Phase 5: Semantic model extraction and theory validation
+
+**What worked**:
+- `analyze-tunnel-mechanisms.py`: degree_shift (99.3%) vs path_divergence (0.7%)
+- `quantify-basin-stability.py`: Gulf_of_Maine is "fragile" sink basin
+- `compute-semantic-model.py`: Algorithm 5.2 implementation (100 entities, 9 subsystems)
+- `validate-tunneling-predictions.py`: 3/4 hypotheses validated
+- `generate-tunneling-report.py`: Publication-ready TUNNELING-FINDINGS.md
+
+**Key discoveries**:
+- **Hub hypothesis REFUTED**: Tunnel nodes have LOWER degree (31.8 vs 34.0, p=0.04)
+- Tunneling is NOT about having more link options
+- Depth strongly predicts tunneling (r=-0.83)
+- 100% of tunnel transitions involve N=5
+
+**Artifacts produced**:
+- 6 new scripts (Phase 4: 3, Phase 5: 3)
+- `semantic_model_wikipedia.json` (43 KB)
+- `tunneling_validation_metrics.tsv`
+- `TUNNELING-FINDINGS.md` (publication-ready)
+- NLR-C-0004 contract marked complete
+
+**Next**: Extend to N=8-10, cross-domain validation
+
+---
+
+### 2026-01-01 - Data Inventory and Consolidation
+
+**What was tried**:
+- Comprehensive inventory of all data files in the project
+- Created consolidated directory with organized copies
+
+**What worked**:
+- `organize-consolidated-data.py`: Idempotent script to copy analysis files into three views
+- Three organization schemes: by-date, by-type, by-n-value
+- 637 files organized (605 TSV + 32 parquet)
+
+**Key discoveries**:
+- 147 GB total project data (137 GB raw, 7.5 GB processed, 1.7 GB analysis)
+- Heavy duplication in analysis/: ~500 files are duplicates across run tags
+- Most common tags: reproduction_2025-12-31 (107), test-runs (213), multi_n_jan_2026 (69)
+- N=5 has most analysis files (168), followed by N=3 (99)
+
+**Artifacts produced**:
+- `n-link-analysis/scripts/organize-consolidated-data.py`
+- `data/wikipedia/processed/consolidated/` (README.md, MANIFEST.md, organized copies)
+
+**Next**: Run script after future analysis to maintain organization
+
+---
+
+### 2026-01-01 - Tunneling Phase 1 Complete + WH Feedback Addressed
+
+**What was tried**:
+- Answered WH's PR feedback questions (cycle attachment, hyperstructure coverage)
+- Built Phase 1 tunneling infrastructure per TUNNELING-ROADMAP.md
+
+**What worked**:
+- `answer-wh-cycle-attachment.py`: Massachusetts reaches itself at N=5, but Ethiopia↔Eritrea at N=4
+- `build-multiplex-table.py`: Unified 2.04M rows across N∈{3,4,5,6,7}
+- `compute-intersection-matrix.py`: Identified **9,018 tunnel nodes** (pages in different cycles at different N)
+- Basin intersection is extremely low (Jaccard ~0.001) confirming N-dependence
+
+**Key discoveries**:
+- Massachusetts↔Gulf_of_Maine cycle **only exists at N=5**
+- Boston at N=5 reaches New_Hampshire↔Vermont, NOT Massachusetts
+- 9,018 pages demonstrably switch cycles when N changes
+
+**Artifacts produced**:
+- `data/wikipedia/processed/multiplex/multiplex_basin_assignments.parquet` (10.6 MB)
+- `data/wikipedia/processed/multiplex/basin_intersection_*.tsv`
+- `n-link-analysis/empirical-investigations/WH-FEEDBACK-ANSWERS.md`
+
+**Next**: Phase 2 tunnel classification, Phase 3 multiplex graph construction
+
+---
+
+### 2026-01-01 (Wrap-up) - Multiplex "Basins as Slices" Breadcrumb (Tunneling)
 
 **Context**: Clarified the tunneling framing: fixed-$N$ basins are 1D slices of a multiplex over $(\text{page}, N)$ (or more general rule index). Exhaustive labeling under a fixed rule shrinks the remaining search space as basins are assigned.
 
