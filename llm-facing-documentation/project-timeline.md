@@ -18,6 +18,41 @@
 
 ## Timeline Entries
 
+### Session: 2026-01-02 - Report Pipeline Gap Analysis and Fix
+
+**Completed**:
+- Inventoried all data preparation scripts in `n-link-analysis/scripts/` and `n-link-analysis/viz/`
+- Identified 3 missing data prep steps in `generate-all-reports.sh`
+- Added `generate_pointclouds()` - generates missing `basin_pointcloud_*.parquet` files before image rendering
+- Added `generate_tributary_trees()` - generates 3D HTML + JSON tree visualizations
+- Added `generate_multi_n_figures()` - generates phase transition and collapse comparison charts
+- Added `CYCLE_PAIRS` associative array with 9 N=5 cycle definitions
+- Added skip flags: `--skip-pointclouds`, `--skip-trees`, `--skip-multi-n`
+- Pipeline now has 8 stages (previously 5)
+
+**Decisions Made**:
+| Decision | Rationale |
+|----------|-----------|
+| Pointclouds before basin images | Dependency order - images require pointcloud parquet files |
+| Skip tributary trees with `--skip-basins` | User likely wants to skip all slow viz generation |
+| Multi-N figures optional | Requires multiplex data from tunneling pipeline (not always available) |
+| Check for existing files before generation | Avoid expensive regeneration when files already exist |
+
+**Discoveries**:
+- `generate-all-reports.sh` assumed `basin_pointcloud_*.parquet` files existed but had no generation step
+- Tributary tree script (`render-tributary-tree-3d.py`) outputs both HTML and JSON sidecar
+- Multi-N figures depend on `multiplex_basin_assignments.parquet` from tunneling pipeline
+
+**Architecture Impact**:
+- Report pipeline now self-contained for all visualization assets
+- New pipeline order: trunkiness → human report → HTML → pointclouds → basin images → trees → multi-N → gallery
+
+**Validation**:
+- Bash syntax check passed
+- Script structure follows existing patterns
+
+---
+
 ### Session: 2026-01-03 - Report Generation Pipeline Script
 
 **Completed**:

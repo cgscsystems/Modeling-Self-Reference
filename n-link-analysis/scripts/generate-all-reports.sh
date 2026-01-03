@@ -5,12 +5,16 @@
 #   1. Generate trunkiness dashboard (aggregates branch analysis)
 #   2. Generate human-readable report with charts
 #   3. Render markdown reports to styled HTML
-#   4. Render basin geometry visualizations as PNG images
+#   4. Generate basin pointcloud data (if missing)
+#   5. Render basin geometry visualizations as PNG images
+#   6. Generate tributary tree visualizations (3D HTML + JSON)
+#   7. Generate multi-N comparison figures (phase transition, collapse)
+#   8. Generate gallery HTML
 #
 # Prerequisites:
 #   - API server running on $API_BASE (default: http://localhost:28000)
 #   - Branch analysis data already computed (branches_all_*.parquet files)
-#   - Basin pointcloud data for image rendering
+#   - nlink_sequences.parquet and pages.parquet (for pointcloud generation)
 #
 # Usage:
 #   ./generate-all-reports.sh [OPTIONS]
@@ -22,7 +26,10 @@
 #   --skip-trunkiness  Skip trunkiness dashboard generation
 #   --skip-human       Skip human report generation
 #   --skip-html        Skip HTML rendering
-#   --skip-basins      Skip basin image rendering
+#   --skip-pointclouds Skip basin pointcloud generation
+#   --skip-basins      Skip basin image rendering (also skips pointcloud generation)
+#   --skip-trees       Skip tributary tree visualization generation
+#   --skip-multi-n     Skip multi-N comparison figure generation
 #   --basins-only LIST Comma-separated list of basins to render (default: all)
 #   --comparison-grid  Generate comparison grid instead of individual images
 #   --dry-run          Show what would be done without executing
@@ -47,6 +54,23 @@ SKIP_BASINS=false
 BASINS_ONLY=""
 COMPARISON_GRID=false
 DRY_RUN=false
+SKIP_POINTCLOUDS=false
+SKIP_TREES=false
+SKIP_MULTI_N=false
+
+# Known cycle pairs for N=5 (from reproduce-main-findings.py)
+# Used to generate basin pointcloud data if missing
+declare -A CYCLE_PAIRS=(
+    ["Massachusetts"]="Gulf_of_Maine"
+    ["Sea_salt"]="Seawater"
+    ["Mountain"]="Hill"
+    ["Autumn"]="Summer"
+    ["Kingdom_(biology)"]="Animal"
+    ["Latvia"]="Lithuania"
+    ["Thermosetting_polymer"]="Curing_(chemistry)"
+    ["Precedent"]="Civil_law"
+    ["American_Revolutionary_War"]="Eastern_United_States"
+)
 
 # Colors for output
 RED='\033[0;31m'
@@ -84,6 +108,18 @@ while [[ $# -gt 0 ]]; do
             ;;
         --skip-basins)
             SKIP_BASINS=true
+            shift
+            ;;
+        --skip-pointclouds)
+            SKIP_POINTCLOUDS=true
+            shift
+            ;;
+        --skip-trees)
+            SKIP_TREES=true
+            shift
+            ;;
+        --skip-multi-n)
+            SKIP_MULTI_N=true
             shift
             ;;
         --basins-only)
@@ -269,6 +305,59 @@ for f in data.get('rendered', []):
     fi
 }
 
+# Generate basin pointcloud data (required for basin image rendering)
+generate_pointclouds() {
+    if $SKIP_POINTCLOUDS; then
+        log_warning "Skipping pointcloud generation (--skip-pointclouds)"
+        return 0
+    fi
+
+    if $SKIP_BASINS; then
+        log_warning "Skipping pointcloud generation (--skip-basins implies --skip-pointclouds)"
+        return 0
+    fi
+
+    log_step "Ensuring Basin Pointclouds Exist (N=$N)"
+
+    local script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+    local repo_root="$(cd "$script_dir/../.." && pwd)"
+    local analysis_dir="$repo_root/data/wikipedia/processed/analysis"
+    local viz_script="$repo_root/n-link-analysis/viz/render-full-basin-geometry.py"
+
+    # Ensure analysis directory exists
+    mkdir -p "$analysis_dir"
+
+    local generated=0
+    local skipped=0
+
+    for cycle_a in "${!CYCLE_PAIRS[@]}"; do
+        local cycle_b="${CYCLE_PAIRS[$cycle_a]}"
+        local parquet="$analysis_dir/basin_pointcloud_n=${N}_cycle=${cycle_a}.parquet"
+
+        if [ -f "$parquet" ]; then
+            log_info "Exists: $cycle_a"
+            ((skipped++))
+        else
+            log_info "Generating: $cycle_a ↔ $cycle_b"
+            if $DRY_RUN; then
+                echo -e "${YELLOW}[DRY-RUN]${NC} Would run: python3 $viz_script --n $N --cycle-title $cycle_a --cycle-title $cycle_b"
+            else
+                if python3 "$viz_script" --n "$N" --cycle-title "$cycle_a" --cycle-title "$cycle_b" --max-depth 0 --max-nodes 0 2>&1; then
+                    ((generated++))
+                else
+                    log_warning "Failed to generate pointcloud for $cycle_a - continuing"
+                fi
+            fi
+        fi
+    done
+
+    if $DRY_RUN; then
+        log_success "Pointclouds: would generate missing files"
+    else
+        log_success "Pointclouds: $generated generated, $skipped already existed"
+    fi
+}
+
 # Render basin images
 render_basin_images() {
     if $SKIP_BASINS; then
@@ -312,6 +401,89 @@ for f in data.get('rendered', []):
     else
         log_error "Basin image rendering failed"
         return 1
+    fi
+}
+
+# Generate tributary tree visualizations (3D interactive HTML + JSON)
+generate_tributary_trees() {
+    if $SKIP_TREES; then
+        log_warning "Skipping tributary tree generation (--skip-trees)"
+        return 0
+    fi
+
+    log_step "Generating Tributary Tree Visualizations (N=$N)"
+
+    local script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+    local repo_root="$(cd "$script_dir/../.." && pwd)"
+    local assets_dir="$repo_root/n-link-analysis/report/assets"
+    local tree_script="$repo_root/n-link-analysis/scripts/render-tributary-tree-3d.py"
+
+    # Parameters for tree generation
+    local top_k=4
+    local max_levels=4
+    local max_depth=10
+
+    local generated=0
+    local skipped=0
+
+    for cycle_a in "${!CYCLE_PAIRS[@]}"; do
+        local cycle_b="${CYCLE_PAIRS[$cycle_a]}"
+        local output_file="$assets_dir/tributary_tree_3d_n=${N}_cycle=${cycle_a}__${cycle_b}_k=${top_k}_levels=${max_levels}_depth=${max_depth}.html"
+
+        if [ -f "$output_file" ]; then
+            log_info "Exists: $cycle_a tree"
+            ((skipped++))
+        else
+            log_info "Generating: $cycle_a ↔ $cycle_b tree"
+            if $DRY_RUN; then
+                echo -e "${YELLOW}[DRY-RUN]${NC} Would run: python3 $tree_script --n $N --cycle-title $cycle_a --cycle-title $cycle_b --top-k $top_k --max-levels $max_levels --max-depth $max_depth"
+            else
+                if python3 "$tree_script" --n "$N" --cycle-title "$cycle_a" --cycle-title "$cycle_b" \
+                    --top-k "$top_k" --max-levels "$max_levels" --max-depth "$max_depth" 2>&1; then
+                    ((generated++))
+                else
+                    log_warning "Failed to generate tributary tree for $cycle_a - continuing"
+                fi
+            fi
+        fi
+    done
+
+    if $DRY_RUN; then
+        log_success "Tributary trees: would generate missing files"
+    else
+        log_success "Tributary trees: $generated generated, $skipped already existed"
+    fi
+}
+
+# Generate multi-N comparison figures (phase transition, collapse charts)
+generate_multi_n_figures() {
+    if $SKIP_MULTI_N; then
+        log_warning "Skipping multi-N figures (--skip-multi-n)"
+        return 0
+    fi
+
+    log_step "Generating Multi-N Comparison Figures"
+
+    local script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+    local repo_root="$(cd "$script_dir/../.." && pwd)"
+    local viz_script="$repo_root/n-link-analysis/viz/generate-multi-n-figures.py"
+    local multiplex_dir="$repo_root/data/wikipedia/processed/multiplex"
+
+    # Check if multiplex data exists
+    if [ ! -f "$multiplex_dir/multiplex_basin_assignments.parquet" ]; then
+        log_warning "Multiplex data not found - skipping multi-N figures"
+        log_info "Run tunneling pipeline first to generate multiplex data"
+        return 0
+    fi
+
+    if $DRY_RUN; then
+        echo -e "${YELLOW}[DRY-RUN]${NC} Would run: python3 $viz_script --all"
+    else
+        if python3 "$viz_script" --all 2>&1; then
+            log_success "Multi-N figures generated"
+        else
+            log_warning "Multi-N figure generation failed - continuing anyway"
+        fi
     fi
 }
 
@@ -378,7 +550,10 @@ main() {
     generate_trunkiness
     generate_human_report
     render_html
+    generate_pointclouds
     render_basin_images
+    generate_tributary_trees
+    generate_multi_n_figures
     generate_gallery
     print_summary
 }

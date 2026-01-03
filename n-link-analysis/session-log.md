@@ -8,6 +8,32 @@
 
 ---
 
+### 2026-01-02 - Report Pipeline Gap Analysis and Fix
+
+**What was tried**:
+- Inventory all data prep scripts to identify missing steps in `generate-all-reports.sh`
+- Add pointcloud generation before basin image rendering
+- Add tributary tree visualization generation
+- Add multi-N comparison figure generation
+
+**What worked**:
+- Added `generate_pointclouds()` - generates missing `basin_pointcloud_*.parquet` before images
+- Added `generate_tributary_trees()` - generates 3D HTML + JSON tree visualizations
+- Added `generate_multi_n_figures()` - generates phase transition/collapse charts (if multiplex data exists)
+- Added `CYCLE_PAIRS` array with 9 N=5 cycle definitions
+- Added skip flags: `--skip-pointclouds`, `--skip-trees`, `--skip-multi-n`
+- Pipeline now has 8 stages (up from 5)
+
+**Discoveries**:
+- Script assumed `basin_pointcloud_*.parquet` files existed but had no generation step
+- Tributary tree script outputs both HTML and JSON sidecar files
+- Multi-N figures require multiplex data from tunneling pipeline
+
+**Files modified**:
+- `scripts/generate-all-reports.sh` - added 3 new functions, 3 new skip flags
+
+---
+
 ### 2026-01-02 - Comprehensive Project Wrap-Up Analysis
 
 **What was tried**:
