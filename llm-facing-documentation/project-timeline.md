@@ -3,7 +3,7 @@
 **Document Type**: Cumulative history
 **Target Audience**: LLMs
 **Purpose**: Chronological record of project evolution, decisions, and discoveries
-**Last Updated**: 2026-01-02
+**Last Updated**: 2026-01-03
 **Status**: Active (append-only)
 
 ---
@@ -17,6 +17,28 @@
 ---
 
 ## Timeline Entries
+
+### Session: 2026-01-03 - Code Archaeology Survey
+
+**Completed**:
+- Conducted comprehensive inventory of all Python (~130) and bash (~10) scripts
+- Created `meta-maintenance/code-archaeology-survey-2026-01.md` documenting findings
+- Identified 27 undocumented scripts in `n-link-analysis/scripts/`
+- Prioritized cleanup recommendations with action checklist
+
+**Discoveries**:
+- 40% of `n-link-analysis/scripts/` not covered by `scripts-reference.md`
+- 1 naming convention violation: `tools/git_stats.py` (should be kebab-case)
+- 2 orphaned subdirectories: `temporal/` and `semantic/` with 1 script each
+- `data-pipeline/INDEX.md` has stale status ("Planning" but complete)
+- `viz/_archive/` contains .bak files from active consolidation effort (intentional)
+
+**Next Steps**:
+- Quick wins: rename git_stats.py, update stale INDEX.md status
+- Documentation sprint: document 27 undocumented scripts
+- Structural cleanup: consolidate orphaned subdirectories
+
+---
 
 ### Session: 2026-01-02 - Pipeline Fixes for Semantic Model and Tributary Trees
 
