@@ -18,6 +18,33 @@
 
 ## Timeline Entries
 
+### Session: 2026-01-03 - Report Generation Pipeline Script
+
+**Completed**:
+- Created `n-link-analysis/scripts/generate-all-reports.sh` - orchestrates full report generation pipeline
+- Script calls 5 stages in sequence:
+  1. Trunkiness dashboard (`/api/v1/reports/trunkiness`)
+  2. Human report with charts (`/api/v1/reports/human`)
+  3. Markdown → HTML rendering (`/api/v1/reports/render/html`)
+  4. Basin image rendering (`/api/v1/reports/render/basins`)
+  5. Gallery HTML generation (`create-visualization-gallery.py`)
+- Tested all render endpoints successfully
+
+**Decisions Made**:
+| Decision | Rationale |
+|----------|-----------|
+| Wrap existing Python gallery script | Reuse proven `create-visualization-gallery.py` instead of duplicating |
+| Add skip flags (`--skip-basins`, etc.) | Basin rendering takes ~22s; allow selective regeneration |
+| Support `--comparison-grid` mode | Single comparison image faster than rendering all basins individually |
+
+**Validation**:
+- Tested HTML render: 8 files in 0.02s
+- Tested basin render: Massachusetts PNG in 4.8s, comparison grid in 22s
+- Tested gallery generation: successfully creates gallery.html
+- All assets accessible at http://localhost:28070/gallery.html
+
+---
+
 ### Session: 2026-01-03 - API Endpoints for Report Rendering
 
 **Completed**:
