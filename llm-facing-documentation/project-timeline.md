@@ -18,6 +18,31 @@
 
 ## Timeline Entries
 
+### Session: 2026-01-03 - Empirical Investigations Gallery Integration
+
+**Completed**:
+- Added empirical investigations section to `n-link-analysis/viz/create-visualization-gallery.py`
+- Extended `n-link-analysis/scripts/render-reports-to-html.py` with EMPIRICAL_INVESTIGATIONS list (9 items)
+- Updated `nlink_api/services/report_service.py` to process both source directories
+- Generated HTML for 9 empirical investigation markdown files
+- Regenerated gallery.html with new "Empirical Investigations" section
+
+**Decisions Made**:
+- Prefix empirical investigation HTML files with `empirical-` to distinguish from regular reports
+- Group investigations by status (Active/Completed) with colored badges in gallery
+- Use italicized research questions as card descriptions to emphasize question-driven nature
+
+**Validation**:
+- Ran `render-reports-to-html.py` - all 17 reports (8 regular + 9 empirical) converted successfully
+- Ran `create-visualization-gallery.py` - gallery generated with new section
+- Verified empirical investigations section appears in gallery.html with correct links
+
+**Architecture Impact**:
+- Report rendering pipeline now supports two source directories
+- Gallery structure extended with dedicated empirical investigations section
+
+---
+
 ### Session: 2026-01-03 - Code Archaeology Survey
 
 **Completed**:

@@ -73,6 +73,55 @@ REPORTS = [
     ),
 ]
 
+# Empirical investigations (from n-link-analysis/empirical-investigations/)
+EMPIRICAL_INVESTIGATIONS = [
+    ReportConfig(
+        source="long-tail-basin-size.md",
+        output="empirical-long-tail-basin-size.html",
+        title="Long-Tail Basin Size Investigation",
+    ),
+    ReportConfig(
+        source="REPRODUCTION-OVERVIEW.md",
+        output="empirical-reproduction-overview.html",
+        title="Cross-N Reproduction Overview",
+    ),
+    ReportConfig(
+        source="PHASE-TRANSITION-REFINED.md",
+        output="empirical-phase-transition-refined.html",
+        title="Phase Transition Refined Analysis",
+    ),
+    ReportConfig(
+        source="MECHANISM-ANALYSIS.md",
+        output="empirical-mechanism-analysis.html",
+        title="Mechanism Analysis",
+    ),
+    ReportConfig(
+        source="MASSACHUSETTS-CASE-STUDY.md",
+        output="empirical-massachusetts-case-study.html",
+        title="Massachusetts Case Study",
+    ),
+    ReportConfig(
+        source="ENTRY-BREADTH-ANALYSIS.md",
+        output="empirical-entry-breadth-analysis.html",
+        title="Entry Breadth Analysis",
+    ),
+    ReportConfig(
+        source="ENTRY-BREADTH-RESULTS.md",
+        output="empirical-entry-breadth-results.html",
+        title="Entry Breadth Results",
+    ),
+    ReportConfig(
+        source="DEPTH-SCALING-ANALYSIS.md",
+        output="empirical-depth-scaling-analysis.html",
+        title="Depth Scaling Analysis",
+    ),
+    ReportConfig(
+        source="DEPTH-DISTRIBUTION-ANALYSIS.md",
+        output="empirical-depth-distribution-analysis.html",
+        title="Depth Distribution Analysis",
+    ),
+]
+
 
 # CSS matching gallery.html aesthetic
 HTML_TEMPLATE = """<!DOCTYPE html>
@@ -515,25 +564,39 @@ def main() -> int:
 
     repo_root = Path(__file__).resolve().parents[2]
     report_dir = repo_root / "n-link-analysis" / "report"
+    empirical_dir = repo_root / "n-link-analysis" / "empirical-investigations"
     assets_dir = report_dir / "assets"
 
     print(f"Report directory: {report_dir}")
+    print(f"Empirical investigations directory: {empirical_dir}")
     print(f"Assets directory: {assets_dir}")
     print()
 
     success_count = 0
+    total_count = len(REPORTS) + len(EMPIRICAL_INVESTIGATIONS)
+
+    # Process regular reports
+    print("=== Written Reports ===")
     for config in REPORTS:
         print(f"Converting: {config.source} -> {config.output}")
         if convert_report(config, report_dir, assets_dir, args.dry_run):
             success_count += 1
         print()
 
-    print(f"Converted {success_count}/{len(REPORTS)} reports")
+    # Process empirical investigations
+    print("=== Empirical Investigations ===")
+    for config in EMPIRICAL_INVESTIGATIONS:
+        print(f"Converting: {config.source} -> {config.output}")
+        if convert_report(config, empirical_dir, assets_dir, args.dry_run):
+            success_count += 1
+        print()
+
+    print(f"Converted {success_count}/{total_count} reports")
 
     if not args.dry_run:
         print("\nReports are now available in the Docker gallery at http://localhost:8070/")
 
-    return 0 if success_count == len(REPORTS) else 1
+    return 0 if success_count == total_count else 1
 
 
 if __name__ == "__main__":

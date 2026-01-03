@@ -133,6 +133,22 @@ WRAPUP_ANALYSIS = [
     ("basin_stats_summary.html", "Basin Statistics Summary", "Per-N basin statistics overview"),
 ]
 
+# Empirical investigations - question-scoped research with methods and results
+EMPIRICAL_INVESTIGATIONS = [
+    # Core investigations
+    ("empirical-long-tail-basin-size.html", "Long-Tail Basin Size", "Do fixed-N basins exhibit a heavy-tail size distribution?", "active"),
+    ("empirical-reproduction-overview.html", "Cross-N Reproduction", "Is basin structure universal or N-dependent?", "complete"),
+    ("empirical-phase-transition-refined.html", "Phase Transition Refined", "What causes the N=4 minimum and N=5 peak?", "complete"),
+    ("empirical-mechanism-analysis.html", "Mechanism Analysis", "Why does N=4 produce smallest basins despite fast convergence?", "complete"),
+    ("empirical-massachusetts-case-study.html", "Massachusetts Case Study", "Why does Massachusetts dominate at N=5 (94× larger than N=4)?", "complete"),
+    # Entry breadth investigations
+    ("empirical-entry-breadth-analysis.html", "Entry Breadth Analysis", "Does entry breadth explain basin mass?", "complete"),
+    ("empirical-entry-breadth-results.html", "Entry Breadth Results", "Entry breadth hypothesis refuted - depth dominates!", "complete"),
+    # Depth investigations
+    ("empirical-depth-scaling-analysis.html", "Depth Scaling Analysis", "What is the universal depth-mass power-law relationship?", "complete"),
+    ("empirical-depth-distribution-analysis.html", "Depth Distribution Analysis", "Which depth metric best predicts basin mass?", "complete"),
+]
+
 
 def generate_gallery_html() -> str:
     """Generate responsive HTML gallery with thumbnails and metadata."""
@@ -623,6 +639,49 @@ def generate_gallery_html() -> str:
         </section>
         """
 
+    # Build empirical investigations section
+    empirical_items_active = []
+    empirical_items_complete = []
+    for filename, title, question, status in EMPIRICAL_INVESTIGATIONS:
+        file_path = ASSETS_DIR / filename
+        if file_path.exists():
+            size_kb = file_path.stat().st_size / 1024
+            status_badge = '<span class="badge" style="background: #27ae60; color: white;">Complete</span>' if status == "complete" else '<span class="badge" style="background: #f39c12; color: white;">Active</span>'
+            card = f"""
+            <div class="tool-card">
+                <h4>{title} {status_badge}</h4>
+                <p><em>{question}</em></p>
+                <a href="{filename}" class="btn" target="_blank">Read Investigation ({size_kb:.0f} KB)</a>
+            </div>
+            """
+            if status == "active":
+                empirical_items_active.append(card)
+            else:
+                empirical_items_complete.append(card)
+
+    empirical_investigations_section = ""
+    if empirical_items_active or empirical_items_complete:
+        active_section = ""
+        complete_section = ""
+        if empirical_items_active:
+            active_section = f"""
+            <h3 style="margin-top: 1.5rem; color: #2c3e50;">Active Investigations</h3>
+            <div class="tools-grid">{''.join(empirical_items_active)}</div>
+            """
+        if empirical_items_complete:
+            complete_section = f"""
+            <h3 style="margin-top: 1.5rem; color: #2c3e50;">Completed Investigations</h3>
+            <div class="tools-grid">{''.join(empirical_items_complete)}</div>
+            """
+        empirical_investigations_section = f"""
+        <section class="tools-section">
+            <h2>Empirical Investigations</h2>
+            <p class="section-intro">Question-scoped research with methods, reproducibility traces, and results. Each investigation addresses a specific empirical question about basin structure.</p>
+            {active_section}
+            {complete_section}
+        </section>
+        """
+
     # Full HTML document
     html = f"""<!DOCTYPE html>
 <html lang="en">
@@ -933,6 +992,8 @@ def generate_gallery_html() -> str:
         {wrapup_section}
 
         {written_reports_section}
+
+        {empirical_investigations_section}
     </div>
 
     <footer>

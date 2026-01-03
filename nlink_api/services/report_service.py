@@ -223,17 +223,31 @@ class ReportService:
         spec.loader.exec_module(render_module)
 
         report_dir = self._settings.repo_root / "n-link-analysis" / "report"
+        empirical_dir = self._settings.repo_root / "n-link-analysis" / "empirical-investigations"
         assets_dir = self._settings.report_assets_dir
         assets_dir.mkdir(parents=True, exist_ok=True)
 
         rendered = []
-        total = len(render_module.REPORTS)
 
-        for i, config in enumerate(render_module.REPORTS):
+        # Get both regular reports and empirical investigations
+        reports_list = list(render_module.REPORTS)
+        empirical_list = list(getattr(render_module, 'EMPIRICAL_INVESTIGATIONS', []))
+        total = len(reports_list) + len(empirical_list)
+
+        # Process regular reports
+        for i, config in enumerate(reports_list):
             if progress_callback:
                 progress_callback(i / total, f"Converting {config.source}")
 
             if render_module.convert_report(config, report_dir, assets_dir, dry_run):
+                rendered.append(config.output)
+
+        # Process empirical investigations
+        for i, config in enumerate(empirical_list):
+            if progress_callback:
+                progress_callback((len(reports_list) + i) / total, f"Converting {config.source}")
+
+            if render_module.convert_report(config, empirical_dir, assets_dir, dry_run):
                 rendered.append(config.output)
 
         if progress_callback:
